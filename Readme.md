@@ -1,4 +1,9 @@
 # CppTest-lite
+
+[![Build Status](https://travis-ci.org/doe300/cpptest-lite.svg)](https://travis-ci.org/doe300/cpptest-lite)
+[![GitHub license](https://img.shields.io/github/license/doe300/cpptest-lite.svg)](https://github.com/doe300/cpptest-lite/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/tag/doe300/cpptest-lite.svg)](https://github.com/doe300/cpptest-lite/releases/latest)
+
 This is an approximate re-implementation of the [cpptest testing framework](http://sourceforge.net/projects/cpptest/).
 This library is based on the version *1.1.2*.
 
