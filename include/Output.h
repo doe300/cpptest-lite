@@ -12,7 +12,7 @@
 #include <string>
 #include <exception>
 
-
+//TODO implement other output-classes
 namespace Test
 {
     namespace Private
@@ -52,26 +52,85 @@ namespace Test
         { }
     };
 
+/*!
+ * Base class for all kinds of Outputs
+ */
 class Output
 {
 public:
     Output(const Output& orig) = delete;
     virtual ~Output() {}
-    
+
+    /*!
+     * Initializes the output for a single suite
+     * 
+     * \param suiteName The name of the suite
+     * \param numTests The number of tests in this suite
+     */    
     virtual void initializeSuite(const std::string& suiteName, const unsigned int numTests) {};
-    virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) {};
     
+    /*!
+     * Finishes the output for a single suite
+     * 
+     * \param suiteName The name of the suite
+     * \param numTests The number of tests in the suite
+     * \param numPositiveTests The number of successful tests in this suite
+     * \param totalDuration The total duration in microseconds the suite took to execute
+     */
+    virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) {};
+
+    /*!
+     * Initializes the output for a single test-method
+     * 
+     * \param suiteName The name of the suite
+     * \param methodName The name of the test-method
+     */
     virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName) {};
+    
+    /*!
+     * Finished the output for a single test-method
+     * 
+     * \param suiteName The name of the suite
+     * \param methodName The name of the test-method
+     * \param withSuccess Whether the test-method was finished with success
+     */
     virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) {};
     
+    /*!
+     * Finished the output for a single test-method that threw an error
+     * 
+     * NOTE: when this method is called, \ref finishTestMethod is skipped for this test-method
+     * 
+     * \param suiteName The name of the suite
+     * \param methodName The name of the test-method
+     * \param ex The exception, that was thrown
+     */
+    virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) {};
+    
+    /*!
+     * Prints a successful test
+     * 
+     * NOTE: this method is only called, if the macro CPPTEST_LITE_LOG_SUCCESS is set
+     * 
+     * \param assertion Information about the successful assertion
+     */
     virtual void printSuccess(const Assertion assertion) {};
+    
+    /*!
+     * Prints a failed test
+     * 
+     * \param assertion Information about the failed assertion
+     */
     virtual void printFailure(const Assertion assertion) {};
     
-    virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) {};
+    
     
 protected:
     Output() {}
 
+    /*!
+     * Converts a fraction into a percentage-value with 2 decimals
+     */
     inline double prettifyPercentage(const double part, const double whole) const 
     {
         int tmp = (part/whole) * 10000;
