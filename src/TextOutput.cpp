@@ -48,13 +48,13 @@ void TextOutput::finishTestMethod(const std::string& suiteName, const std::strin
         stream  << "Test-method '" << methodName << "' finished with " << (withSuccess ? "success!" : "errors!") << std::endl;
 }
 
-void TextOutput::printSuccess(const Assertion assertion)
+void TextOutput::printSuccess(const Assertion& assertion)
 {
     if(mode <= Debug)
         stream << "Test '" << assertion.method << "' line " << assertion.lineNumber << " successful!" << std::endl;
 }
 
-void TextOutput::printFailure(const Assertion assertion)
+void TextOutput::printFailure(const Assertion& assertion)
 {
     stream << "Test '" << assertion.method << "' failed!" << std::endl;
     stream << "\tSuite: " << assertion.suite << std::endl;

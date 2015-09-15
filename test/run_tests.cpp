@@ -159,6 +159,7 @@ main(int argc, char* argv[])
     // Run the tests
     //
     Test::Output* output = new Test::TextOutput(Test::TextOutput::Verbose);
+    //Test::Output* output = new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GCC);
     fts.run(*output, true);
     cts.run(*output, true);
     tts.run(*output, true);

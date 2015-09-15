@@ -36,7 +36,7 @@ namespace Test
 
         void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex);
 
-        void printFailure(const Assertion assertion);
+        void printFailure(const Assertion& assertion);
     private:
         const std::string format;
         std::ostream& stream;

@@ -32,8 +32,8 @@ namespace Test
         virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess);
 
 
-        virtual void printSuccess(const Assertion assertion);
-        virtual void printFailure(const Assertion assertion);
+        virtual void printSuccess(const Assertion& assertion);
+        virtual void printFailure(const Assertion& assertion);
         virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex);
 
     private:

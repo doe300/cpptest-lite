@@ -114,14 +114,14 @@ public:
      * 
      * \param assertion Information about the successful assertion
      */
-    virtual void printSuccess(const Assertion assertion) {};
+    virtual void printSuccess(const Assertion& assertion) {};
     
     /*!
      * Prints a failed test
      * 
      * \param assertion Information about the failed assertion
      */
-    virtual void printFailure(const Assertion assertion) {};
+    virtual void printFailure(const Assertion& assertion) {};
     
     
     

@@ -12,9 +12,9 @@ using namespace Test;
 const std::string CompilerOutput::FORMAT_GCC("%file:%line: %text");
 const std::string CompilerOutput::FORMAT_MSVC("%file(%line) : %text");
 
-const std::string ARG_FILE("%file");
-const std::string ARG_LINE("%line");
-const std::string ARG_TEXT("%text");
+const std::string CompilerOutput::ARG_FILE("%file");
+const std::string CompilerOutput::ARG_LINE("%line");
+const std::string CompilerOutput::ARG_TEXT("%text");
 
 CompilerOutput::CompilerOutput(const std::string& format) : CompilerOutput(format, std::cout)
 {
@@ -30,7 +30,7 @@ CompilerOutput::~CompilerOutput()
     stream.flush();
 }
 
-void CompilerOutput::printFailure(const Assertion assertion)
+void CompilerOutput::printFailure(const Assertion& assertion)
 {
     std::string formatString(format, 0);
     //replace %file
@@ -50,5 +50,6 @@ void CompilerOutput::printFailure(const Assertion assertion)
 
 void CompilerOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
 {
-    //TODO print
+    Assertion assertion(suiteName.data(), 0, ex.what(), methodName.data());
+    printFailure(assertion);
 }
