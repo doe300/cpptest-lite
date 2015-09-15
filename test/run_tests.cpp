@@ -31,6 +31,7 @@
 #include <iostream>
 
 #include "../include/cpptest.h"
+#include "TestMacros.h"
 
 using namespace std;
 
@@ -155,6 +156,7 @@ main(int argc, char* argv[])
     FailTestSuite fts;
     CompareTestSuite cts;
     ThrowTestSuite tts;
+    TestMacros tms;
 
     // Run the tests
     //
@@ -163,6 +165,7 @@ main(int argc, char* argv[])
     fts.run(*output, true);
     cts.run(*output, true);
     tts.run(*output, true);
+    tms.run(*output, true);
 
     delete output;
     

@@ -24,6 +24,11 @@ namespace std
     {
         return val;
     }
+    
+    inline string to_string(const nullptr_t ptr)
+    {
+        return "(nullptr)";
+    }
 };
 
 namespace Test

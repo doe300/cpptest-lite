@@ -54,10 +54,11 @@ namespace Test
 
     protected:
 
-        typedef void (Suite::*SimpleTestMethod)();
-        typedef void (Suite::*StringTestMethod)(const std::string& string);
-        typedef void (Suite::*NumberTestMethod)(const int number);
-        typedef void (Suite::*PointerTestMethod)(const void* ptr);
+        //! Test-method without any parameter
+        using SimpleTestMethod = void (Suite::*)();
+        //! Test-method with a single parameter of arbitrary type
+        template<typename T>
+        using SingleArgTestMethod = void (Suite::*)(const T arg);
 
         inline void setSuiteName(const std::string& suiteName)
         {
@@ -73,25 +74,13 @@ namespace Test
             totalTestMethods++;
         }
 
-        inline void addTest(StringTestMethod method, const std::string& funcName, const std::string string)
+        template<typename T>
+        inline void addTest(SingleArgTestMethod<T> method, const std::string& funcName, const T& arg)
         {
-            testMethods.push_back(TestMethod(funcName, method, string));
+            testMethods.push_back(TestMethod(funcName, method, arg));
             totalTestMethods++;
         }
-
-        inline void addTest(NumberTestMethod method, const std::string& funcName, const int number)
-        {
-            testMethods.push_back(TestMethod(funcName, method, number));
-            totalTestMethods++;
-        }
-
-        inline void addTest(PointerTestMethod method, const std::string& funcName, const void* ptr)
-        {
-            testMethods.push_back(TestMethod(funcName, method, ptr));
-            totalTestMethods++;
-        }
-        //TODO varargs-version
-
+        
 #ifdef CPPTEST_LITE_LOG_SUCCESS
 
         inline void testSucceeded(Assertion assertion)
@@ -140,7 +129,7 @@ namespace Test
         /*!
          * Override this method to run code before every test-method
          */
-        virtual void before(const std::string methodName)
+        virtual void before(const std::string& methodName)
         {
             //does nothing by default
         }
@@ -148,7 +137,7 @@ namespace Test
         /*!
          * Override this method to run code after every test-method
          */
-        virtual void after(const std::string methodName, const bool success)
+        virtual void after(const std::string& methodName, const bool success)
         {
             //does nothing by default
         }
@@ -170,18 +159,11 @@ namespace Test
             {
             }
 
-            TestMethod(const std::string& name, StringTestMethod method, const std::string& string) : name(name), functor(std::bind(method, std::placeholders::_1, string))
+            template<typename T>
+            TestMethod(const std::string& name, SingleArgTestMethod<T> method, const T& arg) : name(name), functor(std::bind(method, std::placeholders::_1, arg))
             {
             }
-
-            TestMethod(const std::string& name, NumberTestMethod method, const int param) : name(name), functor(std::bind(method, std::placeholders::_1, param))
-            {
-            }
-
-            TestMethod(const std::string& name, PointerTestMethod method, const void* ptr) : name(name), functor(std::bind(method, std::placeholders::_1, ptr))
-            {
-            }
-
+            
             inline void operator()(Suite* suite) const
             {
                 functor(suite);
@@ -206,18 +188,18 @@ namespace Test
      */
 #define TEST_ADD(func) setSuiteName(__FILE__); addTest(static_cast<SimpleTestMethod>(&func), #func)
     /*!
-     * Registers a test-method taking a single argument of type string
+     * Registers a test-method taking a single argument of type c-string
      */
-#define TEST_ADD_WITH_STRING(func, string) setSuiteName(__FILE__); addTest(static_cast<StringTestMethod>(&func), #func, string)
+#define TEST_ADD_WITH_STRING_LITERAL(func, string) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<char*>>(&func), #func, string)
     /*!
      * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
      */
-#define TEST_ADD_WITH_INTEGER(func, number) setSuiteName(__FILE__); addTest(static_cast<NumberTestMethod>(&func), #func, number)
+#define TEST_ADD_WITH_INTEGER(func, number) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<int>>(&func), #func, number)
     /*!
      * Registers a test-method which takes an argument to a pointer of arbitrary data
      */
-#define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest(static_cast<PointerTestMethod>(&func), #func, pointer)
-
+#define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<void*>>(&func), #func, pointer)
+    
 };
 
 #endif	/* TESTSUITE_H */
