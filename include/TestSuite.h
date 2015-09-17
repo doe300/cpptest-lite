@@ -47,7 +47,7 @@ namespace Test
         {
             return totalTestMethods;
         }
-
+        
         virtual ~Suite()
         {
         }
@@ -60,10 +60,10 @@ namespace Test
         template<typename T>
         using SingleArgTestMethod = void (Suite::*)(const T arg);
 
-        inline void setSuiteName(const std::string& suiteName)
+        inline void setSuiteName(const std::string& filePath)
         {
             if (this->suiteName.empty()) {
-                this->suiteName = Private::getFileName(suiteName);
+                this->suiteName = Private::getFileName(filePath);
                 this->suiteName = this->suiteName.substr(0, this->suiteName.find_last_of('.'));
             }
         }
@@ -112,10 +112,13 @@ namespace Test
 
         /*!
          * This method can be overridden to execute code before the test-methods in this class are run
+         * 
+         * \return A boolean value, if false, the whole suite will not be executed (inclusive \ref tearDown)
          */
-        virtual void setup()
+        virtual bool setup()
         {
             //does nothing by default
+            return true;
         }
 
         /*!
@@ -128,10 +131,13 @@ namespace Test
 
         /*!
          * Override this method to run code before every test-method
+         * 
+         * \return A boolean value. If false, the test-method will not be executed (inclusive \ref after)
          */
-        virtual void before(const std::string& methodName)
+        virtual bool before(const std::string& methodName)
         {
             //does nothing by default
+            return true;
         }
 
         /*!

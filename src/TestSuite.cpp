@@ -33,15 +33,17 @@ bool Suite::run(Output& output, bool continueAfterFail)
     totalDuration = std::chrono::microseconds::zero();
     positiveTestMethods = 0;
     //run setup before all tests
-    setup();
-    for(const TestMethod& method : testMethods)
+    if(setup())
     {
-        std::pair<bool, std::chrono::microseconds> result = runTestMethod(method);
-        totalDuration += result.second;
-        if(result.first) ++positiveTestMethods;
+        for(const TestMethod& method : testMethods)
+        {
+            std::pair<bool, std::chrono::microseconds> result = runTestMethod(method);
+            totalDuration += result.second;
+            if(result.first) ++positiveTestMethods;
+        }
+        //run tear-down after all tests
+        tear_down();
     }
-    //run tear-down after all tests
-    tear_down();
     output.finishSuite(suiteName, testMethods.size(), positiveTestMethods, totalDuration);
     
     //run sub-suites
@@ -61,32 +63,35 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
     currentTestSucceeded = true;
     output->initializeTestMethod(suiteName, method.name);
     //run before() before every test
-    before(currentTestMethodName);
-    std::chrono::microseconds startTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch());
-    try {
-        method((Suite*)this);
-    }
-    catch(const std::exception& e)
+    if(before(currentTestMethodName))
     {
-        exceptionThrown = true;
-        currentTestSucceeded = false;
-        output->printException(suiteName, method.name, e);
+        std::chrono::microseconds startTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch());
+        try {
+            method((Suite*)this);
+        }
+        catch(const std::exception& e)
+        {
+            exceptionThrown = true;
+            currentTestSucceeded = false;
+            output->printException(suiteName, method.name, e);
+        }
+        catch(...)
+        {
+            exceptionThrown = true;
+            currentTestSucceeded = false;
+            output->printException(suiteName, method.name, std::runtime_error("non-exception type thrown"));
+        }
+        std::chrono::microseconds endTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch());
+        //run after() after every test
+        after(currentTestMethodName, currentTestSucceeded);
+        if(!exceptionThrown)
+        {
+            //we don't need to print twice, that the method has failed
+            output->finishTestMethod(suiteName, method.name, currentTestSucceeded);
+        }
+        return std::make_pair(currentTestSucceeded, endTime - startTime);
     }
-    catch(...)
-    {
-        exceptionThrown = true;
-        currentTestSucceeded = false;
-        output->printException(suiteName, method.name, std::runtime_error("non-exception type thrown"));
-    }
-    std::chrono::microseconds endTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch());
-    //run after() after every test
-    after(currentTestMethodName, currentTestSucceeded);
-    if(!exceptionThrown)
-    {
-        //we don't need to print twice, that the method has failed
-        output->finishTestMethod(suiteName, method.name, currentTestSucceeded);
-    }
-    return std::make_pair(currentTestSucceeded, endTime - startTime);
+    return std::make_pair(false, std::chrono::microseconds::zero());
 }
 
 
