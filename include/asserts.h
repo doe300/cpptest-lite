@@ -50,12 +50,12 @@ namespace Test
     constexpr bool inMaxDistance(const T& source, const T& compare, const T& maxDistance)
     {
         static_assert(std::is_arithmetic<T>(), "Can only compare arithmetic types");
-        return ((compare - source) * ( compare > source ? 1 : -1)) <= maxDistance;
+        return ((compare - source) * ( compare > source ? 1 : -1)) <= (maxDistance < 0 ? -maxDistance : maxDistance);
     }
 #else 
-    bool inMaxDistance(const T& source, const T& compare, const T& maxDistance)
+    inline bool inMaxDistance(const T& source, const T& compare, const T& maxDistance)
     {
-        return ((compare - source) * ( compare > source ? 1 : -1)) <= maxDistance;
+        return ((compare - source) * ( compare > source ? 1 : -1)) <= (maxDistance < 0 ? -maxDistance : maxDistance);
     }
 #endif
     
@@ -68,7 +68,7 @@ namespace Test
         return lowerLimit < upperLimit ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
     }
 #else
-    bool inRange(const T& lowerLimit, const T& upperLimit, const T& value)
+    inline bool inRange(const T& lowerLimit, const T& upperLimit, const T& value)
     {
         return lowerLimit < upperLimit ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
     }
@@ -76,7 +76,7 @@ namespace Test
     
     
     template<typename T>
-    bool inRangeObject(const T& lowerLimit, const T& upperLimit, const T& value)
+    inline bool inRangeObject(const T& lowerLimit, const T& upperLimit, const T& value)
     {
         return (lowerLimit < upperLimit) ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
     } 
@@ -96,7 +96,7 @@ namespace Test
 #define TEST_ASSERT(condition) \
     { \
         if(false == (condition)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__)); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), "")); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -105,7 +105,7 @@ namespace Test
 #define TEST_ASSERT_MSG(condition, msg) \
     { \
         if(false == (condition)) { \
-            testFailed(Test::Assertion( __FILE__, __LINE__, ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion( __FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -156,7 +156,7 @@ namespace Test
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__,__LINE__, "Expected Exception not thrown!", "")); \
+            testFailed(Test::Assertion(__FILE__,__LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), "")); \
             if(!continueAfterFailure()) return; \
         } \
         catch(except) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
@@ -167,7 +167,7 @@ namespace Test
         } \
         catch(...) { \
             /* Any other type than an exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("A non-exception-type was thrown, expected exception of type: ") + #except, "")); \
             if(!continueAfterFailure()) return; \
         } \
     }
@@ -176,7 +176,7 @@ namespace Test
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "Expected Exception not thrown!", ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         catch(except) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
@@ -187,7 +187,7 @@ namespace Test
         } \
         catch(...) { \
             /* Any other type than an exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("A non-exception-type was thrown, expected exception of type: ") + #except, ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
     }
@@ -196,7 +196,7 @@ namespace Test
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "No Exception thrown!", "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", "")); \
             if(!continueAfterFailure()) return; \
         } \
         catch(std::exception &ex) { \
@@ -213,7 +213,7 @@ namespace Test
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "No Exception thrown!", ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         catch(std::exception &ex) { \
@@ -266,35 +266,35 @@ namespace Test
 #define TEST_PREDICATE(predicate, value) \
     { \
         if(false == predicate(value)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__)); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + std::to_string(value) + std::string("' did not match the predicate: ") + #predicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }   
 #define TEST_PREDICATE_MSG(predicate, value, msg) \
     { \
         if(false == predicate(value)) {\
-            testFailed(Test::Assertion(__FILE__, __LINE__, ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + std::to_string(value) + std::string("' did not match the predicate: ") + #predicate, ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE(bipredicate, value0, value1) \
     { \
         if(false == bipredicate(value0, value1)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__)); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + std::to_string(value0) + "' and '" + std::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE_MSG(bipredicate, value0, value1, msg) \
     { \
         if(false == bipredicate(value0, value1)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + std::to_string(value0) + "' and '" + std::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
     
 #define TEST_ABORT(msg) \
     { \
-        testFailed(Test::Assertion(__FILE__, __LINE__, ((msg) != 0 ? #msg : ""))); \
+        testFailed(Test::Assertion(__FILE__, __LINE__, "Test-method aborted!", ((msg) != 0 ? #msg : ""))); \
         return; \
     }
 }   // end of namespace Test

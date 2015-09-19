@@ -81,7 +81,7 @@ private:
 		
 		// Will fail since the expression evaluates to false
 		//
-		TEST_ASSERT(0 == 1);
+		TEST_ASSERT_MSG(0 == 1, "This test should fail. 0 != 1");
 	}
 	
 	void delta_compare()
@@ -89,10 +89,11 @@ private:
 		// Will succeed since the expression evaluates to true
 		//
 		TEST_ASSERT_DELTA(0.5, 0.7, 0.3);
+                TEST_ASSERT_DELTA(0.5, 0.7, -0.3);
 		
 		// Will fail since the expression evaluates to false
 		//
-		TEST_ASSERT_DELTA(0.5, 0.7, 0.1);
+		TEST_ASSERT_DELTA_MSG(0.5, 0.7, 0.1, "This test should fail. (0.7 - 0.5) > 0.1");
 	}
 };
 
@@ -114,10 +115,10 @@ private:
 	{
 		// Will fail since the none of the functions throws anything
 		//
-		TEST_THROWS_MSG(func(), int, "func() does not throw, expected int exception");
-		TEST_THROWS_MSG(func_no_throw(), int, "func_no_throw() does not throw, expected int exception");
-		TEST_THROWS_ANYTHING_MSG(func(), "func() does not throw, expected any exception");
-		TEST_THROWS_ANYTHING_MSG(func_no_throw(), "func_no_throw() does not throw, expected any exception");
+		TEST_THROWS_MSG(func(), int, "Should fail. func() does not throw, expected int exception");
+		TEST_THROWS_MSG(func_no_throw(), int, "Should fail. func_no_throw() does not throw, expected int exception");
+		TEST_THROWS_ANYTHING_MSG(func(), "Should fail. func() does not throw, expected any exception");
+		TEST_THROWS_ANYTHING_MSG(func_no_throw(), "Should fail. func_no_throw() does not throw, expected any exception");
 		
 		// Will succeed since none of the functions throws anything
 		//
@@ -131,8 +132,8 @@ private:
 		
 		// Will fail since func_throw_int() throws an int (not a float)
 		//
-		TEST_THROWS_MSG(func_throw_int(), float, "func_throw_int() throws an int, expected a float exception");
-		TEST_THROWS_NOTHING_MSG(func_throw_int(), "func_throw_int() throws an int, expected no exception at all");
+		TEST_THROWS_MSG(func_throw_int(), float, "Should fail. func_throw_int() throws an int, expected a float exception");
+		TEST_THROWS_NOTHING_MSG(func_throw_int(), "Should fail. func_throw_int() throws an int, expected no exception at all");
 	}
 	
 	void func() {}

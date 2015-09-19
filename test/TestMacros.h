@@ -8,6 +8,9 @@
 #ifndef TESTMACROS_H
 #define	TESTMACROS_H
 
+#include <exception>
+#include <cmath>
+
 #include "cpptest.h"
 
 class TestMacros : public Test::Suite
@@ -20,6 +23,11 @@ public:
     void testMethodWithIntArg(const int arg);
     
     void testMethodWithPointerArg(void* arg);
+    
+    void testFailureMessages();
+private:
+    void throwsException();
+    void throwsInt();
     
 };
 
