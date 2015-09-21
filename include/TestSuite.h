@@ -13,6 +13,7 @@
 #include <chrono>
 #include <functional>
 #include <memory> //shared_ptr
+#include <type_traits> //is_constructible
 
 #include "Output.h"
 
@@ -74,10 +75,11 @@ namespace Test
             totalTestMethods++;
         }
 
-        template<typename T>
-        inline void addTest(SingleArgTestMethod<T> method, const std::string& funcName, const T& arg)
+        template<typename T, typename U>
+        inline void addTest(SingleArgTestMethod<T> method, const std::string& funcName, const U& arg)
         {
-            testMethods.push_back(TestMethod(funcName, method, arg));
+            static_assert(std::is_constructible<T, U>::value, "Can't construct method-parameter out of given type!");
+            testMethods.push_back(TestMethod(funcName, method, {arg}));
             totalTestMethods++;
         }
         
@@ -185,9 +187,13 @@ namespace Test
      */
 #define TEST_ADD(func) setSuiteName(__FILE__); addTest(static_cast<SimpleTestMethod>(&func), #func)
     /*!
+     * Registers a test-method taking a single argument of type std::string or a c-style string-literal
+     */
+#define TEST_ADD_WITH_STRING(func, string) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<std::basic_string<char>>>(&func), #func, string)
+    /*!
      * Registers a test-method taking a single argument of type c-string
      */
-#define TEST_ADD_WITH_STRING_LITERAL(func, string) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<char*>>(&func), #func, string)
+#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<char*>>(&func), #func, stringLiteral)
     /*!
      * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
      */

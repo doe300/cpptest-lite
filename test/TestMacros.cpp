@@ -11,13 +11,15 @@
 
 TestMacros::TestMacros() : Test::Suite()
 {
-    TEST_ADD_WITH_STRING_LITERAL(TestMacros::testMethodWithStringArg, (char*)"42");
+    TEST_ADD_WITH_STRING_LITERAL(TestMacros::testMethodWithCStringArg, (char*)"42");
     TEST_ADD_WITH_INTEGER(TestMacros::testMethodWithIntArg, 42);
-    TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, (void*)nullptr);
+    TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, nullptr);
+    TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, "TestString");
+    TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD(TestMacros::testFailureMessages);
 }
 
-void TestMacros::testMethodWithStringArg(char* arg)
+void TestMacros::testMethodWithCStringArg(char* arg)
 {
     TEST_ASSERT(strlen(arg) == 2);
 }
@@ -34,6 +36,13 @@ void TestMacros::testMethodWithPointerArg(void* arg)
     TEST_ASSERT_EQUALS(nullptr, arg);
     TEST_ASSERT_EQUALS_MSG(nullptr, (void*)0xFF, "Should fail. 0xFF is not a nullptr");
 }
+
+void TestMacros::testMethodWithStringArg(std::string string)
+{
+    TEST_ASSERT(!string.empty());
+    TEST_BIPREDICATE_MSG([](std::string s1, std::string s2){return s1.size() != s2.size();}, string, string, "Will fail");
+}
+
 
 void TestMacros::testFailureMessages()
 {
