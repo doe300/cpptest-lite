@@ -32,6 +32,7 @@
 
 #include "../include/cpptest.h"
 #include "TestMacros.h"
+#include "TestOutputs.h"
 
 using namespace std;
 
@@ -158,15 +159,17 @@ main(int argc, char* argv[])
     CompareTestSuite cts;
     ThrowTestSuite tts;
     TestMacros tms;
+    TestOutputs tos;
 
     // Run the tests
     //
     Test::Output* output = new Test::TextOutput(Test::TextOutput::Verbose);
-    //Test::Output* output = new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GCC);
     fts.run(*output, true);
     cts.run(*output, true);
     tts.run(*output, true);
     tms.run(*output, true);
+    std::cout << std::endl << std::endl << std::endl;
+    tos.run(*output, true);
 
     delete output;
     

@@ -22,7 +22,6 @@ do the exact same thing as **TEST_ASSERT_EQUALS** and **TEST_ASSERT_EQUALS_MSG**
 - the macros **TEST_THROWS_ANYTHING** and **TEST_THROWS_ANYTHING_MSG** treat throwing any type not extending std::exception as failure, 
 because - seriously - that is bad coding style
 - the **add(auto_ptr&lt;Suite&gt;)** method was rewritten to use the new **shared_ptr**.
-- **Test::CollectorOutput** and **Test::HTMLOutput** are not yet available
 - **Test::Suite.setup** now returns a **bool** value
 - Split user-message and failure-message into two separate fields (two separate lines in *TextOutput*)
 

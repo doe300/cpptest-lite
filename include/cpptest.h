@@ -12,8 +12,10 @@
 
 #include "asserts.h"
 #include "TestSuite.h"
+//Outputs
 #include "TextOutput.h"
 #include "CompilerOutput.h"
+#include "HTMLOutput.h"
 
 #endif	/* CPPTEST_H */
 

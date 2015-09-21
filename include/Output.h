@@ -12,7 +12,6 @@
 #include <string>
 #include <exception>
 
-//TODO implement other output-classes
 namespace Test
 {
     namespace Private
