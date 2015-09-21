@@ -36,10 +36,10 @@ void TextOutput::finishSuite(const std::string& suiteName, const unsigned int nu
     stream << "Suite '" << suiteName << "' finished, " << numPositiveTests << '/' << numTests << " successful (" << prettifyPercentage(numPositiveTests, numTests) << "%) in " << totalDuration.count() << " microseconds (" << totalDuration.count()/1000.0 << " ms)." << std::endl;
 }
 
-void TextOutput::initializeTestMethod(const std::string& suiteName, const std::string& methodName)
+void TextOutput::initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString)
 {
     if(mode <= Debug)
-        stream << "Running method '" << methodName << "' ..." << std::endl;;
+        stream << "Running method '" << methodName << "'" << (argString.empty() ? "" : "with argument: ") << argString << "..." << std::endl;;
 }
 
 void TextOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)

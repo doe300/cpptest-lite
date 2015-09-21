@@ -31,7 +31,7 @@ because - seriously - that is bad coding style
 - new macros **TEST_PREDICATE(_MSG)** and **TEST_BIPREDICATE(_MSG)** for testing a single (or two) values with a predicate.
 Additionally, two new types were created: **Test::Predicate** and **Test::BiPredicate**, but basically any method accepting a single (or two) arguments and 
 returning a *bool* or any other type which can be coerced into a *bool* can be used.
-- supports parameterized test-methods and multiple registrations for same test-method. Currently **TEST_ADD_WITH_STRING_LITERAL** allows for a c-string-parameter to be passed,
+- supports parameterized test-methods and multiple registrations for same test-method. Currently **TEST_ADD_WITH_STRING(_LITERAL)** allows for a string (c-style string-literal) to be passed,
 while **TEST_ADD_WITH_INTEGER** accepts an integer and **TEST_ADD_WITH_POINTER** an arbitrary pointer. These values are automatically passed to the test-method
 - added macro **TEST_ABORT** to fail and abort a test-method
 - added methods to be executed **before** and **after** every test-method. **setup** and **before** can be used to skip the suite/a single test-method.

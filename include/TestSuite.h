@@ -149,17 +149,19 @@ namespace Test
         {
             const std::string name;
             const std::function<void(Suite*) > functor;
+            const std::string argString;
 
             TestMethod() : name("")
             {
             }
 
-            TestMethod(const std::string& name, SimpleTestMethod method) : name(name), functor(method)
+            TestMethod(const std::string& name, SimpleTestMethod method) : name(name), functor(method), argString({})
             {
             }
 
             template<typename T>
-            TestMethod(const std::string& name, SingleArgTestMethod<T> method, const T& arg) : name(name), functor(std::bind(method, std::placeholders::_1, arg))
+            TestMethod(const std::string& name, SingleArgTestMethod<T> method, const T& arg) : 
+                name(name), functor(std::bind(method, std::placeholders::_1, arg)), argString(std::to_string(arg))
             {
             }
             

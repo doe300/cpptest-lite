@@ -28,7 +28,7 @@ namespace Test
         virtual void initializeSuite(const std::string& suiteName, const unsigned int numTests);
         virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration);
 
-        virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName);
+        virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString);
         virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess);
 
 
