@@ -1,12 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (CppTest-lite)
 
-option(CPPTEST_LITE_LOG_SUCCESS "Logs successfull tests" OFF)
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)
-
-if(CPPTEST_LITE_LOG_SUCCESS)
-	add_definitions(-DCPPTEST_LITE_LOG_SUCCESS)
-endif()
 
 #Include the header and source files
 file( GLOB HDRS "include/*.h" )

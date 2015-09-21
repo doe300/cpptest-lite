@@ -37,3 +37,4 @@ Makefile
 # Netbeans
 /nbproject
 /compile_commands.json
+/result.html

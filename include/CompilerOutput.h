@@ -29,6 +29,7 @@ namespace Test
     public:
         static const std::string FORMAT_GCC;
         static const std::string FORMAT_MSVC;
+        static const std::string FORMAT_GENERIC;
         
         CompilerOutput(const std::string& format);
         CompilerOutput(const std::string& format, std::ostream& stream);

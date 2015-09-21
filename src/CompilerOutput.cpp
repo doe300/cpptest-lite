@@ -11,6 +11,7 @@ using namespace Test;
 
 const std::string CompilerOutput::FORMAT_GCC("%file:%line: %text");
 const std::string CompilerOutput::FORMAT_MSVC("%file(%line) : %text");
+const std::string CompilerOutput::FORMAT_GENERIC = CompilerOutput::FORMAT_GCC;
 
 const std::string CompilerOutput::ARG_FILE("%file");
 const std::string CompilerOutput::ARG_LINE("%line");

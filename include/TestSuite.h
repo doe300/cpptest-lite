@@ -81,23 +81,14 @@ namespace Test
             totalTestMethods++;
         }
         
-#ifdef CPPTEST_LITE_LOG_SUCCESS
-
-        inline void testSucceeded(Assertion assertion)
+        inline void testSucceeded(Assertion&& assertion)
         {
             assertion.method = currentTestMethodName;
             assertion.suite = suiteName;
             output->printSuccess(assertion);
         }
-#else
 
-        inline void testSucceeded(Assertion assertion)
-        {
-            //do nothing
-        }
-#endif
-
-        inline void testFailed(Assertion assertion)
+        inline void testFailed(Assertion&& assertion)
         {
             currentTestSucceeded = false;
             assertion.method = currentTestMethodName;
