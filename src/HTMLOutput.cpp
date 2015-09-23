@@ -11,7 +11,6 @@ using namespace Test;
 
 HTMLOutput::HTMLOutput()
 {
-    //TODO W3C validate
 }
 
 void HTMLOutput::generate(std::ostream& stream, bool includePassed, const std::string& title)
@@ -46,7 +45,7 @@ void HTMLOutput::generateHeader(std::ostream& stream, const std::string& title)
             << "<style type=\"text/css\">" << std::endl
             << "td { vertical-align: super}" << std::endl
             << ".message { display: block}" << std::endl
-            << "table { border: 1px solid grey}" << std::endl
+            << "table { border: 1px solid grey; border-spacing: 0px}" << std::endl
             << "td {border-top: 1px solid grey; padding: 2px}" << std::endl
             << "td:not(:last-child), th:not(:last-child) {border-right: 1px solid grey}" << std::endl
             << ".allPassed { background-color: green}" << std::endl
@@ -82,7 +81,7 @@ inline std::string getCssClass(const unsigned int totalTests, const unsigned int
 void HTMLOutput::generateSuitesTable(std::ostream& stream, bool includePassed)
 {
     //header
-    stream << "<table id='top' summary='Suites overview' class='suites' cellspacing='0'><tr><th>Suite</th><th># Tests</th><th>Passed Tests</th><th>Duration</th></tr>" << std::endl;
+    stream << "<table id='top' class='suites'><tr><th>Suite</th><th># Tests</th><th>Passed Tests</th><th>Duration</th></tr>" << std::endl;
     //content
     auto info = suites.begin();
     while(info != suites.end())
@@ -103,7 +102,7 @@ void HTMLOutput::generateSuitesTable(std::ostream& stream, bool includePassed)
 
 void HTMLOutput::generateTestsTable(std::ostream& stream, const SuiteInfo& suite, bool includePassed)
 {
-    stream << "<table id='suite_" << suite.suiteName << "' summary='Suite details - " << suite.suiteName << "' cellspacing='0'>"
+    stream << "<table id='suite_" << suite.suiteName << "'>"
             << "<tr><th>Test-method</th><th># Assertions</th><th>Passed Assertions</th><th>Failures</th></tr>" << std::endl;
     //content
     auto testMethod = suite.methods.begin();
