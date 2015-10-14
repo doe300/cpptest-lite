@@ -12,11 +12,29 @@
 
 namespace std
 {
+    
+    //support for enum-class, which can't be implicitly converted to int
+    template<typename T>
+    inline
+    typename std::enable_if<std::is_enum<T>::value>::type
+    printObj(const T val, ostringstream& stream)
+    {
+        stream << (int) val;
+    }
+    
+    template<typename T>
+    inline
+    typename std::enable_if<!std::is_enum<T>::value>::type
+    printObj(const T val, ostringstream& stream)
+    {
+        stream << val;
+    }
+    
     template<typename T>
     inline string to_string(const T val)
     {
         ostringstream tmpstream;
-        tmpstream << val;
+        printObj<T>(val, tmpstream);
         return tmpstream.str();
     }
     
