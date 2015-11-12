@@ -52,11 +52,11 @@ void TestMacros::testFailureMessages()
     TEST_ASSERT_EQUALS_MSG(i, 45, "Comparison should fail");
     TEST_ASSERT_DELTA_MSG(i, 45, 2, "Delta comparison should fail");
     
-    TEST_THROWS_MSG(std::signbit(5), std::out_of_range, "Fails for not throwing exception");
+    TEST_THROWS_MSG(std::signbit(5.0), std::out_of_range, "Fails for not throwing exception");
     TEST_THROWS_MSG(throwsInt(), std::out_of_range, "Fails for non-exception-type");
     //XXX could use improvements
     TEST_THROWS_MSG(throwsException(), std::out_of_range, "Fails for throwing wrong exception");
-    TEST_THROWS_ANYTHING_MSG(std::signbit(5), "Fails for throwing no exception");
+    TEST_THROWS_ANYTHING_MSG(std::signbit(5.0), "Fails for throwing no exception");
     TEST_THROWS_ANYTHING_MSG(throwsInt(), "Fails for throwing a non-exception type");
     TEST_THROWS_NOTHING_MSG(throwsException(), "Fails for throwing exception");
     TEST_THROWS_NOTHING_MSG(throwsInt(), "Fails for throwing a non-exception type");
