@@ -17,6 +17,8 @@ TestMacros::TestMacros() : Test::Suite()
     TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, "TestString");
     TEST_ADD_SINGLE_ARGUMENT(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD(TestMacros::testFailureMessages);
+    TEST_ADD_TWO_ARGUMENTS(TestMacros::testMethodWithVarargs1, 1.0, 2);
+    TEST_ADD_THREE_ARGUMENTS(TestMacros::testMethodWithVarargs2, std::string("string"), 15, 1.0);
 }
 
 void TestMacros::testMethodWithCStringArg(char* arg)
@@ -78,3 +80,13 @@ void TestMacros::throwsInt()
     throw 5;
 }
 
+void TestMacros::testMethodWithVarargs1(const double d, const int i)
+{
+    TEST_ASSERT_MSG(d == i, "Fails for d != i");
+}
+
+void TestMacros::testMethodWithVarargs2(std::string s, int i, double d)
+{
+    TEST_ASSERT_MSG(std::to_string(i).compare(s) == 0, "String has not the same number!");
+    TEST_ASSERT_MSG(d == i, "Fails for d != i");
+}

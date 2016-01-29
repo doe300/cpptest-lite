@@ -61,7 +61,7 @@ namespace Test
         template<typename T>
         using SingleArgTestMethod = void (Suite::*)(const T arg);
         template<typename... T>
-        using VarargTestMethod = void (Suite::*)(const T... args);
+        using VarargTestMethod = void (Suite::*)(T... args);
 
         inline void setSuiteName(const std::string& filePath)
         {
@@ -86,9 +86,9 @@ namespace Test
         }
         
         template<typename... T>
-        inline void addTest(VarargTestMethod<T...> method, const std::string& funcName, const T&... args)
+        inline void addTest(VarargTestMethod<T...> method, const std::string& funcName, const T... args)
         {
-            testMethods.push_back(TestMethod(funcName, method, std::forward(args)...));
+            testMethods.push_back(TestMethod(funcName, method, args...));
             totalTestMethods++;
         }
         
@@ -189,10 +189,10 @@ namespace Test
             }
             
             template<typename... T>
-            TestMethod(const std::string& name, VarargTestMethod<T...> method, const T&... args) : name(name),
-                functor([this, &args..., &method]() {method(this, std::forward(args)...);}), argString(joinStrings(args...))
+            TestMethod(const std::string& name, VarargTestMethod<T...> method, const T... args) : name(name),
+                functor([args..., method](Suite* suite) {(suite->*method)(args...);}), argString(joinStrings(args...))
             {
-                
+                    
             }
             
             inline void operator()(Suite* suite) const
@@ -215,7 +215,13 @@ namespace Test
                 if(sizeof...(R) == 0)
                     return std::string("\"")+t+"\"";
                 return (std::string("\"")+t+"\", ") + joinStrings(remainder...);
-                
+            }
+            
+            template<typename... R>
+            static inline std::string joinStrings(const R&... remainder)
+            {
+                //is never called, but must exist to not throw compilation errors
+                return "";
             }
         };
         std::string suiteName;
@@ -256,14 +262,18 @@ namespace Test
      * Registers a test-method which takes an argument to a pointer of arbitrary data
      */
 #define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<void*>>(&func), #func, pointer)
-    
     /*!
      * Registers a test-method with a single argument of arbitrary type
      */
 #define TEST_ADD_SINGLE_ARGUMENT(func, arg) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<decltype(arg)>>(&func), #func, arg)
-  
-    //TODO doesn't work yet
-//#define TEST_ADD_WITH_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<const decltype(arg0), const decltype(arg1)>(static_cast<VarargTestMethod<const decltype(arg0), const decltype(arg1)>>(&func), #func, arg0, arg1)
+    /*!
+     * Registers a test-method with two arguments of arbitrary types
+     */
+#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1)>(static_cast<VarargTestMethod<decltype(arg0), decltype(arg1)>>(&func), #func, arg0, arg1)
+    /*!
+     * Registers a test-method with three arguments of arbitrary types
+     */
+#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<VarargTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>(&func), #func, arg0, arg1, arg2)
 };
 
 #endif	/* TESTSUITE_H */
