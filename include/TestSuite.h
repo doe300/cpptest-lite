@@ -60,6 +60,8 @@ namespace Test
         //! Test-method with a single parameter of arbitrary type
         template<typename T>
         using SingleArgTestMethod = void (Suite::*)(const T arg);
+        template<typename... T>
+        using VarargTestMethod = void (Suite::*)(const T... args);
 
         inline void setSuiteName(const std::string& filePath)
         {
@@ -83,9 +85,17 @@ namespace Test
             totalTestMethods++;
         }
         
+        template<typename... T>
+        inline void addTest(VarargTestMethod<T...> method, const std::string& funcName, const T&... args)
+        {
+            testMethods.push_back(TestMethod(funcName, method, std::forward(args)...));
+            totalTestMethods++;
+        }
+        
         inline void testSucceeded(Assertion&& assertion)
         {
             assertion.method = currentTestMethodName;
+            assertion.args = currentTestMethodArgs;
             assertion.suite = suiteName;
             output->printSuccess(assertion);
         }
@@ -94,6 +104,7 @@ namespace Test
         {
             currentTestSucceeded = false;
             assertion.method = currentTestMethodName;
+            assertion.args = currentTestMethodArgs;
             assertion.suite = suiteName;
             output->printFailure(assertion);
         }
@@ -165,9 +176,46 @@ namespace Test
             {
             }
             
+            TestMethod(const std::string& name, SingleArgTestMethod<std::string> method, const std::string& arg) : 
+                name(name), functor(std::bind(method, std::placeholders::_1, arg)), argString(std::string("\"")+arg+"\"")
+            {
+                //special case for std::string to enquote argument string
+            }
+            
+            TestMethod(const std::string& name, SingleArgTestMethod<char*> method, char* arg) : 
+                name(name), functor(std::bind(method, std::placeholders::_1, (char* const)arg)), argString((std::string("\"")+arg)+"\"")
+            {
+                //special case for char* to enquote argument string
+            }
+            
+            template<typename... T>
+            TestMethod(const std::string& name, VarargTestMethod<T...> method, const T&... args) : name(name),
+                functor([this, &args..., &method]() {method(this, std::forward(args)...);}), argString(joinStrings(args...))
+            {
+                
+            }
+            
             inline void operator()(Suite* suite) const
             {
                 functor(suite);
+            }
+            
+            template<typename T, typename... R>
+            static inline std::string joinStrings(const T& t, const R&... remainder)
+            {
+                if(sizeof...(R) == 0)
+                    return std::to_string(t);
+                return (std::to_string(t) + ", ") + joinStrings(remainder...);
+            }
+            
+            template<typename... R>
+            static inline std::string joinStrings(const std::string& t, const R&... remainder)
+            {
+                //special case to enquote std::string
+                if(sizeof...(R) == 0)
+                    return std::string("\"")+t+"\"";
+                return (std::string("\"")+t+"\", ") + joinStrings(remainder...);
+                
             }
         };
         std::string suiteName;
@@ -177,6 +225,7 @@ namespace Test
 
         unsigned int positiveTestMethods;
         std::string currentTestMethodName;
+        std::string currentTestMethodArgs;
         bool currentTestSucceeded;
         std::chrono::microseconds totalDuration;
         Output* output;
@@ -208,6 +257,13 @@ namespace Test
      */
 #define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<void*>>(&func), #func, pointer)
     
+    /*!
+     * Registers a test-method with a single argument of arbitrary type
+     */
+#define TEST_ADD_SINGLE_ARGUMENT(func, arg) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<decltype(arg)>>(&func), #func, arg)
+  
+    //TODO doesn't work yet
+//#define TEST_ADD_WITH_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<const decltype(arg0), const decltype(arg1)>(static_cast<VarargTestMethod<const decltype(arg0), const decltype(arg1)>>(&func), #func, arg0, arg1)
 };
 
 #endif	/* TESTSUITE_H */

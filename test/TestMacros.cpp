@@ -15,7 +15,7 @@ TestMacros::TestMacros() : Test::Suite()
     TEST_ADD_WITH_INTEGER(TestMacros::testMethodWithIntArg, 42);
     TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, nullptr);
     TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, "TestString");
-    TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, std::string("TestString"));
+    TEST_ADD_SINGLE_ARGUMENT(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD(TestMacros::testFailureMessages);
 }
 
