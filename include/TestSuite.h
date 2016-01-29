@@ -57,11 +57,9 @@ namespace Test
 
         //! Test-method without any parameter
         using SimpleTestMethod = void (Suite::*)();
-        //! Test-method with a single parameter of arbitrary type
-        template<typename T>
-        using SingleArgTestMethod = void (Suite::*)(const T arg);
+        //! Test-method with an arbitrary number of arguments of arbitrary types
         template<typename... T>
-        using VarargTestMethod = void (Suite::*)(T... args);
+        using ParameterizedTestMethod = void (Suite::*)(T... args);
 
         inline void setSuiteName(const std::string& filePath)
         {
@@ -77,16 +75,8 @@ namespace Test
             totalTestMethods++;
         }
 
-        template<typename T, typename U>
-        inline void addTest(SingleArgTestMethod<T> method, const std::string& funcName, const U& arg)
-        {
-            static_assert(std::is_constructible<T, U>::value, "Can't construct method-parameter out of given type!");
-            testMethods.push_back(TestMethod(funcName, method, {arg}));
-            totalTestMethods++;
-        }
-        
         template<typename... T>
-        inline void addTest(VarargTestMethod<T...> method, const std::string& funcName, const T... args)
+        inline void addTest(ParameterizedTestMethod<T...> method, const std::string& funcName, const T... args)
         {
             testMethods.push_back(TestMethod(funcName, method, args...));
             totalTestMethods++;
@@ -170,26 +160,8 @@ namespace Test
             {
             }
 
-            template<typename T>
-            TestMethod(const std::string& name, SingleArgTestMethod<T> method, const T& arg) : 
-                name(name), functor(std::bind(method, std::placeholders::_1, arg)), argString(std::to_string(arg))
-            {
-            }
-            
-            TestMethod(const std::string& name, SingleArgTestMethod<std::string> method, const std::string& arg) : 
-                name(name), functor(std::bind(method, std::placeholders::_1, arg)), argString(std::string("\"")+arg+"\"")
-            {
-                //special case for std::string to enquote argument string
-            }
-            
-            TestMethod(const std::string& name, SingleArgTestMethod<char*> method, char* arg) : 
-                name(name), functor(std::bind(method, std::placeholders::_1, (char* const)arg)), argString((std::string("\"")+arg)+"\"")
-            {
-                //special case for char* to enquote argument string
-            }
-            
             template<typename... T>
-            TestMethod(const std::string& name, VarargTestMethod<T...> method, const T... args) : name(name),
+            TestMethod(const std::string& name, ParameterizedTestMethod<T...> method, const T... args) : name(name),
                 functor([args..., method](Suite* suite) {(suite->*method)(args...);}), argString(joinStrings(args...))
             {
                     
@@ -249,31 +221,31 @@ namespace Test
     /*!
      * Registers a test-method taking a single argument of type std::string or a c-style string-literal
      */
-#define TEST_ADD_WITH_STRING(func, string) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<std::basic_string<char>>>(&func), #func, string)
+#define TEST_ADD_WITH_STRING(func, string) setSuiteName(__FILE__); addTest<std::basic_string<char>>(static_cast<ParameterizedTestMethod<std::basic_string<char>>>(&func), #func, string)
     /*!
      * Registers a test-method taking a single argument of type c-string
      */
-#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<char*>>(&func), #func, stringLiteral)
+#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) setSuiteName(__FILE__); addTest<char*>(static_cast<ParameterizedTestMethod<char*>>(&func), #func, stringLiteral)
     /*!
      * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
      */
-#define TEST_ADD_WITH_INTEGER(func, number) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<int>>(&func), #func, number)
+#define TEST_ADD_WITH_INTEGER(func, number) setSuiteName(__FILE__); addTest<int>(static_cast<ParameterizedTestMethod<int>>(&func), #func, number)
     /*!
      * Registers a test-method which takes an argument to a pointer of arbitrary data
      */
-#define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<void*>>(&func), #func, pointer)
+#define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest<void*>(static_cast<ParameterizedTestMethod<void*>>(&func), #func, pointer)
     /*!
      * Registers a test-method with a single argument of arbitrary type
      */
-#define TEST_ADD_SINGLE_ARGUMENT(func, arg) setSuiteName(__FILE__); addTest(static_cast<SingleArgTestMethod<decltype(arg)>>(&func), #func, arg)
+#define TEST_ADD_SINGLE_ARGUMENT(func, arg) setSuiteName(__FILE__); addTest<decltype(arg)>(static_cast<ParameterizedTestMethod<decltype(arg)>>(&func), #func, arg)
     /*!
      * Registers a test-method with two arguments of arbitrary types
      */
-#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1)>(static_cast<VarargTestMethod<decltype(arg0), decltype(arg1)>>(&func), #func, arg0, arg1)
+#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1)>>(&func), #func, arg0, arg1)
     /*!
      * Registers a test-method with three arguments of arbitrary types
      */
-#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<VarargTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>(&func), #func, arg0, arg1, arg2)
+#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>(&func), #func, arg0, arg1, arg2)
 };
 
 #endif	/* TESTSUITE_H */
