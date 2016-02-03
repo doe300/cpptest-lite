@@ -1,9 +1,6 @@
 # CppTest-lite
 
-<!-- 
-Disabled on purpose, since Clang has a bug which fails to compile my code
 [![Build Status](https://travis-ci.org/doe300/cpptest-lite.svg)](https://travis-ci.org/doe300/cpptest-lite)
--->
 [![Build Status](https://ci.appveyor.com/api/projects/status/xoa5e8eiwhilifvq?svg=true)](https://ci.appveyor.com/project/doe300/cpptest-lite)
 [![GitHub license](https://img.shields.io/github/license/doe300/cpptest-lite.svg)](https://github.com/doe300/cpptest-lite/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/tag/doe300/cpptest-lite.svg)](https://github.com/doe300/cpptest-lite/releases/latest)
