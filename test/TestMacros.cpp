@@ -15,10 +15,10 @@ TestMacros::TestMacros() : Test::Suite()
     TEST_ADD_WITH_INTEGER(TestMacros::testMethodWithIntArg, 42);
     TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, nullptr);
     TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, "TestString");
-    TEST_ADD_SINGLE_ARGUMENT(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD(TestMacros::testFailureMessages);
 #ifndef __clang__
     //Disabled build on Clang due to an error in the compiler, see https://llvm.org/bugs/show_bug.cgi?id=25695 and https://llvm.org/bugs/show_bug.cgi?id=25250
+    TEST_ADD_SINGLE_ARGUMENT(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD_TWO_ARGUMENTS(TestMacros::testMethodWithVarargs1, 1.0, 2);
     TEST_ADD_THREE_ARGUMENTS(TestMacros::testMethodWithVarargs2, std::string("string"), 15, 1.0);
 #endif
