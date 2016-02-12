@@ -182,13 +182,36 @@ namespace Test
             TestMethod(const std::string& name, SimpleTestMethod method) : name(name), functor(method), argString({})
             {
             }
-
+            
+#ifdef __clang__
+            template<typename T>
+            TestMethod(const std::string& name, ParameterizedTestMethod<T> method, const T arg0) : name(name),
+                functor([arg0, method](Suite* suite) {(suite->*method)(arg0);}), argString(joinStrings(arg0))
+            {
+                    
+            }
+                
+            template<typename T, typename U>
+            TestMethod(const std::string& name, ParameterizedTestMethod<T, U> method, const T arg0, const U arg1) : name(name),
+                functor([arg0, arg1, method](Suite* suite) {(suite->*method)(arg0, arg1);}), argString(joinStrings(arg0, arg1))
+            {
+                    
+            }
+                
+            template<typename T, typename U, typename V>
+            TestMethod(const std::string& name, ParameterizedTestMethod<T, U, V> method, const T arg0, const U arg1, const V arg2) : name(name),
+                functor([arg0, arg1, arg2, method](Suite* suite) {(suite->*method)(arg0, arg1, arg2);}), argString(joinStrings(arg0, arg1, arg2))
+            {
+                    
+            }
+#else
             template<typename... T>
             TestMethod(const std::string& name, ParameterizedTestMethod<T...> method, const T... args) : name(name),
                 functor([args..., method](Suite* suite) {(suite->*method)(args...);}), argString(joinStrings(args...))
             {
                     
             }
+#endif
             
             inline void operator()(Suite* suite) const
             {
