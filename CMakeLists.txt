@@ -13,7 +13,7 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "/W3 /D_UNICODE /DUNICODE")
 	add_library(cpptest-lite STATIC ${SRCS})
 else()
-	SET(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wextra -pthread")
+	SET(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wall -Wextra -pthread")
 	add_library(cpptest-lite ${SRCS})
 endif()
 

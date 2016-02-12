@@ -74,13 +74,36 @@ namespace Test
             testMethods.push_back(TestMethod(funcName, method));
             totalTestMethods++;
         }
-
+        
+#ifdef __clang__ //Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and https://llvm.org/bugs/show_bug.cgi?id=25250
+        template<typename T>
+        inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0)
+        {
+            testMethods.push_back(TestMethod(funcName, method, arg0));
+            totalTestMethods++;
+        }
+        
+        template<typename T, typename U>
+        inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0, const U arg1)
+        {
+            testMethods.push_back(TestMethod(funcName, method, arg0, arg1));
+            totalTestMethods++;
+        }
+        
+        template<typename T, typename U, typename V>
+        inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0, const U arg1, const V arg2)
+        {
+            testMethods.push_back(TestMethod(funcName, method, arg0, arg1, arg2));
+            totalTestMethods++;
+        }
+#else 
         template<typename... T>
         inline void addTest(ParameterizedTestMethod<T...> method, const std::string& funcName, const T... args)
         {
             testMethods.push_back(TestMethod(funcName, method, args...));
             totalTestMethods++;
         }
+#endif
         
         inline void testSucceeded(Assertion&& assertion)
         {
