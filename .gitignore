@@ -38,3 +38,7 @@ Makefile
 /nbproject
 /compile_commands.json
 /result.html
+
+# Eclipse
+.cproject
+.project
