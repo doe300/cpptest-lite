@@ -47,7 +47,7 @@ namespace std
     {
         return "(nullptr)";
     }
-};
+}
 
 namespace Test
 {

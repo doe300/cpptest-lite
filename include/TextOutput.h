@@ -41,7 +41,7 @@ namespace Test
         std::ostream& stream;
     };
 
-};
+}
 
 #endif	/* TEXTOUTPUT_H */
 

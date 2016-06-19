@@ -292,7 +292,7 @@ namespace Test
      * Registers a test-method with three arguments of arbitrary types
      */
 #define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>(&func), #func, arg0, arg1, arg2)
-};
+}
 
 #endif	/* TESTSUITE_H */
 
