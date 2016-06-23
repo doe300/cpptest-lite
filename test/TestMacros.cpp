@@ -24,9 +24,10 @@ TestMacros::TestMacros() : Test::Suite()
 
 void TestMacros::testMethodNoArgs()
 {
-    TEST_ASSERT_STRING_EQUALS_MSG("This is not", "the same", "Should fail!");
-    TEST_ASSERT_STRING_EQUALS_MSG("This isn't", std::string("either"), "Fails too!");
-    TEST_ASSERT_STRING_EQUALS_MSG(std::string("This is the same"), "This is the same", "Must not fail!");
+    TEST_STRING_EQUALS_MSG("This is not", "the same", "Should fail!");
+    TEST_STRING_EQUALS_MSG("This isn't", std::string("either"), "Fails too!");
+    TEST_STRING_EQUALS_MSG(std::string("This is the same"), "This is the same", "Must not fail!");
+    TEST_PREDICATE_MSG(std::mem_fn(&std::string::empty), std::string("Not empty"), "String is not empty!");
 }
 
 void TestMacros::testMethodWithCStringArg(char* arg)

@@ -84,14 +84,14 @@ namespace Test
         }
         
         template<typename T, typename U>
-        inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0, const U arg1)
+        inline void addTest(ParameterizedTestMethod<T, U> method, const std::string& funcName, const T arg0, const U arg1)
         {
             testMethods.push_back(TestMethod(funcName, method, arg0, arg1));
             totalTestMethods++;
         }
         
         template<typename T, typename U, typename V>
-        inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0, const U arg1, const V arg2)
+        inline void addTest(ParameterizedTestMethod<T, U, V> method, const std::string& funcName, const T arg0, const U arg1, const V arg2)
         {
             testMethods.push_back(TestMethod(funcName, method, arg0, arg1, arg2));
             totalTestMethods++;
