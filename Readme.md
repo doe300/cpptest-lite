@@ -38,3 +38,4 @@ returning a *bool* or any other type which can be coerced into a *bool* can be u
 - **ParallelSuite** allows to run TestSuites in a multithreaded-environment and automatically synchronizes access to the Output.
 - new macros to add tests, **TEST_ADD_SINGLE_ARGUMENT**, **TEST_ADD_TWO_ARGUMENTS** and **TEST_ADD_TWO_ARGUMENTS** 
 to add test with one, two or three arguments of arbitrary types.
+- new macros to compare string-equality **TEST_STRING_EQUALS** and **TEST_STRING_EQUALS_MSG**.
