@@ -18,6 +18,7 @@ class TestMacros : public Test::Suite
 public:
     TestMacros();
     
+    void testMethodNoArgs();
     void testMethodWithCStringArg(char* arg);
     void testMethodWithIntArg(const int arg);
     void testMethodWithPointerArg(void* arg);

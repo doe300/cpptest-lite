@@ -13,9 +13,7 @@ matrix:
       env: COMPILER=g++-5
     - os: linux
       compiler: clang
-      env: 
-      - COMPILER=clang++
-      - CPPFLAGS="-I /usr/include/c++/v1"
+      env: COMPILER=clang++
     - os: osx
       compiler: clang
       env: COMPILER=clang++

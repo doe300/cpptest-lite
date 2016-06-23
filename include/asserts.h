@@ -153,6 +153,22 @@ namespace Test
     { \
         static_assert(false, "This macro is deprecated, use TEST_ASSERT_EQUALS_MSG instead"); \
     }
+#define TEST_ASSERT_STRING_EQUALS(expected, value) \
+    { \
+        if(std::string(expected).compare(value) != 0) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), "")); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_STRING_EQUALS_MSG(expected, value, msg) \
+    { \
+        if(std::string(expected).compare(value) != 0) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), ((msg) != 0 ? #msg : ""))); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
 #define TEST_ASSERT_DELTA(expected, value, delta) \
     { \
         if(!Test::inMaxDistance(expected, value, delta)) { \

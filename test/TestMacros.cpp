@@ -12,6 +12,7 @@
 TestMacros::TestMacros() : Test::Suite()
 {
     TEST_ADD(TestMacros::testFailureMessages);
+    TEST_ADD(TestMacros::testMethodNoArgs);
     TEST_ADD_WITH_STRING_LITERAL(TestMacros::testMethodWithCStringArg, (char*)"42");
     TEST_ADD_WITH_INTEGER(TestMacros::testMethodWithIntArg, 42);
     TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, nullptr);
@@ -19,6 +20,13 @@ TestMacros::TestMacros() : Test::Suite()
     TEST_ADD_SINGLE_ARGUMENT(TestMacros::testMethodWithStringArg, std::string("TestString"));
     TEST_ADD_TWO_ARGUMENTS(TestMacros::testMethodWithVarargs1, 1.0, 2);
     TEST_ADD_THREE_ARGUMENTS(TestMacros::testMethodWithVarargs2, std::string("string"), 15, 1.0);
+}
+
+void TestMacros::testMethodNoArgs()
+{
+    TEST_ASSERT_STRING_EQUALS_MSG("This is not", "the same", "Should fail!");
+    TEST_ASSERT_STRING_EQUALS_MSG("This isn't", std::string("either"), "Fails too!");
+    TEST_ASSERT_STRING_EQUALS_MSG(std::string("This is the same"), "This is the same", "Must not fail!");
 }
 
 void TestMacros::testMethodWithCStringArg(char* arg)
