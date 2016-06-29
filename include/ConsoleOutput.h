@@ -20,13 +20,13 @@ namespace Test
         ConsoleOutput(const unsigned int mode);
         virtual ~ConsoleOutput();
         
-        virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration);
+        virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
 
-        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess);
+        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) override;
 
-        virtual void printSuccess(const Assertion& assertion);
-        virtual void printFailure(const Assertion& assertion);
-        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex);
+        virtual void printSuccess(const Assertion& assertion) override;
+        virtual void printFailure(const Assertion& assertion) override;
+        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) override;
     private:
         static const std::string errorColor;
         static const std::string successColor;

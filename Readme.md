@@ -9,9 +9,9 @@ This is an approximate re-implementation of the [cpptest testing framework](http
 This library is based on the version *1.1.2*.
 
 The original cpptest-framework is not longer in active development and I personally found it too complex for the simple tasks it runs.
-So I implement this smaller version in around 2 days of work.
+So I implemented this smaller version in initially around 2 days of work.
 
-CppTest-lite is a lot smaller in size (<100KB compared to >2MB) and runs tests slightly faster.
+CppTest-lite is a lot smaller in size (<200KB compared to >2MB) and runs tests slightly faster.
 
 ## Compatibility
 Runs the test-program of the original *cpptest-1.1.2*.
@@ -38,4 +38,9 @@ returning a *bool* or any other type which can be coerced into a *bool* can be u
 - **ParallelSuite** allows to run TestSuites in a multithreaded-environment and automatically synchronizes access to the Output.
 - new macros to add tests, **TEST_ADD_SINGLE_ARGUMENT**, **TEST_ADD_TWO_ARGUMENTS** and **TEST_ADD_TWO_ARGUMENTS** 
 to add test with one, two or three arguments of arbitrary types.
-- new macros to compare string-equality **TEST_STRING_EQUALS** and **TEST_STRING_EQUALS_MSG**.
+- new macros to compare string-equality **TEST_STRING_EQUALS** and **TEST_STRING_EQUALS_MSG** supporting *std::string* and *string-constants*.
+
+### Behavior driven development
+- As of version 0.6 BDD is supported as a completely new feature
+- write stories and scenarios easily in a text-based style
+- macro-preprocessor automatically generates a **Suite** for every given Story

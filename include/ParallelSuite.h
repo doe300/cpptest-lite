@@ -29,7 +29,7 @@ namespace Test
 
         ~ParallelSuite();
         
-        bool run(Output& output, bool continueAfterFail = true);
+        bool run(Output& output, bool continueAfterFail = true) override;
 
     private:
         bool runSuite(unsigned int suiteIndex);

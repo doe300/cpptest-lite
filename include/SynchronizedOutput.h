@@ -29,14 +29,14 @@ namespace Test
         SynchronizedOutput(const SynchronizedOutput& orig) = delete;
         virtual ~SynchronizedOutput();
         
-        void initializeSuite(const std::string& suiteName, const unsigned int numTests);
-        void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration);
-        void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString);
-        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess);
+        void initializeSuite(const std::string& suiteName, const unsigned int numTests) override;
+        void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
+        void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString) override;
+        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) override;
         
-        void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex);
-        void printSuccess(const Assertion& assertion);
-        void printFailure(const Assertion& assertion);
+        void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) override;
+        void printSuccess(const Assertion& assertion) override;
+        void printFailure(const Assertion& assertion) override;
     private:
         Output& realOutput;
         

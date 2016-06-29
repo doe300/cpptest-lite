@@ -36,7 +36,7 @@ void BDDSuite::runScenario(std::string scenarioName)
     }
     if(scenario == nullptr)
     {
-        TEST_FAIL("Internal error, no such scenario found!");
+        TEST_ABORT("Internal error, no such scenario found!");
         return;
     }
     TEST_ASSERT_MSG(scenario->precondition(), "Precondition failed!");
