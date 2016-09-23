@@ -15,6 +15,13 @@
 public: \
     name() : Test::BDDSuite(#name) {
 
+//Defines a new story containing scenarios and allowing for local variables
+#define STORY_WITH_MEMBERS(name, locals) class name : public Test::BDDSuite { \
+private: \
+    locals ; \
+public: \
+    name() : Test::BDDSuite(#name) {
+
 //Required to mark the end of a story
 #define END_STORY \
     } \

@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
     TestParallelSuite tps;
     Story1 story1;
     Story2 story2;
+    Story3 story3;
 
     // Run the tests
     //
@@ -64,6 +65,7 @@ int main(int argc, char* argv[])
     tps.run(*output, true);
     story1.run(*output);
     story2.run(*output);
+    story3.run(*output);
 
     delete output;
     

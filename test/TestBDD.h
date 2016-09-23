@@ -40,15 +40,32 @@ STORY(Story1)
         
     SCENARIO(ComplexScenario)
     GIVEN(sizeof(char) == 1 && sizeof(short) == 2 && sizeof(int) == 4)
-    WHEN(TEST_ASSERT_EQUALS((short)1, (int)1); TEST_ASSERT(sizeof(short) < sizeof(int)); TEST_ASSERT(true != false))
+    WHEN(
+        TEST_ASSERT_EQUALS((short)1, (int)1); 
+        TEST_ASSERT(sizeof(short) < sizeof(int)); 
+        TEST_ASSERT(true != false)
+    )
     THEN(true)
     END_SCENARIO
         
 END_STORY
             
-STORY(Story2)
+STORY_WITH_MEMBERS(Story2, int a; int b)
             //Empty story
-END_STORY            
+END_STORY      
+
+STORY_WITH_MEMBERS(Story3, int a; int b)
+
+    SCENARIO(TestMembers)
+    GIVEN((a = 5, b = 3, true))
+    WHEN(
+        TEST_ASSERT(5 > b);
+        TEST_ASSERT_EQUALS(3, b)
+    )
+    THEN(true)
+    END_SCENARIO
+
+END_STORY
 
 #endif /* TESTBDD_H */
 
