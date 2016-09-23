@@ -161,6 +161,10 @@ namespace Test
          */
         inline double prettifyPercentage(const double part, const double whole) const
         {
+            if(part == 0 || whole == 0)
+            {
+                return 0;
+            }
             int tmp = (part / whole) * 10000;
             return tmp / 100.0;
         }

@@ -34,6 +34,7 @@
 #include "TestMacros.h"
 #include "TestOutputs.h"
 #include "TestParallelSuite.h"
+#include "TestBDD.h"
 
 using namespace std;
 
@@ -47,6 +48,9 @@ int main(int argc, char* argv[])
     TestMacros tms;
     TestOutputs tos;
     TestParallelSuite tps;
+    Story1 story1;
+    Story2 story2;
+    Story3 story3;
 
     // Run the tests
     //
@@ -59,6 +63,9 @@ int main(int argc, char* argv[])
     tos.run(*output, true);
     std::cout << std::endl << std::endl << std::endl;
     tps.run(*output, true);
+    story1.run(*output);
+    story2.run(*output);
+    story3.run(*output);
 
     delete output;
     

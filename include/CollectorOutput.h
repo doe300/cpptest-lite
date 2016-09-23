@@ -24,15 +24,15 @@ namespace Test
         CollectorOutput();
         virtual ~CollectorOutput();
         
-        virtual void initializeSuite(const std::string& suiteName, const unsigned int numTests);
-        virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration);
+        virtual void initializeSuite(const std::string& suiteName, const unsigned int numTests) override;
+        virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
         
-        virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString);
-        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess);
+        virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString) override;
+        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) override;
 
-        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex);
-        virtual void printSuccess(const Assertion& assertion);
-        virtual void printFailure(const Assertion& assertion);
+        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) override;
+        virtual void printSuccess(const Assertion& assertion) override;
+        virtual void printFailure(const Assertion& assertion) override;
         
     protected:
         
