@@ -49,7 +49,7 @@ void CompilerOutput::printFailure(const Assertion& assertion)
     stream << formatString << std::endl;
 }
 
-void CompilerOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+void CompilerOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
     Assertion assertion(suiteName.data(), 0, ex.what(), methodName.data());
     printFailure(assertion);

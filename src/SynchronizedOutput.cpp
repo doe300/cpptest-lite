@@ -41,17 +41,17 @@ void SynchronizedOutput::initializeTestMethod(const std::string& suiteName, cons
     unlockMutex();
 }
 
-void SynchronizedOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)
+void SynchronizedOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
 {
     lockMutex();
-    realOutput.finishTestMethod(suiteName, methodName, withSuccess);
+    realOutput.finishTestMethod(suiteName, methodName, argString, withSuccess);
     unlockMutex();
 }
 
-void SynchronizedOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+void SynchronizedOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
     lockMutex();
-    realOutput.printException(suiteName, methodName, ex);
+    realOutput.printException(suiteName, methodName, argString, ex);
     unlockMutex();
 }
 

@@ -32,9 +32,9 @@ namespace Test
         void initializeSuite(const std::string& suiteName, const unsigned int numTests) override;
         void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
         void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString) override;
-        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) override;
+        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess) override;
         
-        void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) override;
+        void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
         void printSuccess(const Assertion& assertion) override;
         void printFailure(const Assertion& assertion) override;
     private:

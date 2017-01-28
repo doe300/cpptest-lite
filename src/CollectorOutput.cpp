@@ -41,13 +41,13 @@ void CollectorOutput::initializeTestMethod(const std::string& suiteName, const s
     currentMethod = &(currentSuite->methods.back());
 }
 
-void CollectorOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)
+void CollectorOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
 {
     if(currentMethod == nullptr) throw std::runtime_error("Invalid Test-Method!");
     currentMethod->withSuccess = withSuccess;
 }
 
-void CollectorOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+void CollectorOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
     if(currentMethod == nullptr) throw std::runtime_error("Invalid Test-Method!");
     currentMethod->withSuccess = false;
