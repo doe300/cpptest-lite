@@ -35,6 +35,7 @@
 #include "TestOutputs.h"
 #include "TestParallelSuite.h"
 #include "TestBDD.h"
+#include "TestFormat.h"
 
 using namespace std;
 
@@ -46,6 +47,7 @@ int main(int argc, char* argv[])
     CompareTestSuite cts;
     ThrowTestSuite tts;
     TestMacros tms;
+    TestFormat tfs;
     TestOutputs tos;
     TestParallelSuite tps;
     Story1 story1;
@@ -59,6 +61,7 @@ int main(int argc, char* argv[])
     cts.run(*output, true);
     tts.run(*output, true);
     tms.run(*output, true);
+    tfs.run(*output, true);
     std::cout << std::endl << std::endl << std::endl;
     tos.run(*output, true);
     std::cout << std::endl << std::endl << std::endl;

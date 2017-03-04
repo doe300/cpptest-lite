@@ -16,6 +16,7 @@
 #include <type_traits> //is_constructible
 
 #include "Output.h"
+#include "formatting.h"
 
 namespace Test
 {
@@ -224,8 +225,8 @@ namespace Test
             static inline std::string joinStrings(const T& t, const R&... remainder)
             {
                 if(sizeof...(R) == 0)
-                    return std::to_string(t);
-                return (std::to_string(t) + ", ") + joinStrings(remainder...);
+                    return Test::Formats::to_string(t);
+                return (Test::Formats::to_string(t) + ", ") + joinStrings(remainder...);
             }
             
             template<typename... R>

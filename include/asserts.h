@@ -8,46 +8,7 @@
 #ifndef ASSERTS_H
 #define	ASSERTS_H
 
-#include <sstream>
-
-namespace std
-{
-    
-    //support for enum-class, which can't be implicitly converted to int
-    template<typename T>
-    inline
-    typename std::enable_if<std::is_enum<T>::value>::type
-    printObj(const T val, ostringstream& stream)
-    {
-        stream << (int) val;
-    }
-    
-    template<typename T>
-    inline
-    typename std::enable_if<!std::is_enum<T>::value>::type
-    printObj(const T val, ostringstream& stream)
-    {
-        stream << val;
-    }
-    
-    template<typename T>
-    inline string to_string(const T val)
-    {
-        ostringstream tmpstream;
-        printObj<T>(val, tmpstream);
-        return tmpstream.str();
-    }
-    
-    inline string to_string(const string val)
-    {
-        return val;
-    }
-    
-    inline string to_string(const nullptr_t ptr)
-    {
-        return "(nullptr)";
-    }
-}
+#include "formatting.h"
 
 namespace Test
 {
@@ -132,7 +93,7 @@ namespace Test
 #define TEST_ASSERT_EQUALS(expected, value) \
     { \
         if(expected != value) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + std::to_string(value) + std::string(", expected ") + std::to_string(expected), "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), "")); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -140,7 +101,7 @@ namespace Test
 #define TEST_ASSERT_EQUALS_MSG(expected, value, msg) \
     { \
         if(expected != value) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + std::to_string(value) + std::string(", expected ") + std::to_string(expected), ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -156,7 +117,7 @@ namespace Test
 #define TEST_ASSERT_DELTA(expected, value, delta) \
     { \
         if(!Test::inMaxDistance(expected, value, delta)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + std::to_string(value) + std::string(", expected ") + std::to_string(expected) + std::string(" +/- ") + std::to_string(delta), "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), "")); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -164,7 +125,7 @@ namespace Test
 #define TEST_ASSERT_DELTA_MSG(expected, value, delta, msg) \
     { \
         if(!Test::inMaxDistance(expected, value, delta)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + std::to_string(value) + std::string(", expected ") + std::to_string(expected) + std::string(" +/- ") + std::to_string(delta), ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -284,28 +245,28 @@ namespace Test
 #define TEST_PREDICATE(predicate, value) \
     { \
         if(false == predicate(value)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + std::to_string(value) + std::string("' did not match the predicate: ") + #predicate, "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }   
 #define TEST_PREDICATE_MSG(predicate, value, msg) \
     { \
         if(false == predicate(value)) {\
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + std::to_string(value) + std::string("' did not match the predicate: ") + #predicate, ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE(bipredicate, value0, value1) \
     { \
         if(false == bipredicate(value0, value1)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + std::to_string(value0) + "' and '" + std::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, "")); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE_MSG(bipredicate, value0, value1, msg) \
     { \
         if(false == bipredicate(value0, value1)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + std::to_string(value0) + "' and '" + std::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, ((msg) != 0 ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
