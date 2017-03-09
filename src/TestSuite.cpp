@@ -16,7 +16,8 @@ unsigned int Test::Suite::totalTestMethods = 0;
 Suite::Suite() : Suite("")
 { }
 
-Suite::Suite(const std::string& suiteName) : suiteName(suiteName), testMethods({}), subSuites({})
+Suite::Suite(const std::string& suiteName) : suiteName(suiteName), testMethods({}), subSuites({}),
+		continueAfterFail(true), positiveTestMethods(0), currentTestMethodName(""), currentTestMethodArgs(""), currentTestSucceeded(false), totalDuration(std::chrono::microseconds::zero()), output(nullptr)
 { }
 
 void Suite::add(std::shared_ptr<Test::Suite> suite)

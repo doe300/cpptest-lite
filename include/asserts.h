@@ -138,7 +138,7 @@ namespace Test
             testFailed(Test::Assertion(__FILE__,__LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), "")); \
             if(!continueAfterFailure()) return; \
         } \
-        catch(except) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
+        catch(except&) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
         catch(std::exception &ex) { \
             /*If we get here, wrong exception was thrown*/ \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Wrong Exception was thrown: ") + ex.what(), "")); \
@@ -158,7 +158,7 @@ namespace Test
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
-        catch(except) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
+        catch(except&) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
         catch(std::exception &ex) { \
             /*If we get here, wrong exception was thrown*/ \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Wrong Exception was thrown: ") + ex.what(), ((msg) != 0 ? #msg : ""))); \
