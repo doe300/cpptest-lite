@@ -34,19 +34,17 @@ struct ArbitraryType
         return result;
     }
 
-    std::ostream& operator<<(std::ostream& os) const
-    {
-        //do nothing
-        return os;
-    }
-
 };
+
+std::ostream& operator<<(std::ostream& os, const ArbitraryType& val)
+{
+	//do nothing
+	return os;
+}
 
 void TestFormat::testStreamWriteOperator()
 {
-    /* TODO
     ArbitraryType a;
     ArbitraryType b;
     TEST_ASSERT_EQUALS(a, b);
-     */
 }
