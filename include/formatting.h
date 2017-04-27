@@ -115,7 +115,7 @@ namespace Test
         //support for arbitrary types that support the << operator (excluding enums, which are handled above)
         template<typename T>
         inline
-		typename std::enable_if<std::is_same<std::false_type, std::is_enum<T>>::value, std::string>::type
+		typename std::enable_if<!std::is_enum<T>::value, std::string>::type
 		to_string(const T val)
         {
         	std::stringstream s;
