@@ -112,9 +112,11 @@ namespace Test
 //            return buffer;
 //        }
 
-        //support for arbitrary types that support the << operator
+        //support for arbitrary types that support the << operator (excluding enums, which are handled above)
         template<typename T>
-        inline std::string to_string(const T val)
+        inline
+		typename std::enable_if<std::__not_<std::is_enum<T>>::value, std::string>::type
+		to_string(const T val)
         {
         	std::stringstream s;
         	s << val;
