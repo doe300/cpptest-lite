@@ -3,6 +3,13 @@ project (CppTest-lite)
 
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)
 
+# For in-tree build, move libraries to build
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+endif()
+
 #Include the header and source files
 file( GLOB HDRS "include/*.h" )
 file( GLOB SRCS "src/*.cpp" )
@@ -27,12 +34,10 @@ set_target_properties(
 	cpptest-lite PROPERTIES
 	# This corresponds to the project/library-version
 	VERSION "0.7"
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
 )
 
 if(CPPTEST_LITE_CREATE_TESTS)
 	file( GLOB TEST_SRCS "test/*.cpp")
 	add_executable(testCppTestLite ${TEST_SRCS} ${HDRS})
 	target_link_libraries(testCppTestLite cpptest-lite)
-	set_target_properties(testCppTestLite PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 endif()
