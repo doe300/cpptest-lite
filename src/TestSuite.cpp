@@ -16,7 +16,8 @@ unsigned int Test::Suite::totalTestMethods = 0;
 Suite::Suite() : Suite("")
 { }
 
-Suite::Suite(const std::string& suiteName) : suiteName(suiteName), testMethods({}), subSuites({})
+Suite::Suite(const std::string& suiteName) : suiteName(suiteName), testMethods({}), subSuites({}),
+		continueAfterFail(true), positiveTestMethods(0), currentTestMethodName(""), currentTestMethodArgs(""), currentTestSucceeded(false), totalDuration(std::chrono::microseconds::zero()), output(nullptr)
 { }
 
 void Suite::add(std::shared_ptr<Test::Suite> suite)
@@ -74,13 +75,13 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
         {
             exceptionThrown = true;
             currentTestSucceeded = false;
-            output->printException(suiteName, method.name, e);
+            output->printException(suiteName, method.name, method.argString, e);
         }
         catch(...)
         {
             exceptionThrown = true;
             currentTestSucceeded = false;
-            output->printException(suiteName, method.name, std::runtime_error("non-exception type thrown"));
+            output->printException(suiteName, method.name, method.argString, std::runtime_error("non-exception type thrown"));
         }
         std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
         //run after() after every test
@@ -88,7 +89,7 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
         if(!exceptionThrown)
         {
             //we don't need to print twice, that the method has failed
-            output->finishTestMethod(suiteName, method.name, currentTestSucceeded);
+            output->finishTestMethod(suiteName, method.name, method.argString, currentTestSucceeded);
         }
         return std::make_pair(currentTestSucceeded, std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime));
     }

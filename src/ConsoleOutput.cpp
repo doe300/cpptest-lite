@@ -34,13 +34,13 @@ void ConsoleOutput::finishSuite(const std::string& suiteName, const unsigned int
     stream << resetColors;
 }
 
-void ConsoleOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)
+void ConsoleOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
 {
     if(!withSuccess)
     {
         stream << errorColor;
     }
-    TextOutput::finishTestMethod(suiteName, methodName, withSuccess);
+    TextOutput::finishTestMethod(suiteName, methodName, argString, withSuccess);
     stream << resetColors;
 }
 
@@ -58,9 +58,9 @@ void ConsoleOutput::printFailure(const Assertion& assertion)
     stream << resetColors;
 }
 
-void ConsoleOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+void ConsoleOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
     stream << errorColor;
-    TextOutput::printException(suiteName, methodName, ex);
+    TextOutput::printException(suiteName, methodName, argString, ex);
     stream << resetColors;
 }

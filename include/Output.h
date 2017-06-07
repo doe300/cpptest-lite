@@ -109,9 +109,10 @@ namespace Test
          * 
          * \param suiteName The name of the suite
          * \param methodName The name of the test-method
+         * \param argString The argument-string for the test-method
          * \param withSuccess Whether the test-method was finished with success
          */
-        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)
+        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
         {
         };
 
@@ -122,9 +123,10 @@ namespace Test
          * 
          * \param suiteName The name of the suite
          * \param methodName The name of the test-method
+         * \param argString The argument-string for the test-method
          * \param ex The exception, that was thrown
          */
-        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
         {
         };
 

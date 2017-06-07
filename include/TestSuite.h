@@ -16,6 +16,7 @@
 #include <type_traits> //is_constructible
 
 #include "Output.h"
+#include "formatting.h"
 
 namespace Test
 {
@@ -75,7 +76,9 @@ namespace Test
             totalTestMethods++;
         }
         
-#ifdef __clang__ //Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and https://llvm.org/bugs/show_bug.cgi?id=25250
+#if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
+        //Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and https://llvm.org/bugs/show_bug.cgi?id=25250
+        //Same for GCC <= 4.8, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=41933
         template<typename T>
         inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0)
         {
@@ -183,7 +186,7 @@ namespace Test
             {
             }
             
-#ifdef __clang__
+#if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
             template<typename T>
             TestMethod(const std::string& name, ParameterizedTestMethod<T> method, const T arg0) : name(name),
                 functor([arg0, method](Suite* suite) {(suite->*method)(arg0);}), argString(joinStrings(arg0))
@@ -222,8 +225,8 @@ namespace Test
             static inline std::string joinStrings(const T& t, const R&... remainder)
             {
                 if(sizeof...(R) == 0)
-                    return std::to_string(t);
-                return (std::to_string(t) + ", ") + joinStrings(remainder...);
+                    return Test::Formats::to_string(t);
+                return (Test::Formats::to_string(t) + ", ") + joinStrings(remainder...);
             }
             
             template<typename... R>

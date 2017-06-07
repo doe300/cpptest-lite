@@ -42,16 +42,16 @@ void TextOutput::initializeTestMethod(const std::string& suiteName, const std::s
         stream << "Running method '" << methodName << "'" << (argString.empty() ? "" : "with argument: ") << argString << "..." << std::endl;;
 }
 
-void TextOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess)
+void TextOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
 {
     if(mode <= Debug || (mode <= Verbose && !withSuccess))
-        stream  << "Test-method '" << methodName << "' finished with " << (withSuccess ? "success!" : "errors!") << std::endl;
+        stream  << "Test-method '" << methodName << '(' << (argString.empty() ? "" : argString) << ")' finished with " << (withSuccess ? "success!" : "errors!") << std::endl;
 }
 
 void TextOutput::printSuccess(const Assertion& assertion)
 {
     if(mode <= Debug)
-        stream << "Test '" << assertion.method << "' line " << assertion.lineNumber << " successful!" << std::endl;
+        stream << "Test '" << assertion.method << '(' << (assertion.args.empty() ? "" : assertion.args) << ")' line " << assertion.lineNumber << " successful!" << std::endl;
 }
 
 void TextOutput::printFailure(const Assertion& assertion)
@@ -66,9 +66,9 @@ void TextOutput::printFailure(const Assertion& assertion)
         stream << "\tMessage: " << assertion.userMessage << std::endl;
 }
 
-void TextOutput::printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex)
+void TextOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
-    stream << "Test-method '" << methodName << "' failed with exception!" << std::endl;
+    stream << "Test-method '" << methodName << '(' << (argString.empty() ? "" : argString) << ")' failed with exception!" << std::endl;
     stream << "\tException: " << ex.what() << std::endl;
     stream << "\tErrno: " << errno << std::endl;
     stream << "\tError: " << strerror(errno) << std::endl;

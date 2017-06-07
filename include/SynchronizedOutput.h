@@ -8,11 +8,7 @@
 #ifndef SYNCHRONIZEDOUTPUT_H
 #define	SYNCHRONIZEDOUTPUT_H
 
-#ifdef _WIN32
-#include <windows.h>    //mutex
-#else
 #include <mutex>    //std::mutex
-#endif
 
 #include "Output.h"
 
@@ -32,23 +28,14 @@ namespace Test
         void initializeSuite(const std::string& suiteName, const unsigned int numTests) override;
         void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
         void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString) override;
-        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const bool withSuccess) override;
+        void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess) override;
         
-        void printException(const std::string& suiteName, const std::string& methodName, const std::exception& ex) override;
+        void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
         void printSuccess(const Assertion& assertion) override;
         void printFailure(const Assertion& assertion) override;
     private:
         Output& realOutput;
-        
-        #ifdef _WIN32
-        HANDLE outputMutex;
-        #else
         std::mutex outputMutex;
-        #endif
-
-        void lockMutex();
-
-        void unlockMutex();
     };
 
 }
