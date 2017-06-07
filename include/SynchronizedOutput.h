@@ -8,11 +8,7 @@
 #ifndef SYNCHRONIZEDOUTPUT_H
 #define	SYNCHRONIZEDOUTPUT_H
 
-#ifdef _WIN32
-#include <windows.h>    //mutex
-#else
 #include <mutex>    //std::mutex
-#endif
 
 #include "Output.h"
 
@@ -39,16 +35,7 @@ namespace Test
         void printFailure(const Assertion& assertion) override;
     private:
         Output& realOutput;
-        
-        #ifdef _WIN32
-        HANDLE outputMutex;
-        #else
         std::mutex outputMutex;
-        #endif
-
-        void lockMutex();
-
-        void unlockMutex();
     };
 
 }

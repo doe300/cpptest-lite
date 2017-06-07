@@ -9,58 +9,8 @@
 #define	ASSERTS_H
 
 #include "formatting.h"
+#include "comparisons.h"
 
-namespace Test
-{
-    template<typename T>
-    struct Predicate
-    {
-        bool operator()(const T& obj) const;
-    };
-    
-    template<typename T>
-    struct BiPredicate
-    {
-        bool operator()(const T& obj1, const T& obj2) const;
-    };
-    
-    template<typename T>
-#ifndef _WIN32
-    constexpr bool inMaxDistance(const T& source, const T& compare, const T& maxDistance)
-    {
-        static_assert(std::is_arithmetic<T>(), "Can only compare arithmetic types");
-        return ((compare - source) * ( compare > source ? 1 : -1)) <= (maxDistance < 0 ? -maxDistance : maxDistance);
-    }
-#else 
-    inline bool inMaxDistance(const T& source, const T& compare, const T& maxDistance)
-    {
-        return ((compare - source) * ( compare > source ? 1 : -1)) <= (maxDistance < 0 ? -maxDistance : maxDistance);
-    }
-#endif
-    
-    
-    template<typename T>
-#ifndef _WIN32
-    constexpr bool inRange(const T& lowerLimit, const T& upperLimit, const T& value)
-    {
-        static_assert(std::is_arithmetic<T>(), "Can only compare arithmetic types");
-        return lowerLimit < upperLimit ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
-    }
-#else
-    inline bool inRange(const T& lowerLimit, const T& upperLimit, const T& value)
-    {
-        return lowerLimit < upperLimit ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
-    }
-#endif
-    
-    
-    template<typename T>
-    inline bool inRangeObject(const T& lowerLimit, const T& upperLimit, const T& value)
-    {
-        return (lowerLimit < upperLimit) ? (lowerLimit <= value && value <= upperLimit) : (upperLimit <= value && value <= lowerLimit);
-    } 
-    
-    
 ////
 //  All asserts from cpptest-1.1.2
 ////
@@ -92,7 +42,7 @@ namespace Test
     
 #define TEST_ASSERT_EQUALS(expected, value) \
     { \
-        if(expected != value) { \
+        if(!Test::Comparisons::isSame(expected, value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), "")); \
             if(!continueAfterFailure()) return; \
         } \
@@ -100,7 +50,7 @@ namespace Test
     }
 #define TEST_ASSERT_EQUALS_MSG(expected, value, msg) \
     { \
-        if(expected != value) { \
+        if(!Test::Comparisons::isSame(expected, value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
@@ -116,7 +66,7 @@ namespace Test
     }
 #define TEST_ASSERT_DELTA(expected, value, delta) \
     { \
-        if(!Test::inMaxDistance(expected, value, delta)) { \
+        if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), "")); \
             if(!continueAfterFailure()) return; \
         } \
@@ -124,7 +74,7 @@ namespace Test
     }
 #define TEST_ASSERT_DELTA_MSG(expected, value, delta, msg) \
     { \
-        if(!Test::inMaxDistance(expected, value, delta)) { \
+        if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), ((msg) != 0 ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
@@ -291,6 +241,5 @@ namespace Test
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
-}   // end of namespace Test
 #endif	/* ASSERTS_H */
 

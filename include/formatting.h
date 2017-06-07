@@ -101,22 +101,11 @@ namespace Test
             return std::to_string((int) val);
         }
 
-        //support for arbitrary pointer types -> is included in support for arbitrary types beneath
-//        template<typename T>
-//        inline
-//        typename std::enable_if<std::is_pointer<T>::value, std::string>::type
-//        to_string(const T val)
-//        {
-//            char buffer[128];
-//            sprintf(buffer, "%p", val);
-//            return buffer;
-//        }
-
         //support for arbitrary types that support the << operator (excluding enums, which are handled above)
         template<typename T>
         inline
 		typename std::enable_if<!std::is_enum<T>::value, std::string>::type
-		to_string(const T val)
+		to_string(const T& val)
         {
         	std::stringstream s;
         	s << val;
