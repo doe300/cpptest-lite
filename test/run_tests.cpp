@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-#include "../include/cpptest.h"
+#include "../include/cpptest-main.h"
 #include "TestMacros.h"
 #include "TestOutputs.h"
 #include "TestParallelSuite.h"
@@ -43,35 +43,18 @@ using namespace std;
 //
 int main(int argc, char* argv[])
 {
-    FailTestSuite fts;
-    CompareTestSuite cts;
-    ThrowTestSuite tts;
-    TestMacros tms;
-    TestFormat tfs;
-    TestOutputs tos;
-    TestParallelSuite tps;
-    Story1 story1;
-    Story2 story2;
-    Story3 story3;
+    Test::setContinueAfterFail(true);
+    Test::registerSuite(Test::newInstance<FailTestSuite>, "fail-tests", "Tests the correct handling of failed tests");
+    Test::registerSuite(Test::newInstance<CompareTestSuite>, "test-comparisons", "Tests the comparison tests");
+    Test::registerSuite(Test::newInstance<ThrowTestSuite>, "test-exceptions", "Tests correct handling of exceptions (expected and unexpected)");
+    Test::registerSuite(Test::newInstance<TestMacros>, "test-macros", "Tests all available test-macros");
+    Test::registerSuite(Test::newInstance<TestFormat>, "test-format", "Tests the various output formats");
+    Test::registerSuite(Test::newInstance<TestOutputs>, "test-outputs", "Tests the various output types");
+    Test::registerSuite(Test::newInstance<TestParallelSuite>, "test-parallel", "Tests the parallel test suite");
+    Test::registerSuite(Test::newInstance<Story1>, "story1", "Runs the first BDD story");
+    Test::registerSuite(Test::newInstance<Story2>, "story2", "Runs the second BDD story");
+    Test::registerSuite(Test::newInstance<Story3>, "story3", "Runs the third BDD story");
 
-    // Run the tests
-    //
-    Test::Output* output = new Test::TextOutput(Test::TextOutput::Verbose);
-    fts.run(*output, true);
-    cts.run(*output, true);
-    tts.run(*output, true);
-    tms.run(*output, true);
-    tfs.run(*output, true);
-    std::cout << std::endl << std::endl << std::endl;
-    tos.run(*output, true);
-    std::cout << std::endl << std::endl << std::endl;
-    tps.run(*output, true);
-    story1.run(*output);
-    story2.run(*output);
-    story3.run(*output);
-
-    delete output;
-    
-    return 0;
+    return Test::runSuites(argc, argv);
 }
 
