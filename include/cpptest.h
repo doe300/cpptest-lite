@@ -8,8 +8,6 @@
 #ifndef CPPTEST_H
 #define	CPPTEST_H
 
-#define CPPTEST_LITE_VERSION "0.7"
-
 #include "asserts.h"
 #include "TestSuite.h"
 #include "ParallelSuite.h"

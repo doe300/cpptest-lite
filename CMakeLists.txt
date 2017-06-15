@@ -1,7 +1,9 @@
-cmake_minimum_required (VERSION 2.6)
-project (CppTest-lite)
+cmake_minimum_required (VERSION 3.1)
 
-option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)
+project (CppTest-lite VERSION 0.8)
+add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
+
+option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" ON)
 
 # For in-tree build, move libraries to build
 if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
@@ -33,7 +35,9 @@ endif()
 set_target_properties(
 	cpptest-lite PROPERTIES
 	# This corresponds to the project/library-version
-	VERSION "0.7"
+	VERSION "${PROJECT_VERSION}"
+	# This corresponds to the API-version (e.g. CppTest 1.1.2)
+	SOVERSION "1.1.2"
 )
 
 if(CPPTEST_LITE_CREATE_TESTS)
