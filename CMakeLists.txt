@@ -45,3 +45,9 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	add_executable(testCppTestLite ${TEST_SRCS} ${HDRS})
 	target_link_libraries(testCppTestLite cpptest-lite)
 endif()
+
+# Installation targets
+install(TARGETS cpptest-lite EXPORT cpptest-lite LIBRARY DESTINATION lib)
+install(EXPORT cpptest-lite DESTINATION share/cpptest-lite)
+install(DIRECTORY include/ DESTINATION include/cpptest-lite FILES_MATCHING PATTERN "*.h")
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "cmake_uninstall.cmake")

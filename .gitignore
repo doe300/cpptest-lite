@@ -33,6 +33,7 @@
 /cmake_install.cmake
 /CMakeFiles/
 Makefile
+/install_manifest.txt
 
 # Netbeans
 /nbproject
@@ -42,3 +43,5 @@ Makefile
 # Eclipse
 .cproject
 .project
+.settings
+.csettings
