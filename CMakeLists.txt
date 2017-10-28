@@ -4,6 +4,7 @@ project (CppTest-lite VERSION 0.8)
 add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
 
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" ON)
+option(ENABLE_SANITIZERS "Enable build with various sanitizers" ON)
 
 # For in-tree build, move libraries to build
 if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
@@ -26,9 +27,14 @@ if(WIN32)
 	add_library(cpptest-lite STATIC ${SRCS})
 else()
 	if(CMAKE_CXX_FLAGS STREQUAL "")
-		SET(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -pthread -fPIC -Wpedantic")
+		SET(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wall -Wextra -Wold-style-cast -Wno-unused-parameter -Wno-missing-field-initializers -pthread -fPIC -Wpedantic")
 	endif()
 	add_library(cpptest-lite SHARED ${SRCS})
+endif()
+
+# Enable sanitizers
+if(ENABLE_SANITIZERS)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined ")
 endif()
 
 # "For shared libraries VERSION and SOVERSION can be used to specify the build version and API version respectively."
