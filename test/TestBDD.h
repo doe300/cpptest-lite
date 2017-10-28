@@ -41,7 +41,7 @@ STORY(Story1)
     SCENARIO(ComplexScenario)
     GIVEN(sizeof(char) == 1 && sizeof(short) == 2 && sizeof(int) == 4)
     WHEN(
-        TEST_ASSERT_EQUALS((short)1, (int)1); 
+        TEST_ASSERT_EQUALS(static_cast<short>(1), static_cast<int>(1));
         TEST_ASSERT(sizeof(short) < sizeof(int)); 
         TEST_ASSERT(true != false)
     )

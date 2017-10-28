@@ -98,7 +98,7 @@ namespace Test
         typename std::enable_if<std::is_enum<T>::value, std::string>::type
         to_string(const T val)
         {
-            return std::to_string((int) val);
+            return std::to_string(static_cast<int>(val));
         }
 
         //support for arbitrary types that support the << operator (excluding enums, which are handled above)

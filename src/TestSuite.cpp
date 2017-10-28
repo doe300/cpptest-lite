@@ -69,7 +69,7 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
     {
         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
         try {
-            method((Suite*)this);
+            method(static_cast<Suite*>(this));
         }
         catch(const std::exception& e)
         {

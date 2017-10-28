@@ -13,7 +13,7 @@ TestMacros::TestMacros() : Test::Suite()
 {
     TEST_ADD(TestMacros::testFailureMessages);
     TEST_ADD(TestMacros::testMethodNoArgs);
-    TEST_ADD_WITH_STRING_LITERAL(TestMacros::testMethodWithCStringArg, (char*)"42");
+    TEST_ADD_WITH_STRING_LITERAL(TestMacros::testMethodWithCStringArg, const_cast<char*>(std::string("42").data()));
     TEST_ADD_WITH_INTEGER(TestMacros::testMethodWithIntArg, 42);
     TEST_ADD_WITH_POINTER(TestMacros::testMethodWithPointerArg, nullptr);
     TEST_ADD_WITH_STRING(TestMacros::testMethodWithStringArg, "TestString");
@@ -45,7 +45,7 @@ void TestMacros::testMethodWithIntArg(const int arg)
 void TestMacros::testMethodWithPointerArg(void* arg)
 {
     TEST_ASSERT_EQUALS(nullptr, arg);
-    TEST_ASSERT_EQUALS_MSG(nullptr, (void*)0xFF, "Should fail. 0xFF is not a nullptr");
+    TEST_ASSERT_EQUALS_MSG(nullptr, reinterpret_cast<void*>(0xFF), "Should fail. 0xFF is not a nullptr");
 }
 
 void TestMacros::testMethodWithStringArg(std::string string)
@@ -72,7 +72,7 @@ void TestMacros::testFailureMessages()
     TEST_THROWS_NOTHING_MSG(throwsException(), "Fails for throwing exception");
     TEST_THROWS_NOTHING_MSG(throwsInt(), "Fails for throwing a non-exception type");
     
-    TEST_PREDICATE_MSG(std::signbit, (double)i, "Fails for value not matching predicate");
+    TEST_PREDICATE_MSG(std::signbit, static_cast<double>(i), "Fails for value not matching predicate");
     TEST_BIPREDICATE_MSG([](int x, int y){return x == y;}, i, 45, "Fails for not matching bipredicate");
     
     TEST_ABORT("Abort method");

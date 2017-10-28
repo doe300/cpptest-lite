@@ -14,10 +14,10 @@ using namespace Test;
 TestOutputs::TestOutputs() : Test::Suite("TestOutputs"), textOutput(new TextOutput(TextOutput::Verbose)),
         compilerOutput(new CompilerOutput(CompilerOutput::FORMAT_GENERIC)), htmlOutput(new HTMLOutput()), consoleOutput(new ConsoleOutput(TextOutput::Verbose))
 {
-    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, (void*)textOutput);
-    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, (void*)compilerOutput);
-    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, (void*)htmlOutput);
-    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, (void*)consoleOutput);
+    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, static_cast<void*>(textOutput));
+    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, static_cast<void*>(compilerOutput));
+    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, static_cast<void*>(htmlOutput));
+    TEST_ADD_WITH_POINTER(TestOutputs::testOutput, static_cast<void*>(consoleOutput));
 }
 
 TestOutputs::~TestOutputs()
@@ -31,7 +31,7 @@ TestOutputs::~TestOutputs()
 
 void TestOutputs::testOutput(void* output)
 {
-    Output* realOutput = (Output*)output;
+    Output* realOutput = static_cast<Output*>(output);
     TestWithOutput runTest;
     runTest.run(*realOutput, true);
     HTMLOutput* htmlOutput = dynamic_cast<HTMLOutput*>(realOutput);
@@ -48,8 +48,8 @@ TestWithOutput::TestWithOutput() : Suite("TestWithOutput")
     //test Output-format
     TEST_ADD(TestWithOutput::someTestMethod);
     //tests overloaded test-methods
-    TEST_ADD_WITH_STRING_LITERAL(TestWithOutput::anotherTestMethod, (char*)"Test method 1");
-    TEST_ADD_WITH_STRING_LITERAL(TestWithOutput::anotherTestMethod, (char*)"Test method 2");
+    TEST_ADD_WITH_STRING_LITERAL(TestWithOutput::anotherTestMethod, const_cast<char*>(std::string("Test method 1").data()));
+    TEST_ADD_WITH_STRING_LITERAL(TestWithOutput::anotherTestMethod, const_cast<char*>(std::string("Test method 2").data()));
 }
 
 void TestWithOutput::someTestMethod()
