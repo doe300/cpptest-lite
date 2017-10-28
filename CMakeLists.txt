@@ -3,8 +3,8 @@ cmake_minimum_required (VERSION 3.1)
 project (CppTest-lite VERSION 0.8)
 add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
 
-option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" ON)
-option(ENABLE_SANITIZERS "Enable build with various sanitizers" ON)
+option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)
+option(ENABLE_SANITIZERS "Enable build with various sanitizers" OFF)
 
 # For in-tree build, move libraries to build
 if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
