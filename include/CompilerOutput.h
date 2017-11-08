@@ -35,9 +35,9 @@ namespace Test
         CompilerOutput(const std::string& format, std::ostream& stream);
         ~CompilerOutput();
 
-        void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex);
+        void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
 
-        void printFailure(const Assertion& assertion);
+        void printFailure(const Assertion& assertion) override;
     private:
         const std::string format;
         std::ostream& stream;

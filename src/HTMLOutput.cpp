@@ -57,7 +57,7 @@ void HTMLOutput::generateHeader(std::ostream& stream, const std::string& title)
             << "</head>" << std::endl;
 }
 
-inline std::string getCssClass(const unsigned int totalTests, const unsigned int passedTests)
+inline std::string getCssClass(const std::size_t totalTests, const std::size_t passedTests)
 {
     if(totalTests == passedTests)
     {
@@ -92,7 +92,7 @@ void HTMLOutput::generateSuitesTable(std::ostream& stream, bool includePassed)
                     << "<td>" << info->numTests << "</td>"
                     << "<td class='" << getCssClass(info->numTests, info->numPositiveTests) << "'>"
                         << info->numPositiveTests << " (" << prettifyPercentage(info->numPositiveTests, info->numTests) << "%)</td>"
-                    << "<td>" << info->suiteDuration.count()/1000.0 << " ms (" << info->suiteDuration.count()/1000000.0 << " s)</td>"
+                    << "<td>" << static_cast<double>(info->suiteDuration.count())/1000.0 << " ms (" << static_cast<double>(info->suiteDuration.count())/1000000.0 << " s)</td>"
                     << "</tr>" << std::endl;
         }
         ++info;
@@ -108,12 +108,12 @@ void HTMLOutput::generateTestsTable(std::ostream& stream, const SuiteInfo& suite
     auto testMethod = suite.methods.begin();
     while(testMethod != suite.methods.end())
     {
-        unsigned int totalAssertions = testMethod->passedAssertions.size() + testMethod->failedAssertions.size();
+        std::size_t totalAssertions = testMethod->passedAssertions.size() + testMethod->failedAssertions.size();
         stream << "<tr><td>" << stripMethodName(testMethod->methodName)  << "(" << truncateString(testMethod->argString, 20) << ")</td>"
                 << "<td>" << totalAssertions << "</td>"
                 << "<td class='" << getCssClass(totalAssertions, testMethod->passedAssertions.size()) << "'>"
                     << testMethod->passedAssertions.size() << " (" 
-                    << prettifyPercentage(testMethod->passedAssertions.size(), totalAssertions) << "%)</td>"
+                    << prettifyPercentage(testMethod->passedAssertions.size(), static_cast<double>(totalAssertions)) << "%)</td>"
                 << "<td>";
         auto assertion = testMethod->failedAssertions.begin();
         while(assertion != testMethod->failedAssertions.end())

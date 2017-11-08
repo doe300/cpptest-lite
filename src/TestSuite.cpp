@@ -29,7 +29,7 @@ bool Suite::run(Output& output, bool continueAfterFail)
 {
     this->continueAfterFail = continueAfterFail;
     this->output = &output;
-    output.initializeSuite(suiteName, testMethods.size());
+    output.initializeSuite(suiteName, static_cast<unsigned>(testMethods.size()));
     //run tests
     totalDuration = std::chrono::microseconds::zero();
     positiveTestMethods = 0;
@@ -45,7 +45,7 @@ bool Suite::run(Output& output, bool continueAfterFail)
         //run tear-down after all tests
         tear_down();
     }
-    output.finishSuite(suiteName, testMethods.size(), positiveTestMethods, totalDuration);
+    output.finishSuite(suiteName, static_cast<unsigned>(testMethods.size()), positiveTestMethods, totalDuration);
     
     //run sub-suites
     for(std::shared_ptr<Test::Suite>& suite : subSuites)

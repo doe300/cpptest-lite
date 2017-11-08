@@ -33,7 +33,7 @@ void TextOutput::initializeSuite(const std::string& suiteName, const unsigned in
 void TextOutput::finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration)
 {
     if(mode <= Verbose || numTests != numPositiveTests)
-    stream << "Suite '" << suiteName << "' finished, " << numPositiveTests << '/' << numTests << " successful (" << prettifyPercentage(numPositiveTests, numTests) << "%) in " << totalDuration.count() << " microseconds (" << totalDuration.count()/1000.0 << " ms)." << std::endl;
+    stream << "Suite '" << suiteName << "' finished, " << numPositiveTests << '/' << numTests << " successful (" << prettifyPercentage(numPositiveTests, numTests) << "%) in " << totalDuration.count() << " microseconds (" << static_cast<double>(totalDuration.count())/1000.0 << " ms)." << std::endl;
 }
 
 void TextOutput::initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString)

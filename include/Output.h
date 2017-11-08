@@ -167,7 +167,7 @@ namespace Test
             {
                 return 0;
             }
-            int tmp = (part / whole) * 10000;
+            int tmp = static_cast<int>((part / whole) * 10000);
             return tmp / 100.0;
         }
 
@@ -176,7 +176,7 @@ namespace Test
          */
         inline std::string stripMethodName(const std::string& methodName)
         {
-            unsigned int pos = methodName.size() - 1;
+            std::size_t pos = methodName.size() - 1;
             while(pos > 0)
             {
                 if(methodName[pos] == ':')

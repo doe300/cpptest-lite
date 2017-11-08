@@ -27,7 +27,7 @@ bool ParallelSuite::run(Output& output, bool continueAfterFail)
 {
     this->continueAfterFail = continueAfterFail;
     this->output = new SynchronizedOutput(output);
-    output.initializeSuite(suiteName, testMethods.size());
+    output.initializeSuite(suiteName, static_cast<unsigned>(testMethods.size()));
     if(setup())
     {
         //warn if test-methods are directly added
@@ -39,7 +39,7 @@ bool ParallelSuite::run(Output& output, bool continueAfterFail)
         //run tear-down after all tests
         tear_down();
     }
-    output.finishSuite(suiteName, testMethods.size(), 0, std::chrono::microseconds::zero());
+    output.finishSuite(suiteName, static_cast<unsigned>(testMethods.size()), 0, std::chrono::microseconds::zero());
     
     std::vector<std::future<bool>> results(subSuites.size());
     //run sub-suites
