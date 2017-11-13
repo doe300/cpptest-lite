@@ -63,15 +63,15 @@ inline std::string getCssClass(const std::size_t totalTests, const std::size_t p
     {
         return "allPassed";
     }
-    if( passedTests >= (totalTests*0.75))
+    if( passedTests >= (totalTests * (3 / 4)))
     {
         return "mostPassed";
     }
-    if(passedTests >= (totalTests*0.5))
+    if(passedTests >= (totalTests * (2 / 4)))
     {
         return "manyPassed";
     }
-    if(passedTests >= (totalTests* 0.25))
+    if(passedTests >= (totalTests * (1 / 4)))
     {
         return "somePassed";
     }
@@ -113,7 +113,7 @@ void HTMLOutput::generateTestsTable(std::ostream& stream, const SuiteInfo& suite
                 << "<td>" << totalAssertions << "</td>"
                 << "<td class='" << getCssClass(totalAssertions, testMethod->passedAssertions.size()) << "'>"
                     << testMethod->passedAssertions.size() << " (" 
-                    << prettifyPercentage(testMethod->passedAssertions.size(), static_cast<double>(totalAssertions)) << "%)</td>"
+                    << prettifyPercentage(static_cast<double>(testMethod->passedAssertions.size()), static_cast<double>(totalAssertions)) << "%)</td>"
                 << "<td>";
         auto assertion = testMethod->failedAssertions.begin();
         while(assertion != testMethod->failedAssertions.end())

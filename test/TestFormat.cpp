@@ -34,11 +34,21 @@ struct ArbitraryType
         return result;
     }
 
+    std::string toString() const
+    {
+    	return std::string("toString(") + std::to_string(reinterpret_cast<uintptr_t>(this)) + ")";
+    }
+
+    std::string to_string() const
+    {
+    	return std::string("to_string(") + std::to_string(reinterpret_cast<uintptr_t>(this)) + ")";
+    }
 };
 
 std::ostream& operator<<(std::ostream& os, const ArbitraryType& val)
 {
 	//do nothing
+	os << "stream-operator(" << &val << ")";
 	return os;
 }
 

@@ -134,7 +134,7 @@ private:
     {
     }
 
-    void func_throw_int() throw (int)
+    void func_throw_int()
     {
         throw 13;
     }
