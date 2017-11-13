@@ -15,4 +15,4 @@ build_script:
   - cmake --build .
   
 after_build:
-  - Debug\testCppTestLite.exe
+  - 'Debug\testCppTestLite.exe && exit 0'

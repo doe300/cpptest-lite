@@ -54,7 +54,11 @@ if(CPPTEST_LITE_CREATE_TESTS)
 endif()
 
 # Installation targets
-install(TARGETS cpptest-lite EXPORT cpptest-lite LIBRARY DESTINATION lib)
+if(WIN32)
+	install(TARGETS cpptest-lite EXPORT cpptest-lite ARCHIVE DESTINATION lib)
+else()
+	install(TARGETS cpptest-lite EXPORT cpptest-lite LIBRARY DESTINATION lib)
+endif()
 install(EXPORT cpptest-lite DESTINATION share/cpptest-lite)
 install(DIRECTORY include/ DESTINATION include/cpptest-lite FILES_MATCHING PATTERN "*.h")
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "cmake_uninstall.cmake")
