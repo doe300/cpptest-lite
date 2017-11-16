@@ -33,7 +33,7 @@ namespace Test
 		Suite(Suite&&) noexcept = default;
 
 		Suite& operator=(const Suite&) = delete;
-		Suite& operator=(Suite&&) noexcept = default;
+		Suite& operator=(Suite&&) = default;
 
 		/*!
 		 * Adds another Test::Suite to this suite.
