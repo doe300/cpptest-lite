@@ -40,7 +40,7 @@ namespace Test
 		~BDDSuite() override;
 
 		BDDSuite& operator=(const BDDSuite&) = delete;
-		BDDSuite& operator=(BDDSuite&&) noexcept = default;
+		BDDSuite& operator=(BDDSuite&&) = default;
 
 		void runScenario(const std::string scenarioName);
 

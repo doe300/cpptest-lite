@@ -31,7 +31,7 @@ namespace Test
 		~ParallelSuite() override;
 
 		ParallelSuite& operator=(const ParallelSuite&) = delete;
-		ParallelSuite& operator=(ParallelSuite&&) noexcept = default;
+		ParallelSuite& operator=(ParallelSuite&&) = default;
 
 		bool run(Output& output, bool continueAfterFail = true) override;
 
