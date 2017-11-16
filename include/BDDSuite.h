@@ -13,35 +13,40 @@
 namespace Test
 {
 
-    /*!
-     * Test Suite for behavior driven development
-     * 
-     * \since 0.6
-     */
-    class BDDSuite : public Suite
-    {
-    public:
-        
-        using Condition = std::function<bool()>;
-        using Action = std::function<void()>;
-        
-        struct Scenario
-        {
-            std::string name;
-            Condition precondition;
-            Action action;
-            Condition postcondition;
-        };
-        
-        BDDSuite();
-        BDDSuite(const std::string& suiteName);
-        virtual ~BDDSuite();
-        
-        void runScenario(std::string scenarioName);
-        
-    protected:
-        std::vector<Scenario> scenarios;
-    };
-}
+	/*!
+	 * Test Suite for behavior driven development
+	 *
+	 * \since 0.6
+	 */
+	class BDDSuite : public Suite
+	{
+	public:
+
+		using Condition = std::function<bool()>;
+		using Action = std::function<void()>;
+
+		struct Scenario
+		{
+			std::string name;
+			Condition precondition;
+			Action action;
+			Condition postcondition;
+		};
+
+		BDDSuite() = default;
+		explicit BDDSuite(const std::string& suiteName);
+		BDDSuite(const BDDSuite&) = delete;
+		BDDSuite(BDDSuite&&) noexcept = default;
+		~BDDSuite() override;
+
+		BDDSuite& operator=(const BDDSuite&) = delete;
+		BDDSuite& operator=(BDDSuite&&) noexcept = default;
+
+		void runScenario(const std::string scenarioName);
+
+	protected:
+		std::vector<Scenario> scenarios;
+	};
+} // namespace Test
 #endif /* BDDSUITE_H */
 

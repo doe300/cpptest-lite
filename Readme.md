@@ -40,6 +40,7 @@ returning a *bool* or any other type which can be coerced into a *bool* can be u
 to add test with one, two or three arguments of arbitrary types.
 - new macros to compare string-equality **TEST_STRING_EQUALS** and **TEST_STRING_EQUALS_MSG** supporting *std::string* and *string-constants*.
 - **TEST_ASSERT_EQUALS(_MSG)** now also supports string equality as well as comparison of *NaNs*
+- Help-page and selection of test-suites to run can be automatically generated via *Test::registerSuite()* and *Test::runSuites*
 
 ### Behavior driven development
 - As of version 0.6 BDD is supported as a completely new feature

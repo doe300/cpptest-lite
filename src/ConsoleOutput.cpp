@@ -7,8 +7,8 @@
 
 #include "ConsoleOutput.h"
 
+#include <cstring>
 #include <iostream>
-#include <string.h>
 
 using namespace Test;
 
@@ -20,47 +20,43 @@ ConsoleOutput::ConsoleOutput(const unsigned int mode) : TextOutput(mode, std::co
 {
 }
 
-ConsoleOutput::~ConsoleOutput()
-{
-}
-
 void ConsoleOutput::finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration)
 {
-    if(numTests != numPositiveTests)
-    {
-        stream << errorColor;
-    }
-    TextOutput::finishSuite(suiteName, numTests, numPositiveTests, totalDuration);
-    stream << resetColors;
+	if(numTests != numPositiveTests)
+	{
+		stream << errorColor;
+	}
+	TextOutput::finishSuite(suiteName, numTests, numPositiveTests, totalDuration);
+	stream << resetColors;
 }
 
 void ConsoleOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
 {
-    if(!withSuccess)
-    {
-        stream << errorColor;
-    }
-    TextOutput::finishTestMethod(suiteName, methodName, argString, withSuccess);
-    stream << resetColors;
+	if(!withSuccess)
+	{
+		stream << errorColor;
+	}
+	TextOutput::finishTestMethod(suiteName, methodName, argString, withSuccess);
+	stream << resetColors;
 }
 
 void ConsoleOutput::printSuccess(const Assertion& assertion)
 {
-    stream << successColor;
-    TextOutput::printSuccess(assertion);
-    stream << resetColors;
+	stream << successColor;
+	TextOutput::printSuccess(assertion);
+	stream << resetColors;
 }
 
 void ConsoleOutput::printFailure(const Assertion& assertion)
 {
-    stream << errorColor;
-    TextOutput::printFailure(assertion);
-    stream << resetColors;
+	stream << errorColor;
+	TextOutput::printFailure(assertion);
+	stream << resetColors;
 }
 
 void ConsoleOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
-    stream << errorColor;
-    TextOutput::printException(suiteName, methodName, argString, ex);
-    stream << resetColors;
+	stream << errorColor;
+	TextOutput::printException(suiteName, methodName, argString, ex);
+	stream << resetColors;
 }

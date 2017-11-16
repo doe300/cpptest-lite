@@ -9,6 +9,7 @@
 #define COMPARISONS_H
 
 #include <cmath>
+#include <string>
 #include <type_traits>
 
 namespace Test
@@ -58,11 +59,6 @@ namespace Test
 			return val1 == val2;
 		}
 
-		inline bool isSame(const std::string& val1, const std::string& val2)
-		{
-			return val1.compare(val2) == 0;
-		}
-
 		////
 		// General case
 		////
@@ -73,7 +69,7 @@ namespace Test
 		{
 			return val1 == val2;
 		}
-	}
-}
+	} // namespace Comparisons
+} // namespace Test
 
 #endif /* COMPARISONS_H */

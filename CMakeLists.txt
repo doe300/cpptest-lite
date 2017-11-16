@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.1)
 
-project (CppTest-lite VERSION 0.8)
+project (CppTest-lite VERSION 0.9)
 add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
 
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)

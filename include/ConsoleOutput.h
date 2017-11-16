@@ -14,25 +14,30 @@
 namespace Test
 {
 
-    class ConsoleOutput : public TextOutput
-    {
-    public:
-        ConsoleOutput(const unsigned int mode);
-        virtual ~ConsoleOutput();
-        
-        virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) override;
+	class ConsoleOutput : public TextOutput
+	{
+	public:
+		explicit ConsoleOutput(unsigned int mode);
+		ConsoleOutput(const ConsoleOutput&) = delete;
+		ConsoleOutput(ConsoleOutput&&) noexcept = delete;
+		~ConsoleOutput() override = default;
 
-        virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess) override;
+		ConsoleOutput& operator=(const ConsoleOutput&) = delete;
+		ConsoleOutput& operator=(ConsoleOutput&&) noexcept = delete;
 
-        virtual void printSuccess(const Assertion& assertion) override;
-        virtual void printFailure(const Assertion& assertion) override;
-        virtual void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
-    private:
-        static const std::string errorColor;
-        static const std::string successColor;
-        static const std::string resetColors;
-    };
+		void finishSuite(const std::string& suiteName, unsigned int numTests, unsigned int numPositiveTests, std::chrono::microseconds totalDuration) override;
 
-}
+		void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, bool withSuccess) override;
+
+		void printSuccess(const Assertion& assertion) override;
+		void printFailure(const Assertion& assertion) override;
+		void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
+	private:
+		static const std::string errorColor;
+		static const std::string successColor;
+		static const std::string resetColors;
+	};
+
+} // namespace Test
 #endif /* CONSOLEOUTPUT_H */
 

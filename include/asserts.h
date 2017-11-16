@@ -8,8 +8,8 @@
 #ifndef ASSERTS_H
 #define	ASSERTS_H
 
-#include "formatting.h"
 #include "comparisons.h"
+#include "formatting.h"
 
 ////
 //  All asserts from cpptest-1.1.2

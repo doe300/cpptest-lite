@@ -28,29 +28,29 @@ CompilerOutput::CompilerOutput(const std::string& format, std::ostream& stream) 
 
 CompilerOutput::~CompilerOutput()
 {
-    stream.flush();
+	stream.flush();
 }
 
 void CompilerOutput::printFailure(const Assertion& assertion)
 {
-    std::string formatString(format, 0);
-    //replace %file
-    std::string::size_type index = formatString.find(ARG_FILE);
-    if(index != std::string::npos)
-        formatString.replace(index, ARG_FILE.size(), assertion.file);
-    //replace %line
-    index = formatString.find(ARG_LINE);
-    if(index != std::string::npos)
-        formatString.replace(index, ARG_LINE.size(), std::to_string(assertion.lineNumber));
-    //replace %text
-    index = formatString.find(ARG_TEXT);
-    if(index != std::string::npos)
-        formatString.replace(index, ARG_TEXT.size(), (!assertion.errorMessage.empty() ? assertion.errorMessage : assertion.userMessage));
-    stream << formatString << std::endl;
+	std::string formatString(format, 0);
+	//replace %file
+	std::string::size_type index = formatString.find(ARG_FILE);
+	if(index != std::string::npos)
+		formatString.replace(index, ARG_FILE.size(), assertion.file);
+	//replace %line
+	index = formatString.find(ARG_LINE);
+	if(index != std::string::npos)
+		formatString.replace(index, ARG_LINE.size(), std::to_string(assertion.lineNumber));
+	//replace %text
+	index = formatString.find(ARG_TEXT);
+	if(index != std::string::npos)
+		formatString.replace(index, ARG_TEXT.size(), (!assertion.errorMessage.empty() ? assertion.errorMessage : assertion.userMessage));
+	stream << formatString << std::endl;
 }
 
 void CompilerOutput::printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 {
-    Assertion assertion(suiteName.data(), 0, ex.what(), methodName.data());
-    printFailure(assertion);
+	Assertion assertion(suiteName.data(), 0, ex.what(), methodName.data());
+	printFailure(assertion);
 }
