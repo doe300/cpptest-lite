@@ -24,11 +24,11 @@ namespace Test
 	public:
 		HTMLOutput() = default;
 		HTMLOutput(const HTMLOutput&) = delete;
-		HTMLOutput(HTMLOutput&&) noexcept = default;
+		HTMLOutput(HTMLOutput&&) = default; //RPi cross-compiler throws on noexcept here
 		~HTMLOutput() override;
 
 		HTMLOutput& operator=(const HTMLOutput&) = delete;
-		HTMLOutput& operator=(HTMLOutput&&) noexcept = default;
+		HTMLOutput& operator=(HTMLOutput&&) = default; //RPi cross-compiler throws on noexcept here
 
 		/*!
 		 * Generates a HTML page with a <table> listing the result of the tests

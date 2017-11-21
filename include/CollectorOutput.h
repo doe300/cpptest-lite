@@ -23,11 +23,11 @@ namespace Test
 	public:
 		CollectorOutput() = default;
 		CollectorOutput(const CollectorOutput&) = delete;
-		CollectorOutput(CollectorOutput&&) noexcept = default;
+		CollectorOutput(CollectorOutput&&) = default; //RPi cross-compiler throws on noexcept here
 		~CollectorOutput() override = default;
 
 		CollectorOutput& operator=(const CollectorOutput&) = delete;
-		CollectorOutput& operator=(CollectorOutput&&) noexcept = default;
+		CollectorOutput& operator=(CollectorOutput&&) = default; //RPi cross-compiler throws on noexcept here
 
 		void initializeSuite(const std::string& suiteName, unsigned int numTests) override;
 		void finishSuite(const std::string& suiteName, unsigned int numTests, unsigned int numPositiveTests, std::chrono::microseconds totalDuration) override;
