@@ -11,6 +11,7 @@
 #include "cpptest.h"
 
 #include <algorithm>
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -68,13 +69,14 @@ namespace Test
 	{
 		static const int paramWidth = 30;
 		static const int gapWidth = 4;
-		std::cout << "Runs the test-suites. The list of all available test-suites can be found beneath. Passing no argument runs all available suites." << std::endl;
+		std::cout << "Runs the test-suites. The list of all available test-suites can be found beneath. Passing no argument runs all suites marked with '(default)'." << std::endl;
 		std::cout << "Run with '" << progName << " [options]'" << std::endl;
 		std::cout << std::endl;
 		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
 		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic. Defaults to 'plain'" << std::endl;
 		std::cout << std::setw(paramWidth) << "-o=val" << std::setw(gapWidth) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
 		std::cout << std::setw(paramWidth) << "--mode=val" << std::setw(gapWidth) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
+		std::cout << std::setw(paramWidth) << "--output-file=file" << std::setw(gapWidth) << " " << "Sets the optional output file to write to, defaults to 'stdout'. 'colored' output can only write to console!" << std::endl;
 		std::cout << std::endl;
 		std::cout << "Test suites:" << std::endl;
 		//sort suites by name
@@ -92,6 +94,7 @@ namespace Test
 		std::vector<std::unique_ptr<Test::Suite>> selectedSuites;
 		selectedSuites.reserve(argc);
 		std::string outputMode = "plain";
+		std::string outputFile;
 		unsigned int mode = Test::TextOutput::Terse;
 		for(int i = 1; i < argc; ++i)
 		{
@@ -100,6 +103,11 @@ namespace Test
 			{
 				printHelp(argv[0]);
 				return 0;
+			}
+			else if(arg.find("--output-file") == 0)
+			{
+				if(arg.find("=") != std::string::npos)
+					outputFile = arg.substr(arg.find("=") + 1);
 			}
 			else if(arg.find("--output") == 0 || arg.find("-o") == 0)
 			{
@@ -140,23 +148,50 @@ namespace Test
 			}
 		}
 
+		std::ofstream f;
+		if(!outputFile.empty())
+			f.open(outputFile, std::ios_base::out|std::ios_base::trunc);
+
 		std::unique_ptr<Test::Output> realOutput;
 		std::unique_ptr<Test::Output> output;
 
 		if(outputMode.find("plain") != std::string::npos)
-			realOutput.reset(new Test::TextOutput(mode));
+		{
+			if(!outputFile.empty())
+				realOutput.reset(new Test::TextOutput(mode, f));
+			else
+				realOutput.reset(new Test::TextOutput(mode));
+		}
 		else if(outputMode.find("colored") != std::string::npos)
 			realOutput.reset(new Test::ConsoleOutput(mode));
 		else if(outputMode.find("gcc") != std::string::npos)
-			realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GCC));
+		{
+			if(!outputFile.empty())
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GCC, f));
+			else
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GCC));
+		}
 		else if(outputMode.find("msvc") != std::string::npos)
-			realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_MSVC));
+		{
+			if(!outputFile.empty())
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_MSVC, f));
+			else
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_MSVC));
+		}
 		else if(outputMode.find("generic") != std::string::npos)
-			realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GENERIC));
+		{
+			if(!outputFile.empty())
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GENERIC, f));
+			else
+				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GENERIC));
+		}
 		else
 		{
 			std::cout << "Unrecognized output: " << outputMode << std::endl;
-			realOutput.reset(new Test::TextOutput(mode));
+			if(!outputFile.empty())
+				realOutput.reset(new Test::TextOutput(mode, f));
+			else
+				realOutput.reset(new Test::TextOutput(mode));
 		}
 
 		//there could be parallel suites
