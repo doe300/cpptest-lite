@@ -9,19 +9,29 @@
 #define	CPPTEST_MAIN_H
 
 #include "cpptest.h"
-#include <vector>
-#include <memory>
+
+#include <algorithm>
 #include <functional>
-#include <map>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <vector>
 
 namespace Test
 {
 	using SuiteSupplier = std::function<Test::Suite*(void)>;
 
-	static std::map<std::string, SuiteSupplier> availableSuites;
-	static std::map<std::string, std::string> suiteDescriptions;
+	struct SuiteEntry
+	{
+		std::string name;
+		SuiteSupplier supplier;
+		std::string description;
+		bool runByDefault;
+	};
+
+	//using a list here sorts entries by order of insertion
+	static std::vector<SuiteEntry> availableSuites;
 	static bool continueAfterFailure = true;
 
 	void setContinueAfterFail(bool continueAfterFail)
@@ -35,31 +45,45 @@ namespace Test
 	 * \param supplier A function returning the test-suite instance, e.g. the constructor
 	 *
 	 * \param parameterName The parameter-name to be used to run this test-suite, cannot be empty or contain spaces
+	 *
+	 * \param description An optional description to be printed for the --help option
+	 *
+	 * \param runByDefault Whether this test-suite is run in default mode (no explicit suites specified)
 	 */
-	void registerSuite(const SuiteSupplier supplier, const std::string& parameterName, const std::string& description = "")
+	void registerSuite(const SuiteSupplier supplier, const std::string& parameterName, const std::string& description = "", bool runByDefault = true)
 	{
 		if(parameterName.empty())
 			throw std::invalid_argument("Test-suite parameter cannot be empty!");
 		if(parameterName.find_first_of(" \"'") != std::string::npos)
 			throw std::invalid_argument(std::string("Test-suite parameter is invalid: ") + parameterName);
-		availableSuites[std::string("--") + parameterName] = supplier;
-		suiteDescriptions[std::string("--") + parameterName] = description;
+		SuiteEntry entry;
+		entry.name = std::string("--") + parameterName;
+		entry.supplier = supplier;
+		entry.description = description;
+		entry.runByDefault = runByDefault;
+		availableSuites.push_back(entry);
 	}
 
 	void printHelp(const std::string& progName)
 	{
+		static const int paramWidth = 30;
+		static const int gapWidth = 4;
 		std::cout << "Runs the test-suites. The list of all available test-suites can be found beneath. Passing no argument runs all available suites." << std::endl;
 		std::cout << "Run with '" << progName << " [options]'" << std::endl;
 		std::cout << std::endl;
-		std::cout << std::setw(20) << "--help" << std::setw(4) << " " << "Prints this help" << std::endl;
-		std::cout << std::setw(20) << "--output=val" << std::setw(4) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic. Defaults to 'plain'" << std::endl;
-		std::cout << std::setw(20) << "-o=val" << std::setw(4) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
-		std::cout << std::setw(20) << "--mode=val" << std::setw(4) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
+		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
+		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic. Defaults to 'plain'" << std::endl;
+		std::cout << std::setw(paramWidth) << "-o=val" << std::setw(gapWidth) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
+		std::cout << std::setw(paramWidth) << "--mode=val" << std::setw(gapWidth) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
 		std::cout << std::endl;
 		std::cout << "Test suites:" << std::endl;
-		for(const auto& pair : suiteDescriptions)
+		//sort suites by name
+		std::map<std::string, SuiteEntry> sortedSuites;
+		for(const auto& entry : availableSuites)
+			sortedSuites.emplace(entry.name, entry);
+		for(const auto& pair : sortedSuites)
 		{
-			std::cout << std::setw(20) << pair.first << std::setw(4) << " " << pair.second << std::endl;
+			std::cout << std::setw(paramWidth) << pair.first << std::setw(gapWidth) << " " << pair.second.description << (pair.second.runByDefault ? " (default)" : "") << std::endl;
 		}
 	}
 
@@ -94,13 +118,14 @@ namespace Test
 			}
 			else
 			{
-				auto it = availableSuites.find(arg);
+				const char* name = argv[i];
+				auto it = std::find_if(availableSuites.begin(), availableSuites.end(), [name](const SuiteEntry& e) -> bool {return e.name == name;});
 				if(it == availableSuites.end())
 				{
 					std::cerr << "Unknown parameter: " << argv[i] << std::endl;
 					continue;
 				}
-				selectedSuites.emplace_back(it->second());
+				selectedSuites.emplace_back(it->supplier());
 			}
 
 		}
@@ -108,9 +133,10 @@ namespace Test
 		if(selectedSuites.empty())
 		{
 			//only the program-name run all suites
-			for(const auto& pair : availableSuites)
+			for(const auto& entry : availableSuites)
 			{
-				selectedSuites.emplace_back(pair.second());
+				if(entry.runByDefault)
+					selectedSuites.emplace_back(entry.supplier());
 			}
 		}
 
