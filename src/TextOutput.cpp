@@ -39,7 +39,7 @@ void TextOutput::finishSuite(const std::string& suiteName, const unsigned int nu
 void TextOutput::initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString)
 {
 	if(mode <= Debug)
-		stream << "Running method '" << methodName << "'" << (argString.empty() ? "" : "with argument: ") << argString << "..." << std::endl;;
+		stream << "Running method '" << methodName << "'" << (argString.empty() ? "" : " with argument: ") << argString << "..." << std::endl;;
 }
 
 void TextOutput::finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)

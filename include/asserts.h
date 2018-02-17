@@ -11,6 +11,8 @@
 #include "comparisons.h"
 #include "formatting.h"
 
+#include <limits>
+
 ////
 //  All asserts from cpptest-1.1.2
 ////
@@ -76,6 +78,24 @@
     { \
         if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), ((msg) != nullptr ? #msg : ""))); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_ULP(expected, value, numULP) \
+    { \
+		auto delta = expected * numULP * std::numeric_limits<decltype(expected)>::epsilon(); \
+        if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), "")); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_ULP_MSG(expected, value, numULP, msg) \
+    { \
+		auto delta = expected * numULP * std::numeric_limits<decltype(expected)>::epsilon(); \
+        if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), ((msg) != nullptr ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \

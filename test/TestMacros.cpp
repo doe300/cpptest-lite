@@ -62,6 +62,7 @@ void TestMacros::testFailureMessages()
     TEST_ASSERT_MSG(i == 0, "Assertion should fail");
     TEST_ASSERT_EQUALS_MSG(i, 45, "Comparison should fail");
     TEST_ASSERT_DELTA_MSG(i, 45, 2, "Delta comparison should fail");
+    TEST_ASSERT_ULP_MSG(0.9f, std::nextafter(std::nextafter(0.9f, 1.0f), 1.0f), 1, "ULP comparison should fail");
     
     TEST_THROWS_MSG(std::signbit(5.0), std::out_of_range, "Fails for not throwing exception");
     TEST_THROWS_MSG(throwsInt(), std::out_of_range, "Fails for non-exception-type");
