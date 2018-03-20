@@ -1,5 +1,10 @@
 cmake_minimum_required (VERSION 3.1)
 
+# Set C++ standard to C++11 without any extensions (e.g. GNU)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 project (CppTest-lite VERSION 0.9)
 add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
 
@@ -27,7 +32,7 @@ if(WIN32)
 	add_library(cpptest-lite STATIC ${SRCS})
 else()
 	if(CMAKE_CXX_FLAGS STREQUAL "")
-		SET(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wall -Wextra -Wold-style-cast -Wno-unused-parameter -Wno-missing-field-initializers -pthread -fPIC -Wpedantic")
+		SET(CMAKE_CXX_FLAGS " -O3 -Wall -Wextra -Wold-style-cast -Wno-unused-parameter -Wno-missing-field-initializers -pthread -fPIC -Wpedantic")
 	endif()
 	add_library(cpptest-lite SHARED ${SRCS})
 endif()
@@ -51,6 +56,21 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	file( GLOB TEST_SRCS "test/*.cpp")
 	add_executable(testCppTestLite ${TEST_SRCS} ${HDRS})
 	target_link_libraries(testCppTestLite cpptest-lite)
+	
+	#Add ctest targets
+	enable_testing()
+	add_test(NAME Failings COMMAND testCppTestLite --fail-tests WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Comparisons COMMAND testCppTestLite --test-comparisons WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Exceptions COMMAND testCppTestLite --test-exceptions WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Macros COMMAND testCppTestLite --test-macros WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Format COMMAND testCppTestLite --test-format WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Outputs COMMAND testCppTestLite --test-outputs WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Parallel COMMAND testCppTestLite --test-parallel WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story1 COMMAND testCppTestLite --story1 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story2 COMMAND testCppTestLite --story2 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story3 COMMAND testCppTestLite --story3 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	set_tests_properties(Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
+	
 endif()
 
 # Installation targets
