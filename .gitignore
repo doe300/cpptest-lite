@@ -31,6 +31,7 @@
 # CMake
 /CMakeCache.txt
 /cmake_install.cmake
+/cpptest-lite-exports.cmake
 /CMakeFiles/
 Makefile
 /install_manifest.txt

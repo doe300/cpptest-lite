@@ -4,9 +4,11 @@ cmake_minimum_required (VERSION 3.1)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -rdynamic")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 project (CppTest-lite VERSION 0.9)
-add_definitions(-DCPPTEST_LITE_VERSION="${PROJECT_VERSION}")
+find_package(Threads REQUIRED)
 
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)
 option(ENABLE_SANITIZERS "Enable build with various sanitizers" OFF)
@@ -18,29 +20,39 @@ if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 endif()
 
-#Include the header and source files
-file( GLOB HDRS "include/*.h" )
-file( GLOB SRCS "src/*.cpp" )
-
-include_directories ("include/")
-
 if(WIN32)
+	add_library(cpptest-lite STATIC "")
 	#don't override flags, if set by e.g. parent-project
 	if(CMAKE_CXX_FLAGS STREQUAL "")
-		set(CMAKE_CXX_FLAGS "/W3 /D_UNICODE /DUNICODE")
+		target_compile_options(cpptest-lite PRIVATE /W3 /D_UNICODE /DUNICODE)
 	endif()
-	add_library(cpptest-lite STATIC ${SRCS})
 else()
+	add_library(cpptest-lite SHARED "")
 	if(CMAKE_CXX_FLAGS STREQUAL "")
-		SET(CMAKE_CXX_FLAGS " -O3 -Wall -Wextra -Wold-style-cast -Wno-unused-parameter -Wno-missing-field-initializers -pthread -fPIC -Wpedantic")
+		target_compile_options(cpptest-lite PRIVATE -O3 -Wall -Wextra -Wold-style-cast -Wno-unused-parameter -Wno-missing-field-initializers -Wpedantic -fPIC)
 	endif()
-	add_library(cpptest-lite SHARED ${SRCS})
 endif()
+target_link_libraries(cpptest-lite ${CMAKE_THREAD_LIBS_INIT})
+
+#Include the header and source files
+target_sources(cpptest-lite
+  PRIVATE
+    src/BDDSuite.cpp
+    src/CollectorOutput.cpp
+    src/CompilerOutput.cpp
+    src/ConsoleOutput.cpp
+    src/HTMLOutput.cpp
+    src/ParallelSuite.cpp
+    src/SynchronizedOutput.cpp
+    src/TestSuite.cpp
+    src/TextOutput.cpp
+)
 
 # Enable sanitizers
 if(ENABLE_SANITIZERS)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined ")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdelete-null-pointer-checks -Wnull-dereference -Wuninitialized -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wsuggest-override -Wconversion -Wzero-as-null-pointer-constant")
+	target_compile_options(cpptest-lite PRIVATE -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+	target_compile_options(cpptest-lite PRIVATE -fdelete-null-pointer-checks -Wnull-dereference -Wuninitialized -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wsuggest-override -Wconversion -Wzero-as-null-pointer-constant)
+	target_link_libraries(cpptest-lite asan ubsan)
 endif()
 
 # "For shared libraries VERSION and SOVERSION can be used to specify the build version and API version respectively."
@@ -53,10 +65,25 @@ set_target_properties(
 )
 
 if(CPPTEST_LITE_CREATE_TESTS)
-	file( GLOB TEST_SRCS "test/*.cpp")
-	add_executable(testCppTestLite ${TEST_SRCS} ${HDRS})
+	add_executable(testCppTestLite test/run_tests.cpp)
 	target_link_libraries(testCppTestLite cpptest-lite)
 	
+	target_sources(testCppTestLite
+	  PRIVATE
+	    test/TestAssertions.cpp
+	    test/TestAssertions.h
+	    test/TestBDD.h
+	    test/TestFormat.cpp
+	    test/TestFormat.h
+	    test/TestMacros.cpp
+	    test/TestMacros.h
+	    test/TestOutputs.cpp
+	    test/TestOutputs.h
+	    test/TestParallelSuite.cpp
+	    test/TestParallelSuite.h
+	    test/TestSuites.h
+	)
+
 	#Add ctest targets
 	enable_testing()
 	add_test(NAME Failings COMMAND testCppTestLite --fail-tests WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -71,7 +98,6 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	add_test(NAME Story2 COMMAND testCppTestLite --story2 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Story3 COMMAND testCppTestLite --story3 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	set_tests_properties(Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
-	
 endif()
 
 # Installation targets
@@ -80,6 +106,13 @@ if(WIN32)
 else()
 	install(TARGETS cpptest-lite EXPORT cpptest-lite LIBRARY DESTINATION lib)
 endif()
+# Adds the public headers to the target, so they are exported
+target_include_directories(cpptest-lite PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>  $<INSTALL_INTERFACE:include/cpptest-lite>)
+# Creates the export target (to be used by CMake to find the INSTALLED library)
 install(EXPORT cpptest-lite DESTINATION share/cpptest-lite)
-install(DIRECTORY include/ DESTINATION include/cpptest-lite FILES_MATCHING PATTERN "*.h")
+# Creates the install target for the headers
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/" DESTINATION include/cpptest-lite FILES_MATCHING PATTERN "*.h")
+# Exports the target (to be used by CMake to find the SOURCE library)
+export(TARGETS cpptest-lite FILE cpptest-lite-exports.cmake)
+# Adds custom uninstall command
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "cmake_uninstall.cmake")
