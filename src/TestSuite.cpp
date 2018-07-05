@@ -99,3 +99,8 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
 
 
 
+// explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx
+// thats a bug in libc++, because of interaction with __attribute__ ((__visibility__("hidden"), __always_inline__)) in std::string
+// see https://github.com/rttrorg/rttr/blob/master/src/rttr/detail/misc/standard_types.cpp
+// and https://stackoverflow.com/questions/48273190/undefined-symbol-error-for-stdstringempty-c-standard-method-linking-error?rq=1
+template class std::basic_string<char>;
