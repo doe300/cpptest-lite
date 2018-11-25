@@ -130,7 +130,7 @@ private:
     {
     }
 
-    void func_no_throw() throw ()
+    void func_no_throw() noexcept
     {
     }
 

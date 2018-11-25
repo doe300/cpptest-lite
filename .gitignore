@@ -1,46 +1,8 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Default build directory
 /build/
-
-# CMake
-/CMakeCache.txt
-/cmake_install.cmake
-/cpptest-lite-exports.cmake
-/CMakeFiles/
-Makefile
-/install_manifest.txt
-CTestTestfile.cmake
-Testing/
 
 # Netbeans
 /nbproject
-/compile_commands.json
 /result.html
 
 # Eclipse

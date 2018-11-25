@@ -42,7 +42,7 @@ namespace Test
 		BDDSuite& operator=(const BDDSuite&) = delete;
 		BDDSuite& operator=(BDDSuite&&) = default;
 
-		void runScenario(const std::string scenarioName);
+		void runScenario(std::string scenarioName);
 
 	protected:
 		std::vector<Scenario> scenarios;

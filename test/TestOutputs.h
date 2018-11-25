@@ -16,7 +16,7 @@ class TestOutputs : public Test::Suite
 {
 public:
     TestOutputs();
-    ~TestOutputs();
+    ~TestOutputs() override;
     
     void testOutput(void* output);
 private:

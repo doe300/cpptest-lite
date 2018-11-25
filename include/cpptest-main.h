@@ -89,7 +89,16 @@ namespace Test
 		}
 	}
 
-	int runSuites(int argc, char** argv)
+	/*!
+	 * Callback that is invoked when a command-line argument unknown to cpptest-lite is encountered.
+	 *
+	 * Using this callback allows the test program to define and handle additional command-line arguments.
+	 *
+	 * The callback returns whether the argument is handled by it (and therefore is a valid argument)
+	 */
+	using ArgumentCallback = std::function<bool(const std::string&)>;
+
+	int runSuites(int argc, char** argv, const ArgumentCallback& callback = [](const std::string&) -> bool { return false;})
 	{
 		std::vector<std::unique_ptr<Test::Suite>> selectedSuites;
 		selectedSuites.reserve(argc);
@@ -99,15 +108,15 @@ namespace Test
 		for(int i = 1; i < argc; ++i)
 		{
 			std::string arg(argv[i]);
-			if(arg.compare("--help") == 0 || arg.compare("-h") == 0)
+			if(arg == "--help" || arg == "-h")
 			{
 				printHelp(argv[0]);
 				return 0;
 			}
 			else if(arg.find("--output-file") == 0)
 			{
-				if(arg.find("=") != std::string::npos)
-					outputFile = arg.substr(arg.find("=") + 1);
+				if(arg.find('=') != std::string::npos)
+					outputFile = arg.substr(arg.find('=') + 1);
 			}
 			else if(arg.find("--output") == 0 || arg.find("-o") == 0)
 			{
@@ -128,7 +137,7 @@ namespace Test
 			{
 				const char* name = argv[i];
 				auto it = std::find_if(availableSuites.begin(), availableSuites.end(), [name](const SuiteEntry& e) -> bool {return e.name == name;});
-				if(it == availableSuites.end())
+				if(it == availableSuites.end() && !callback(arg))
 				{
 					std::cerr << "Unknown parameter: " << argv[i] << std::endl;
 					continue;

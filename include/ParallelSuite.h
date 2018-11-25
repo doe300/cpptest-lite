@@ -33,7 +33,7 @@ namespace Test
 		ParallelSuite& operator=(const ParallelSuite&) = delete;
 		ParallelSuite& operator=(ParallelSuite&&) = default;
 
-		bool run(Output& output, bool continueAfterFail = true) override;
+		bool run(Output& output, bool continueAfterFail) override;
 
 	private:
 		bool runSuite(unsigned int suiteIndex);

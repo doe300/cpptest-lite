@@ -5,7 +5,7 @@
  * Created on September 15, 2015, 6:27 PM
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "TestMacros.h"
 

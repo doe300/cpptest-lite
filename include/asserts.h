@@ -247,7 +247,7 @@
     }
 #define TEST_STRING_EQUALS(expected, value) \
     { \
-        if(std::string(expected).compare(value) != 0) { \
+        if(std::string(expected) != (value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), "")); \
             if(!continueAfterFailure()) return; \
         } \
@@ -255,7 +255,7 @@
     }
 #define TEST_STRING_EQUALS_MSG(expected, value, msg) \
     { \
-        if(std::string(expected).compare(value) != 0) { \
+        if(std::string(expected) != (value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), ((msg) != nullptr ? #msg : ""))); \
             if(!continueAfterFailure()) return; \
         } \

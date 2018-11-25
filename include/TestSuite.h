@@ -75,7 +75,7 @@ namespace Test
 
 		inline void addTest(SimpleTestMethod method, const std::string& funcName)
 		{
-			testMethods.push_back(TestMethod(funcName, method));
+			testMethods.emplace_back(funcName, method);
 			totalTestMethods++;
 		}
 
