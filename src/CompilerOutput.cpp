@@ -21,7 +21,7 @@ CompilerOutput::CompilerOutput(const std::string& format) : CompilerOutput(forma
 {
 }
 
-CompilerOutput::CompilerOutput(const std::string& format, std::ostream& stream) : Output(), format(format), stream(stream)
+CompilerOutput::CompilerOutput(const std::string& format, std::ostream& stream) : format(format), stream(stream)
 {
 
 }

@@ -8,8 +8,8 @@
 #ifndef TESTMACROS_H
 #define	TESTMACROS_H
 
-#include <exception>
 #include <cmath>
+#include <exception>
 
 #include "cpptest.h"
 

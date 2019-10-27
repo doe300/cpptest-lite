@@ -10,8 +10,6 @@
 
 #include "cpptest.h"
 
-using namespace Test;
-
 class TestOutputs : public Test::Suite
 {
 public:
@@ -20,10 +18,10 @@ public:
     
     void testOutput(void* output);
 private:
-    Output* textOutput;
-    Output* compilerOutput;
-    Output* htmlOutput;
-    Output* consoleOutput;
+    Test::Output* textOutput;
+    Test::Output* compilerOutput;
+    Test::Output* htmlOutput;
+    Test::Output* consoleOutput;
 };
 
 class TestWithOutput : public Test::Suite

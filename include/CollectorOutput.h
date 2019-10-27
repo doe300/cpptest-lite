@@ -24,7 +24,7 @@ namespace Test
 		CollectorOutput() = default;
 		CollectorOutput(const CollectorOutput&) = delete;
 		CollectorOutput(CollectorOutput&&) = default; //RPi cross-compiler throws on noexcept here
-		~CollectorOutput() override = default;
+		~CollectorOutput() noexcept override = default;
 
 		CollectorOutput& operator=(const CollectorOutput&) = delete;
 		CollectorOutput& operator=(CollectorOutput&&) = default; //RPi cross-compiler throws on noexcept here

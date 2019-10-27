@@ -21,7 +21,7 @@ Suite::Suite(const std::string& suiteName) : suiteName(suiteName), testMethods({
 		currentTestMethodName(""), currentTestMethodArgs(""), totalDuration(std::chrono::microseconds::zero()), output(nullptr), positiveTestMethods(0), continueAfterFail(true), currentTestSucceeded(false)
 { }
 
-void Suite::add(std::shared_ptr<Test::Suite> suite)
+void Suite::add(const std::shared_ptr<Test::Suite>& suite)
 {
 	subSuites.push_back(suite);
 }

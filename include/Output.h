@@ -67,7 +67,7 @@ namespace Test
 	public:
 		Output(const Output& orig) = delete;
 		Output(Output&&) noexcept = default;
-		virtual ~Output() = default;
+		virtual ~Output() noexcept = default;
 
 		Output& operator=(const Output&) = delete;
 		Output& operator=(Output&&) noexcept = default;

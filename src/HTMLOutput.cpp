@@ -9,11 +9,6 @@
 
 using namespace Test;
 
-HTMLOutput::~HTMLOutput()
-{
-
-}
-
 void HTMLOutput::generate(std::ostream& stream, bool includePassed, const std::string& title)
 {
 	//1. print header (including style-information)
@@ -41,9 +36,9 @@ void HTMLOutput::generateHeader(std::ostream& stream, const std::string& title)
 {
 	stream << "<!DOCTYPE html>" << std::endl
 			<< "<html><head><title>" << title << "</title>" << std::endl
-			<< "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />" << std::endl
-			<< "<meta name=\"generator\" content=\"CppTest-lite - http://github.com/doe300/cpptest-lite\" />" << std::endl
-			<< "<style type=\"text/css\">" << std::endl
+			<< R"(<meta http-equiv="content-type" content="text/html; charset=utf-8" />)" << std::endl
+			<< R"(<meta name="generator" content="CppTest-lite - http://github.com/doe300/cpptest-lite" />)" << std::endl
+			<< R"(<style type="text/css">)" << std::endl
 			<< "td { vertical-align: super}" << std::endl
 			<< ".message { display: block}" << std::endl
 			<< "table { border: 1px solid grey; border-spacing: 0px}" << std::endl

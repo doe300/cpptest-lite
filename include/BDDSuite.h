@@ -37,7 +37,7 @@ namespace Test
 		explicit BDDSuite(const std::string& suiteName);
 		BDDSuite(const BDDSuite&) = delete;
 		BDDSuite(BDDSuite&&) noexcept = default;
-		~BDDSuite() override;
+		~BDDSuite() noexcept override = default;
 
 		BDDSuite& operator=(const BDDSuite&) = delete;
 		BDDSuite& operator=(BDDSuite&&) = default;

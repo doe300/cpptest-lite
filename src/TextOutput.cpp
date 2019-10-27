@@ -16,7 +16,7 @@ using namespace Test;
 TextOutput::TextOutput(const unsigned int mode) : TextOutput(mode, std::cout)
 { }
 
-TextOutput::TextOutput(const unsigned int mode, std::ostream& stream) : Output(), stream(stream), mode(mode)
+TextOutput::TextOutput(const unsigned int mode, std::ostream& stream) : stream(stream), mode(mode)
 { }
 
 TextOutput::~TextOutput()

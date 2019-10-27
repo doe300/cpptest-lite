@@ -14,11 +14,6 @@ BDDSuite::BDDSuite(const std::string& suiteName) : Suite(suiteName)
 
 }
 
-BDDSuite::~BDDSuite()
-{
-
-}
-
 void BDDSuite::runScenario(const std::string scenarioName)
 {
 	const Scenario* scenario = nullptr;

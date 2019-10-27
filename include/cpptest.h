@@ -19,4 +19,3 @@
 #include "TextOutput.h"
 
 #endif	/* CPPTEST_H */
-

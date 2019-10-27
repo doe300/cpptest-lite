@@ -20,7 +20,7 @@ namespace Test
 		explicit ConsoleOutput(unsigned int mode);
 		ConsoleOutput(const ConsoleOutput&) = delete;
 		ConsoleOutput(ConsoleOutput&&) noexcept = delete;
-		~ConsoleOutput() override = default;
+		~ConsoleOutput() noexcept override = default;
 
 		ConsoleOutput& operator=(const ConsoleOutput&) = delete;
 		ConsoleOutput& operator=(ConsoleOutput&&) noexcept = delete;

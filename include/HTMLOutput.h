@@ -25,7 +25,7 @@ namespace Test
 		HTMLOutput() = default;
 		HTMLOutput(const HTMLOutput&) = delete;
 		HTMLOutput(HTMLOutput&&) = default; //RPi cross-compiler throws on noexcept here
-		~HTMLOutput() override;
+		~HTMLOutput() noexcept override = default;
 
 		HTMLOutput& operator=(const HTMLOutput&) = delete;
 		HTMLOutput& operator=(HTMLOutput&&) = default; //RPi cross-compiler throws on noexcept here

@@ -84,7 +84,7 @@
     }
 #define TEST_ASSERT_ULP(expected, value, numULP) \
     { \
-		auto delta = expected * numULP * std::numeric_limits<decltype(expected)>::epsilon(); \
+		auto delta = (expected) * (numULP) * std::numeric_limits<decltype(expected)>::epsilon(); \
         if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), "")); \
             if(!continueAfterFailure()) return; \
@@ -93,7 +93,7 @@
     }
 #define TEST_ASSERT_ULP_MSG(expected, value, numULP, msg) \
     { \
-		auto delta = expected * numULP * std::numeric_limits<decltype(expected)>::epsilon(); \
+		auto delta = (expected) * (numULP) * std::numeric_limits<decltype(expected)>::epsilon(); \
         if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), ((msg) != nullptr ? #msg : ""))); \
             if(!continueAfterFailure()) return; \

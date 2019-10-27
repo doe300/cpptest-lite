@@ -51,7 +51,7 @@ namespace Test
 	 *
 	 * \param runByDefault Whether this test-suite is run in default mode (no explicit suites specified)
 	 */
-	void registerSuite(const SuiteSupplier supplier, const std::string& parameterName, const std::string& description = "", bool runByDefault = true)
+	void registerSuite(const SuiteSupplier& supplier, const std::string& parameterName, const std::string& description = "", bool runByDefault = true)
 	{
 		if(parameterName.empty())
 			throw std::invalid_argument("Test-suite parameter cannot be empty!");
@@ -226,7 +226,7 @@ namespace Test
 	{
 		return new T();
 	}
-}
+} // namespace Test
 
 #endif	/* CPPTEST_MAIN_H */
 

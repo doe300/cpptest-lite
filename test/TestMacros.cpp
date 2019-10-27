@@ -9,7 +9,7 @@
 
 #include "TestMacros.h"
 
-TestMacros::TestMacros() : Test::Suite()
+TestMacros::TestMacros()
 {
     TEST_ADD(TestMacros::testFailureMessages);
     TEST_ADD(TestMacros::testMethodNoArgs);
@@ -97,6 +97,6 @@ void TestMacros::testMethodWithVarargs1(const double d, const int i)
 
 void TestMacros::testMethodWithVarargs2(std::string s, int i, double d)
 {
-    TEST_ASSERT_MSG(std::to_string(i).compare(s) == 0, "String has not the same number!");
+    TEST_ASSERT_MSG(std::to_string(i) == s, "String has not the same number!");
     TEST_ASSERT_MSG(d == i, "Fails for d != i");
 }

@@ -66,7 +66,7 @@ void TestWithOutput::anotherTestMethod(char* someText)
 {
     TEST_ASSERT_MSG(std::string(someText).empty(), "Should fail, text is not empty");
     
-    TEST_ASSERT(std::string(someText).substr(0, 4).compare("Test") == 0);
+    TEST_ASSERT(std::string(someText).substr(0, 4) == "Test");
     TEST_ASSERT_MSG(someText[12] == '1', "Fails in one case");
 }
 

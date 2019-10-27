@@ -31,6 +31,7 @@ namespace Test
 		explicit Suite(const std::string& suiteName);
 		Suite(const Suite&) = delete;
 		Suite(Suite&&) noexcept = default;
+		virtual ~Suite() noexcept = default;
 
 		Suite& operator=(const Suite&) = delete;
 		Suite& operator=(Suite&&) = default;
@@ -40,7 +41,7 @@ namespace Test
 		 * All associated suites will be run after this suite has finished
 		 *
 		 */
-		void add(std::shared_ptr<Test::Suite> suite);
+		void add(const std::shared_ptr<Test::Suite>& suite);
 
 		/*!
 		 * Runs all the registered test-methods in this suite
@@ -54,8 +55,6 @@ namespace Test
 		{
 			return totalTestMethods;
 		}
-
-		virtual ~Suite() = default;
 
 	protected:
 
