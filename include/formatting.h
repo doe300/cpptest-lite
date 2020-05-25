@@ -63,7 +63,7 @@ namespace Test
 		inline std::string to_string(const float val)
 		{
 			char buffer[128];
-			sprintf(buffer, "%g", val);
+			sprintf(buffer, "%g", static_cast<double>(val));
 			return buffer;
 		}
 
