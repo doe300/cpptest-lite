@@ -46,6 +46,7 @@ target_sources(cpptest-lite
     src/ParallelSuite.cpp
     src/SynchronizedOutput.cpp
     src/TestSuite.cpp
+	src/TestMain.cpp
     src/TextOutput.cpp
 )
 
