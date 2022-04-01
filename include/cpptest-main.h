@@ -10,6 +10,9 @@
 
 #include "cpptest.h"
 
+#include <functional>
+#include <string>
+
 namespace Test
 {
 	using SuiteSupplier = std::function<Test::Suite*(void)>;
