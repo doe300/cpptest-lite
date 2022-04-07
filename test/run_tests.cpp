@@ -45,6 +45,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     Test::setContinueAfterFail(true);
+    Test::ignoreArgument("--no-such-argument");
     Test::registerSuite(Test::newInstance<FailTestSuite>, "fail-tests", "Tests the correct handling of failed tests");
     Test::registerSuite(Test::newInstance<CompareTestSuite>, "test-comparisons", "Tests the comparison tests");
     Test::registerSuite(Test::newInstance<ThrowTestSuite>, "test-exceptions", "Tests correct handling of exceptions (expected and unexpected)");

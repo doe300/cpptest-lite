@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   cpptest-main.h
  * Author: daniel
  *
@@ -18,6 +18,7 @@ namespace Test
 	using SuiteSupplier = std::function<Test::Suite*(void)>;
 
 	void setContinueAfterFail(bool continueAfterFail);
+	void ignoreArgument(const std::string& arg);
 
 	/*!
 	 * Registers a new test-suite for execution.
@@ -43,7 +44,7 @@ namespace Test
 	 */
 	using ArgumentCallback = std::function<bool(const std::string&)>;
 
-	int runSuites(int argc, char** argv, const ArgumentCallback& callback = [](const std::string&) -> bool { return false;});
+	int runSuites(int argc, char** argv, const ArgumentCallback& callback = nullptr);
 
 	template<typename T>
 	Test::Suite* newInstance()

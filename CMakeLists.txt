@@ -69,7 +69,7 @@ set_target_properties(
 if(CPPTEST_LITE_CREATE_TESTS)
 	add_executable(testCppTestLite test/run_tests.cpp)
 	target_link_libraries(testCppTestLite cpptest-lite)
-	
+
 	target_sources(testCppTestLite
 	  PRIVATE
 	    test/TestAssertions.cpp
@@ -88,6 +88,8 @@ if(CPPTEST_LITE_CREATE_TESTS)
 
 	#Add ctest targets
 	enable_testing()
+	add_test(NAME InvalidArgument COMMAND testCppTestLite --invalid-argument WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME UnsupportedArgument COMMAND testCppTestLite --no-such-argument --help WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Failings COMMAND testCppTestLite --fail-tests WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Comparisons COMMAND testCppTestLite --test-comparisons WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Exceptions COMMAND testCppTestLite --test-exceptions WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -99,7 +101,7 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	add_test(NAME Story1 COMMAND testCppTestLite --story1 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Story2 COMMAND testCppTestLite --story2 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Story3 COMMAND testCppTestLite --story3 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	set_tests_properties(Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
+	set_tests_properties(InvalidArgument Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
 endif()
 
 # Installation targets

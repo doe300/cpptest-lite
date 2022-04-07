@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   TestMain.cpp
- * Author: 
- * 
+ * Author:
+ *
  * Created on March 31, 2022, 2:56 PM
  */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <vector>
 
 namespace Test
@@ -30,13 +31,20 @@ namespace Test
 		bool runByDefault;
 	};
 
-	//using a list here sorts entries by order of insertion
+	// using a list here sorts entries by order of insertion
 	static std::vector<SuiteEntry> availableSuites;
 	static bool continueAfterFailure = true;
+	// optional set of arguments to be ignored, e.g. to not report an error on it
+	static std::set<std::string> ignoredArguments;
 
 	void setContinueAfterFail(bool continueAfterFail)
 	{
 		Test::continueAfterFailure = continueAfterFail;
+	}
+
+	void ignoreArgument(const std::string& arg)
+	{
+		Test::ignoredArguments.emplace(arg);
 	}
 
 	/*!
@@ -61,7 +69,7 @@ namespace Test
 		entry.supplier = supplier;
 		entry.description = description;
 		entry.runByDefault = runByDefault;
-		availableSuites.push_back(entry);
+		availableSuites.emplace_back(std::move(entry));
 	}
 
 	void printHelp(const std::string& progName)
@@ -88,18 +96,10 @@ namespace Test
 		}
 	}
 
-	/*!
-	 * Callback that is invoked when a command-line argument unknown to cpptest-lite is encountered.
-	 *
-	 * Using this callback allows the test program to define and handle additional command-line arguments.
-	 *
-	 * The callback returns whether the argument is handled by it (and therefore is a valid argument)
-	 */
-	using ArgumentCallback = std::function<bool(const std::string&)>;
-
 	int runSuites(int argc, char** argv, const ArgumentCallback& callback)
 	{
 		std::vector<std::unique_ptr<Test::Suite>> selectedSuites;
+		std::set<std::string> selectedSuiteNames;
 		selectedSuites.reserve(argc);
 		std::string outputMode = "plain";
 		std::string outputFile;
@@ -135,13 +135,23 @@ namespace Test
 			else
 			{
 				const char* name = argv[i];
-				auto it = std::find_if(availableSuites.begin(), availableSuites.end(), [name](const SuiteEntry& e) -> bool {return e.name == name;});
-				if(it == availableSuites.end() && !callback(arg))
+				if(ignoredArguments.find(name) != ignoredArguments.end())
 				{
-					std::cerr << "Unknown parameter: " << argv[i] << std::endl;
 					continue;
 				}
-				selectedSuites.emplace_back(it->supplier());
+				auto it = std::find_if(availableSuites.begin(), availableSuites.end(), [name](const SuiteEntry& e) -> bool {return e.name == name;});
+				if(it == availableSuites.end() && (!callback || !callback(arg)))
+				{
+					std::cerr << "Unknown parameter: " << argv[i] << std::endl;
+					if(!callback)
+						return 1;
+					continue;
+				}
+				if(selectedSuiteNames.find(name) == selectedSuiteNames.end())
+				{
+					selectedSuites.emplace_back(it->supplier());
+					selectedSuiteNames.emplace(name);
+				}
 			}
 
 		}
@@ -151,8 +161,11 @@ namespace Test
 			//only the program-name run all suites
 			for(const auto& entry : availableSuites)
 			{
-				if(entry.runByDefault)
+				if(entry.runByDefault && selectedSuiteNames.find(entry.name) == selectedSuiteNames.end())
+				{
 					selectedSuites.emplace_back(entry.supplier());
+					selectedSuiteNames.emplace(entry.name);
+				}
 			}
 		}
 
