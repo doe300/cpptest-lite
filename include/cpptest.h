@@ -1,12 +1,4 @@
-/* 
- * File:   cpptest.h
- * Author: daniel
- *
- * Created on September 11, 2015, 7:15 PM
- */
-
-#ifndef CPPTEST_H
-#define	CPPTEST_H
+#pragma once
 
 #include "asserts.h"
 #include "ParallelSuite.h"
@@ -17,5 +9,4 @@
 #include "ConsoleOutput.h"
 #include "HTMLOutput.h"
 #include "TextOutput.h"
-
-#endif	/* CPPTEST_H */
+#include "XMLOutput.h"

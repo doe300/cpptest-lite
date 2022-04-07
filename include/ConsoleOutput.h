@@ -1,12 +1,4 @@
-/* 
- * File:   ConsoleOutput.h
- * Author: doe300
- *
- * Created on April 25, 2016, 4:43 PM
- */
-
-#ifndef CONSOLEOUTPUT_H
-#define CONSOLEOUTPUT_H
+#pragma once
 
 #include "Output.h"
 #include "TextOutput.h"
@@ -39,5 +31,3 @@ namespace Test
 	};
 
 } // namespace Test
-#endif /* CONSOLEOUTPUT_H */
-

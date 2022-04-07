@@ -1,13 +1,4 @@
-/* 
- * File:   BDDSuite.h
- * Author: doe300
- *
- * Created on June 29, 2016, 2:47 PM
- */
-
-#ifndef BDDSUITE_H
-#define BDDSUITE_H
-
+#pragma once
 #include "cpptest.h"
 
 namespace Test
@@ -48,5 +39,3 @@ namespace Test
 		std::vector<Scenario> scenarios;
 	};
 } // namespace Test
-#endif /* BDDSUITE_H */
-

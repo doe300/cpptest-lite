@@ -1,12 +1,4 @@
-/* 
- * File:   ParallelSuite.h
- * Author: daniel
- *
- * Created on September 13, 2015, 5:14 PM
- */
-
-#ifndef PARALLELSUITE_H
-#define	PARALLELSUITE_H
+#pragma once
 
 #include "SynchronizedOutput.h"
 #include "TestSuite.h"
@@ -39,6 +31,3 @@ namespace Test
 		bool runSuite(unsigned int suiteIndex);
 	};
 } // namespace Test
-
-#endif	/* PARALLELSUITE_H */
-

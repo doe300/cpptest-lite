@@ -80,7 +80,7 @@ namespace Test
 		std::cout << "Run with '" << progName << " [options]'" << std::endl;
 		std::cout << std::endl;
 		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
-		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic. Defaults to 'plain'" << std::endl;
+		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic, junit. Defaults to 'plain'" << std::endl;
 		std::cout << std::setw(paramWidth) << "-o=val" << std::setw(gapWidth) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
 		std::cout << std::setw(paramWidth) << "--mode=val" << std::setw(gapWidth) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
 		std::cout << std::setw(paramWidth) << "--output-file=file" << std::setw(gapWidth) << " " << "Sets the optional output file to write to, defaults to 'stdout'. 'colored' output can only write to console!" << std::endl;
@@ -205,6 +205,13 @@ namespace Test
 				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GENERIC, f));
 			else
 				realOutput.reset(new Test::CompilerOutput(Test::CompilerOutput::FORMAT_GENERIC));
+		}
+		else if(outputMode.find("junit") != std::string::npos)
+		{
+			if(!outputFile.empty())
+				realOutput.reset(new Test::XMLOutput(outputFile));
+			else
+				realOutput.reset(new Test::XMLOutput(std::cout));
 		}
 		else
 		{

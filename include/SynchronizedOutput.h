@@ -1,12 +1,4 @@
-/* 
- * File:   SynchronizedOutput.h
- * Author: daniel
- *
- * Created on October 16, 2015, 11:44 AM
- */
-
-#ifndef SYNCHRONIZEDOUTPUT_H
-#define	SYNCHRONIZEDOUTPUT_H
+#pragma once
 
 #include "Output.h"
 
@@ -42,6 +34,3 @@ namespace Test
 		std::mutex outputMutex;
 	};
 } // namespace Test
-
-#endif	/* SYNCHRONIZEDOUTPUT_H */
-

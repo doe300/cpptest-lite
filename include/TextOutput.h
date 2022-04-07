@@ -1,12 +1,4 @@
-/* 
- * File:   TextOutput.h
- * Author: daniel
- *
- * Created on September 11, 2015, 7:07 PM
- */
-
-#ifndef TEXTOUTPUT_H
-#define	TEXTOUTPUT_H
+#pragma once
 
 #include "Output.h"
 
@@ -47,6 +39,3 @@ namespace Test
 	};
 
 } // namespace Test
-
-#endif	/* TEXTOUTPUT_H */
-

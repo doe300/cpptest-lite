@@ -1,12 +1,4 @@
-/* 
- * File:   Output.h
- * Author: daniel
- *
- * Created on September 10, 2015, 4:59 PM
- */
-
-#ifndef OUTPUT_H
-#define	OUTPUT_H
+#pragma once
 
 #include <chrono>
 #include <exception>
@@ -197,6 +189,3 @@ namespace Test
 	};
 
 } // namespace Test
-
-#endif	/* OUTPUT_H */
-

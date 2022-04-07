@@ -1,12 +1,4 @@
-/*
- * File:   cpptest-main.h
- * Author: daniel
- *
- * Created on September 12, 2015, 8:00 AM
- */
-
-#ifndef CPPTEST_MAIN_H
-#define	CPPTEST_MAIN_H
+#pragma once
 
 #include "cpptest.h"
 
@@ -52,6 +44,3 @@ namespace Test
 		return new T();
 	}
 } // namespace Test
-
-#endif	/* CPPTEST_MAIN_H */
-

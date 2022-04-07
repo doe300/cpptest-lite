@@ -1,12 +1,4 @@
-/* 
- * File:   formatting.h
- * Author: doe300
- *
- * Created on March 4, 2017, 11:47 AM
- */
-
-#ifndef FORMATTING_H
-#define FORMATTING_H
+#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -182,6 +174,3 @@ namespace Test
 		}
 	} // namespace Formats
 } // namespace Test
-
-#endif /* FORMATTING_H */
-

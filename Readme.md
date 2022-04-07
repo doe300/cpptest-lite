@@ -42,6 +42,7 @@ to add test with one, two or three arguments of arbitrary types.
 - Help-page and selection of test-suites to run can be automatically generated via *Test::registerSuite()* and *Test::runSuites*
 - new macros to compare with allowed error, **TEST_ASSERT_ULP** and **TEST_ASSERT_ULP_MSG**
 - allows to register test suites from different files than the main test entry-point, thanks to @mondegreengames
+- can now generate JUnit XML format via *XMLOutput*
 
 ### Behavior driven development
 - As of version 0.6 BDD is supported as a completely new feature

@@ -39,4 +39,13 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{ matrix.build_type }}
 
     - name: Test
-      run: ctest --test-dir ${{github.workspace}}/build --output-on-failure
+      run: ctest --test-dir ${{github.workspace}}/build -C ${{ matrix.build_type }} --output-on-failure
+
+    - name: Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: JUnit results
+        path: '${{github.workspace}}/build/*.xml'
+        reporter: jest-junit
+        fail-on-error: false

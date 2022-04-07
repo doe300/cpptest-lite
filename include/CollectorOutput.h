@@ -1,12 +1,4 @@
-/* 
- * File:   CollectorOutput.h
- * Author: daniel
- *
- * Created on September 20, 2015, 12:16 PM
- */
-
-#ifndef COLLECTOROUTPUT_H
-#define	COLLECTOROUTPUT_H
+#pragma once
 
 #include "Output.h"
 
@@ -69,12 +61,8 @@ namespace Test
 		};
 
 		std::vector<SuiteInfo> suites;
-	private:
 		//we need pointers to the current suite/test-method, because their name is not unique
 		SuiteInfo* currentSuite = nullptr;
 		TestMethodInfo* currentMethod = nullptr;
 	};
 } // namespace Test
-
-#endif	/* COLLECTOROUTPUT_H */
-

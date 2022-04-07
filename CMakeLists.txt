@@ -48,6 +48,7 @@ target_sources(cpptest-lite
     src/TestSuite.cpp
 	src/TestMain.cpp
     src/TextOutput.cpp
+    src/XMLOutput.cpp
 )
 
 # Enable sanitizers
@@ -88,19 +89,19 @@ if(CPPTEST_LITE_CREATE_TESTS)
 
 	#Add ctest targets
 	enable_testing()
-	add_test(NAME InvalidArgument COMMAND testCppTestLite --invalid-argument WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME InvalidArgument COMMAND testCppTestLite --invalid-argument --output=junit --output-file=invalid-argument.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME UnsupportedArgument COMMAND testCppTestLite --no-such-argument --help WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Failings COMMAND testCppTestLite --fail-tests WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Comparisons COMMAND testCppTestLite --test-comparisons WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Exceptions COMMAND testCppTestLite --test-exceptions WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Macros COMMAND testCppTestLite --test-macros WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Format COMMAND testCppTestLite --test-format WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Failings COMMAND testCppTestLite --fail-tests --output=junit --output-file=fail-tests.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Comparisons COMMAND testCppTestLite --test-comparisons --output=junit --output-file=test-comparisons.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Exceptions COMMAND testCppTestLite --test-exceptions --output=junit --output-file=test-exceptions.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Macros COMMAND testCppTestLite --test-macros --output=junit --output-file=test-macros.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Format COMMAND testCppTestLite --test-format --output=junit --output-file=test-format.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Outputs COMMAND testCppTestLite --test-outputs WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Parallel COMMAND testCppTestLite --test-parallel WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Assertions COMMAND testCppTestLite --test-assertions WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Story1 COMMAND testCppTestLite --story1 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Story2 COMMAND testCppTestLite --story2 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	add_test(NAME Story3 COMMAND testCppTestLite --story3 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Parallel COMMAND testCppTestLite --test-parallel --output=junit --output-file=test-parallel.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Assertions COMMAND testCppTestLite --test-assertions --output=junit --output-file=test-assertions.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story1 COMMAND testCppTestLite --story1 --output=junit --output-file=story1.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story2 COMMAND testCppTestLite --story2 --output=junit --output-file=story2.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME Story3 COMMAND testCppTestLite --story3 --output=junit --output-file=story3.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	set_tests_properties(InvalidArgument Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
 endif()
 

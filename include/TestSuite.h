@@ -1,12 +1,4 @@
-/* 
- * File:   SimpleTest.h
- * Author: daniel
- *
- * Created on September 10, 2015, 11:28 AM
- */
-
-#ifndef TESTSUITE_H
-#define	TESTSUITE_H
+#pragma once
 
 #include "Output.h"
 #include "formatting.h"
@@ -101,7 +93,7 @@ namespace Test
 			testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1, arg2));
 			totalTestMethods++;
 		}
-#else 
+#else
 		template<typename... T>
 		inline void addTest(ParameterizedTestMethod<T...> method, const std::string& funcName, const T... args)
 		{
@@ -298,6 +290,3 @@ namespace Test
 	 */
 #define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>((&func)), #func, arg0, arg1, arg2)
 } // namespace Test
-
-#endif	/* TESTSUITE_H */
-

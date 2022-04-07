@@ -1,12 +1,4 @@
-/*
- * comparisons.h
- *
- *  Created on: Jun 7, 2017
- *      Author: daniel
- */
-
-#ifndef COMPARISONS_H
-#define COMPARISONS_H
+#pragma once
 
 #include <cmath>
 #include <string>
@@ -71,5 +63,3 @@ namespace Test
 		}
 	} // namespace Comparisons
 } // namespace Test
-
-#endif /* COMPARISONS_H */

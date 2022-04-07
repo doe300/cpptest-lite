@@ -1,12 +1,4 @@
-/* 
- * File:   bdd.h
- * Author: doe300
- *
- * Created on June 29, 2016, 3:14 PM
- */
-
-#ifndef BDD_H
-#define BDD_H
+#pragma once
 
 #include "BDDSuite.h"
 
@@ -36,13 +28,10 @@ public: \
 #define END_SCENARIO  });
 
 //Defines a precondition for a scenario to run
-#define GIVEN(condition) [this]() -> bool{return condition;}, \
+#define GIVEN(condition) [this]() -> bool{return condition;},
 
 //Defines the actions to run
-#define WHEN(actions) [this]() -> void{actions;}, \
+#define WHEN(actions) [this]() -> void{actions;},
 
 //Defines a postcondition which should be met
-#define THEN(condition) [this]() -> bool{return condition;} \
-
-#endif /* BDD_H */
-
+#define THEN(condition) [this]() -> bool{return condition;}

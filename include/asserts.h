@@ -1,12 +1,4 @@
-/* 
- * File:   asserts.h
- * Author: daniel
- *
- * Created on September 10, 2015, 11:22 AM
- */
-
-#ifndef ASSERTS_H
-#define	ASSERTS_H
+#pragma once
 
 #include "comparisons.h"
 #include "formatting.h"
@@ -16,14 +8,14 @@
 ////
 //  All asserts from cpptest-1.1.2
 ////
-    
-    
+
+
 #define TEST_FAIL(msg) \
     { \
         testFailed(Test::Assertion(__FILE__, __LINE__, ((msg) != nullptr ? #msg : ""))); \
         if(!continueAfterFailure()) return; \
     }
-    
+
 #define TEST_ASSERT(condition) \
     { \
         if(false == (condition)) { \
@@ -41,7 +33,7 @@
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
-    
+
 #define TEST_ASSERT_EQUALS(expected, value) \
     { \
         if(!Test::Comparisons::isSame(expected, value)) { \
@@ -220,7 +212,7 @@
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
-    }   
+    }
 #define TEST_PREDICATE_MSG(predicate, value, msg) \
     { \
         if(false == predicate(value)) {\
@@ -263,5 +255,3 @@
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
-#endif	/* ASSERTS_H */
-

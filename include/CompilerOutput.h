@@ -1,12 +1,4 @@
-/* 
- * File:   CompilerOutput.h
- * Author: daniel
- *
- * Created on September 14, 2015, 10:23 PM
- */
-
-#ifndef COMPILEROUTPUT_H
-#define	COMPILEROUTPUT_H
+#pragma once
 
 #include "Output.h"
 #include <iostream>
@@ -52,6 +44,3 @@ namespace Test
 		static const std::string ARG_TEXT;
 	};
 } // namespace Test
-
-#endif	/* COMPILEROUTPUT_H */
-

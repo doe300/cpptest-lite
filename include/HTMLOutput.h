@@ -1,12 +1,4 @@
-/* 
- * File:   HTMLOutput.h
- * Author: daniel
- *
- * Created on September 20, 2015, 12:53 PM
- */
-
-#ifndef HTMLOUTPUT_H
-#define	HTMLOUTPUT_H
+#pragma once
 
 #include "CollectorOutput.h"
 #include "cpptest.h"
@@ -46,6 +38,3 @@ namespace Test
 	};
 
 } // namespace Test
-
-#endif	/* HTMLOUTPUT_H */
-
