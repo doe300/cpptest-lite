@@ -41,11 +41,20 @@ jobs:
     - name: Test
       run: ctest --test-dir ${{github.workspace}}/build -C ${{ matrix.build_type }} --output-on-failure
 
-    - name: Report
-      uses: dorny/test-reporter@v1
-      if: always()
+    - name: Report Linux
+      uses: EnricoMi/publish-unit-test-result-action@v1.31
+      if: ${{ matrix.config.os != 'windows-latest' }}
       with:
-        name: JUnit results
-        path: '${{github.workspace}}/build/*.xml'
-        reporter: jest-junit
-        fail-on-error: false
+        files: '${{github.workspace}}/build/*.xml'
+        comment_mode: off
+        fail_on: nothing
+        check_run_annotations: none
+
+    - name: Report Windows
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1.31
+      if: ${{ matrix.config.os == 'windows-latest' }}
+      with:
+        files: '${{github.workspace}}/build/*.xml'
+        comment_mode: off
+        fail_on: nothing
+        check_run_annotations: none
