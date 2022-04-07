@@ -1,0 +1,42 @@
+name: CMake Build and Test
+
+on:
+  [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }} ${{ matrix.build_type }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          [Release, Debug]
+        config:
+        - name: "Windows"
+          os: "windows-latest"
+          cc: "cl"
+          cxx: "cl"
+        - name: "Linux GCC"
+          os: "ubuntu-latest"
+          cc: "gcc"
+          cxx: "g++"
+        - name: "Linux CLang"
+          os: "ubuntu-latest"
+          cc: "clang"
+          cxx: "clang++"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCPPTEST_LITE_CREATE_TESTS=ON
+      env:
+        CC: ${{ matrix.config.cc }}
+        CXX: ${{ matrix.config.cxx }}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{ matrix.build_type }}
+
+    - name: Test
+      run: ctest --test-dir ${{github.workspace}}/build --output-on-failure
