@@ -23,13 +23,22 @@ XMLOutput::~XMLOutput() noexcept
 	output.flush();
 }
 
-static std::string escapeQuotes(std::string text)
+static std::string escapeXML(std::string text)
 {
 	std::size_t pos = 0;
-	while ((pos = text.find('"', pos)) != std::string::npos)
+	while ((pos = text.find_first_of("\"'<>&", pos)) != std::string::npos)
 	{
-		text.replace(pos, 1, "\\\"");
-		pos += 2;
+		if(text[pos] == '"')
+			text.replace(pos, 1, "&quot;");
+		else if(text[pos] == '\'')
+			text.replace(pos, 1, "&apos;");
+		else if(text[pos] == '<')
+			text.replace(pos, 1, "&lt;");
+		else if(text[pos] == '>')
+			text.replace(pos, 1, "&gt;");
+		else if(text[pos] == '&')
+			text.replace(pos, 1, "&amp;");
+		pos += 4;
 	}
 	return text;
 }
@@ -42,7 +51,7 @@ void XMLOutput::finishSuite(const std::string& suiteName, unsigned int numTests,
 	std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(totalDuration);
 	std::chrono::microseconds remainder = totalDuration - seconds;
 	unsigned numErrors = std::count_if(currentSuite->methods.begin(), currentSuite->methods.end(), [] (const TestMethodInfo& method) { return !method.exceptionMessage.empty(); });
-	output << "\t<testsuite name=\"" << suiteName << "\" tests=\"" << numTests << "\" failures=\""
+	output << "\t<testsuite name=\"" << escapeXML(suiteName) << "\" tests=\"" << numTests << "\" failures=\""
 		<< (numTests - numPositiveTests - numErrors) << "\" errors=\"" << numErrors << "\" time=\""
 		<< seconds.count() << '.' << std::setfill('0') << std::setw(3) << remainder.count() << "\" timestamp=\""
 		<< std::put_time(gmtime(&now), "%FT%T") << "\">\n";
@@ -52,24 +61,22 @@ void XMLOutput::finishSuite(const std::string& suiteName, unsigned int numTests,
 		std::string name = stripMethodName(method.methodName);
 		if(!method.argString.empty())
 			name.append("(" + method.argString + ")");
-		output << "\t\t<testcase classname=\"" << suiteName << "\" name=\"" << escapeQuotes(name) << "\">\n";
+		output << "\t\t<testcase classname=\"" << escapeXML(suiteName) << "\" name=\"" << escapeXML(name) << "\">\n";
 		if(!method.exceptionMessage.empty())
-			output << "\t\t\t<error message=\"" << escapeQuotes(method.exceptionMessage) << "\" type=\"\"/>\n";
+			output << "\t\t\t<error message=\"" << escapeXML(method.exceptionMessage) << "\" type=\"\"/>\n";
 		else if(method.failedAssertions.empty() && method.passedAssertions.empty())
 			output << "\t\t\t<skipped message=\"Test case has no assertions\" type=\"\"/>\n";
 		else if(!method.failedAssertions.empty())
 		{
-			output << "\t\t\t<failure message=\"" << method.failedAssertions.size() << " assertions failed\" type=\"\">\n";
 			for(const Assertion& assertion : method.failedAssertions)
 			{
-				output << "\t\t\t\tFailure: " << assertion.errorMessage << '\n';
-				output << "\t\t\t\tFile: " << Private::getFileName(assertion.file) << '\n';
+				output << "\t\t\t<failure message=\"" << (assertion.errorMessage.empty() ? "Failure" : escapeXML(assertion.errorMessage)) << "\" type=\"\">\n";
+				output << "\t\t\t\tFile: " << escapeXML(Private::getFileName(assertion.file)) << '\n';
 				output << "\t\t\t\tLine: " << assertion.lineNumber << '\n';
 				if(!assertion.userMessage.empty())
-					output << "\t\t\t\tMessage: " << assertion.userMessage << '\n';
-				output << '\n';
+					output << "\t\t\t\tMessage: " << escapeXML(assertion.userMessage) << '\n';
+				output << "\t\t\t</failure>\n";
 			}
-			output << "\t\t\t</failure>\n";
 		}
 		output << "\t\t</testcase>\n";
 	}
