@@ -12,6 +12,12 @@
 
 namespace Test
 {
+	struct TestMethodInfo
+	{
+		std::uintptr_t reference;
+		std::string name;
+		std::string argString;
+	};
 
 	/*!
 	 * Any test-class must extend this class
@@ -41,11 +47,12 @@ namespace Test
 		 * \param continueAfterFail whether to continue running after a test failed
 		 */
 		virtual bool run(Output& output, bool continueAfterFail = true);
+		virtual bool run(Output& output, const std::vector<TestMethodInfo>& selectedMethods, bool continueAfterFail = true);
 
-		static unsigned int getTotalNumberOfTests()
-		{
-			return totalTestMethods;
-		}
+		/*!
+		 * Lists all test-methods to be run in this suite
+		 */
+		virtual std::vector<TestMethodInfo> listTests() const;
 
 	protected:
 
@@ -247,6 +254,8 @@ namespace Test
 		bool currentTestSucceeded;
 
 		std::pair<bool, std::chrono::microseconds> runTestMethod(const TestMethod& method);
+
+		std::vector<std::reference_wrapper<const TestMethod>> filterTests(const std::vector<TestMethodInfo>& selectedMethods);
 
 		//ParallelSuite needs access to subSuites
 		friend class ParallelSuite;

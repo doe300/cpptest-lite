@@ -51,10 +51,10 @@ int main(int argc, char* argv[])
     Test::registerSuite(Test::newInstance<ThrowTestSuite>, "test-exceptions", "Tests correct handling of exceptions (expected and unexpected)");
     Test::registerSuite(Test::newInstance<TestMacros>, "test-macros", "Tests all available test-macros");
     Test::registerSuite(Test::newInstance<TestFormat>, "test-format", "Tests the various output formats");
-    Test::registerSuite(Test::newInstance<TestOutputs>, "test-outputs", "Tests the various output types");
+    Test::registerSuite(Test::newInstance<TestOutputs>, "test-outputs", "Tests the various output types", Test::RegistrationFlags::OMIT_LIST_TESTS);
     Test::registerSuite(Test::newInstance<TestParallelSuite>, "test-parallel", "Tests the parallel test suite");
     Test::registerSuite(Test::newInstance<TestAssertions>, "test-assertions", "Tests the available TEST_XXX assertions");
-    Test::registerSuite(Test::newInstance<Story1>, "story1", "Runs the first BDD story", false);
+    Test::registerSuite(Test::newInstance<Story1>, "story1", "Runs the first BDD story", Test::RegistrationFlags::OMIT_FROM_DEFAULT);
     Test::registerSuite(Test::newInstance<Story2>, "story2", "Runs the second BDD story");
     Test::registerSuite(Test::newInstance<Story3>, "story3", "Runs the third BDD story");
 

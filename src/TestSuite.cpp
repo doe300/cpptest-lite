@@ -26,25 +26,32 @@ void Suite::add(const std::shared_ptr<Test::Suite>& suite)
 
 bool Suite::run(Output& output, bool continueAfterFail)
 {
+	return run(output, listTests(), continueAfterFail);
+}
+
+bool Suite::run(Output& output, const std::vector<TestMethodInfo>& selectedMethods, bool continueAfterFail)
+{
+	auto selectedTestMethods = filterTests(selectedMethods);
+
 	this->continueAfterFail = continueAfterFail;
 	this->output = &output;
-	output.initializeSuite(suiteName, static_cast<unsigned>(testMethods.size()));
+	output.initializeSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()));
 	//run tests
 	totalDuration = std::chrono::microseconds::zero();
 	positiveTestMethods = 0;
 	//run setup before all tests
 	if(setup())
 	{
-		for(const TestMethod& method : testMethods)
+		for(const auto& method : selectedTestMethods)
 		{
-			std::pair<bool, std::chrono::microseconds> result = runTestMethod(method);
+			std::pair<bool, std::chrono::microseconds> result = runTestMethod(method.get());
 			totalDuration += result.second;
 			if(result.first) ++positiveTestMethods;
 		}
 		//run tear-down after all tests
 		tear_down();
 	}
-	output.finishSuite(suiteName, static_cast<unsigned>(testMethods.size()), positiveTestMethods, totalDuration);
+	output.finishSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()), positiveTestMethods, totalDuration);
 
 	//run sub-suites
 	for(std::shared_ptr<Test::Suite>& suite : subSuites)
@@ -52,7 +59,18 @@ bool Suite::run(Output& output, bool continueAfterFail)
 		suite->run(output, continueAfterFail);
 	}
 
-	return positiveTestMethods == testMethods.size();
+	return positiveTestMethods == selectedTestMethods.size();
+}
+
+std::vector<TestMethodInfo> Suite::listTests() const
+{
+	std::vector<TestMethodInfo> result;
+	result.reserve(testMethods.size());
+	for(const auto& method : testMethods)
+	{
+		result.emplace_back(TestMethodInfo{reinterpret_cast<std::uintptr_t>(&method), method.name, method.argString});
+	}
+	return result;
 }
 
 std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod& method)
@@ -95,6 +113,19 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
 	return std::make_pair(false, std::chrono::microseconds::zero());
 }
 
+std::vector<std::reference_wrapper<const Suite::TestMethod>> Suite::filterTests(const std::vector<TestMethodInfo>& selectedMethods)
+{
+	std::vector<std::reference_wrapper<const TestMethod>> result;
+	result.reserve(selectedMethods.size());
+
+	for(const auto& info : selectedMethods)
+	{
+		const auto* method = reinterpret_cast<const TestMethod*>(info.reference);
+		result.emplace_back(std::cref(*method));
+	}
+
+	return result;
+}
 
 
 // explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx

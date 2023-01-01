@@ -25,6 +25,22 @@ namespace Test
 	 */
 	void registerSuite(const SuiteSupplier& supplier, const std::string& parameterName, const std::string& description = "", bool runByDefault = true);
 
+	enum class RegistrationFlags : uint32_t
+	{
+		NONE = 0x00,
+		/*! Do not run this test-suite in default mode (if no tests are selected explicitly when invoking the test harness) */
+		OMIT_FROM_DEFAULT = 0x01,
+		/*! Do not include this test-suite when listing tests by invoking this suite's TestSuite#listTests member function */
+		OMIT_LIST_TESTS = 0x02,
+	};
+
+	constexpr RegistrationFlags operator|(RegistrationFlags one, RegistrationFlags other) noexcept
+	{
+		return static_cast<RegistrationFlags>(static_cast<uint32_t>(one) | static_cast<uint32_t>(other));
+	}
+
+	void registerSuite(const SuiteSupplier& supplier, const std::string& parameterName, const std::string& description, RegistrationFlags flags);
+
 	void printHelp(const std::string& progName);
 
 	/*!

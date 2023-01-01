@@ -28,7 +28,12 @@ namespace Test
 		std::string name;
 		SuiteSupplier supplier;
 		std::string description;
-		bool runByDefault;
+		RegistrationFlags flags;
+
+		bool has(RegistrationFlags flag) const noexcept
+		{
+			return (static_cast<uint32_t>(flags) & static_cast<uint32_t>(flag)) == static_cast<uint32_t>(flag);
+		}
 	};
 
 	// using a list here sorts entries by order of insertion
@@ -60,6 +65,11 @@ namespace Test
 	 */
 	void registerSuite(const SuiteSupplier& supplier, const std::string& parameterName, const std::string& description, bool runByDefault)
 	{
+		registerSuite(supplier, parameterName, description, runByDefault ? RegistrationFlags::NONE : RegistrationFlags::OMIT_FROM_DEFAULT);
+	}
+
+	void registerSuite(const SuiteSupplier& supplier, const std::string& parameterName, const std::string& description, RegistrationFlags flags)
+	{
 		if(parameterName.empty())
 			throw std::invalid_argument("Test-suite parameter cannot be empty!");
 		if(parameterName.find_first_of(" \"'") != std::string::npos)
@@ -68,7 +78,7 @@ namespace Test
 		entry.name = std::string("--") + parameterName;
 		entry.supplier = supplier;
 		entry.description = description;
-		entry.runByDefault = runByDefault;
+		entry.flags = flags;
 		availableSuites.emplace_back(std::move(entry));
 	}
 
@@ -80,6 +90,7 @@ namespace Test
 		std::cout << "Run with '" << progName << " [options]'" << std::endl;
 		std::cout << std::endl;
 		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
+		std::cout << std::setw(paramWidth) << "--list-tests[=<file>]" << std::setw(gapWidth) << " " << "Prints the list of tests methods to the given output file or the standard output. Does not actually run any tests" << std::endl;
 		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic, junit. Defaults to 'plain'" << std::endl;
 		std::cout << std::setw(paramWidth) << "-o=val" << std::setw(gapWidth) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
 		std::cout << std::setw(paramWidth) << "--mode=val" << std::setw(gapWidth) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
@@ -92,7 +103,8 @@ namespace Test
 			sortedSuites.emplace(entry.name, entry);
 		for(const auto& pair : sortedSuites)
 		{
-			std::cout << std::setw(paramWidth) << pair.first << std::setw(gapWidth) << " " << pair.second.description << (pair.second.runByDefault ? " (default)" : "") << std::endl;
+			std::cout << std::setw(paramWidth) << pair.first << std::setw(gapWidth) << " " << pair.second.description
+				<< (pair.second.has(RegistrationFlags::OMIT_FROM_DEFAULT) ? "" : " (default)") << std::endl;
 		}
 	}
 
@@ -104,6 +116,8 @@ namespace Test
 		std::string outputMode = "plain";
 		std::string outputFile;
 		unsigned int mode = Test::TextOutput::Terse;
+		std::unique_ptr<std::ostream> listTestsFile;
+		std::ostream* listTestsOutput = nullptr;
 		for(int i = 1; i < argc; ++i)
 		{
 			std::string arg(argv[i]);
@@ -111,6 +125,18 @@ namespace Test
 			{
 				printHelp(argv[0]);
 				return 0;
+			}
+			else if (arg.find("--list-tests") == 0)
+			{
+				if(arg.find('=') != std::string::npos)
+				{
+					listTestsFile.reset(new std::ofstream(arg.substr(arg.find('=') + 1)));
+					listTestsOutput = listTestsFile.get();
+				}
+				else
+				{
+					listTestsOutput = &std::cout;
+				}
 			}
 			else if(arg.find("--output-file") == 0)
 			{
@@ -161,7 +187,12 @@ namespace Test
 			//only the program-name run all suites
 			for(const auto& entry : availableSuites)
 			{
-				if(entry.runByDefault && selectedSuiteNames.find(entry.name) == selectedSuiteNames.end())
+				if((!listTestsOutput && entry.has(RegistrationFlags::OMIT_FROM_DEFAULT)) ||
+				   (listTestsOutput && entry.has(RegistrationFlags::OMIT_LIST_TESTS)))
+				{
+					continue;
+				}
+				if(selectedSuiteNames.find(entry.name) == selectedSuiteNames.end())
 				{
 					selectedSuites.emplace_back(entry.supplier());
 					selectedSuiteNames.emplace(entry.name);
@@ -234,7 +265,17 @@ namespace Test
 		bool failures = false;
 		for(auto& suite : selectedSuites)
 		{
-			failures = !suite->run(*output, Test::continueAfterFailure) || failures;
+			if (listTestsOutput)
+			{
+				for(const auto& test : suite->listTests())
+				{
+					*listTestsOutput << test.name << '(' << (test.argString.empty() ? "" : test.argString) << ')' << std::endl;
+				}
+			}
+			else
+			{
+				failures = !suite->run(*output, Test::continueAfterFailure) || failures;
+			}
 		}
 
 		return failures ? 1 : 0;
