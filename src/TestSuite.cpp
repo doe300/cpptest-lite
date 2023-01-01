@@ -56,7 +56,7 @@ bool Suite::run(Output& output, const std::vector<TestMethodInfo>& selectedMetho
 	//run sub-suites
 	for(std::shared_ptr<Test::Suite>& suite : subSuites)
 	{
-		suite->run(output, continueAfterFail);
+		suite->run(output, selectedMethods, continueAfterFail);
 	}
 
 	return positiveTestMethods == selectedTestMethods.size();
@@ -68,7 +68,12 @@ std::vector<TestMethodInfo> Suite::listTests() const
 	result.reserve(testMethods.size());
 	for(const auto& method : testMethods)
 	{
-		result.emplace_back(TestMethodInfo{reinterpret_cast<std::uintptr_t>(&method), method.name, method.argString});
+		result.emplace_back(TestMethodInfo{reinterpret_cast<std::uintptr_t>(&method), method.name + "(" + method.argString + ")"});
+	}
+	for(const auto& suite : subSuites)
+	{
+		auto tmp = suite->listTests();
+		result.insert(result.end(), std::make_move_iterator(tmp.begin()), std::make_move_iterator(tmp.end()));
 	}
 	return result;
 }

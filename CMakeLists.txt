@@ -103,6 +103,11 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	add_test(NAME Story2 COMMAND testCppTestLite --story2 --output=junit --output-file=story2.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME Story3 COMMAND testCppTestLite --story3 --output=junit --output-file=story3.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	set_tests_properties(InvalidArgument Failings Comparisons Exceptions Macros Format Story1 PROPERTIES WILL_FAIL TRUE)
+
+	add_test(NAME ListTests COMMAND testCppTestLite --list-tests WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME PatternNoMatch COMMAND testCppTestLite --test-pattern=*moo* --output=junit --output-file=pattern_empty.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	add_test(NAME PatternMatch COMMAND testCppTestLite --test-pattern=*BDD* --output=junit --output-file=pattern_bdd.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	set_tests_properties(PatternMatch PROPERTIES WILL_FAIL TRUE)
 endif()
 
 # Installation targets

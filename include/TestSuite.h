@@ -15,8 +15,7 @@ namespace Test
 	struct TestMethodInfo
 	{
 		std::uintptr_t reference;
-		std::string name;
-		std::string argString;
+		std::string fullName;
 	};
 
 	/*!

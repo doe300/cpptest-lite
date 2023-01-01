@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ParallelSuite.cpp
  * Author: daniel
- * 
+ *
  * Created on September 13, 2015, 5:14 PM
  */
 
@@ -19,7 +19,7 @@ ParallelSuite::~ParallelSuite()
 }
 
 
-bool ParallelSuite::run(Output& output, bool continueAfterFail)
+bool ParallelSuite::run(Output& output, const std::vector<TestMethodInfo>& selectedMethods, bool continueAfterFail)
 {
 	this->continueAfterFail = continueAfterFail;
 	this->output = new SynchronizedOutput(output);
@@ -41,7 +41,7 @@ bool ParallelSuite::run(Output& output, bool continueAfterFail)
 	//run sub-suites
 	for(unsigned int i = 0; i < subSuites.size(); i++)
 	{
-		results[i] = std::async(std::launch::async, &ParallelSuite::runSuite, this, i);
+		results[i] = std::async(std::launch::async, &ParallelSuite::runSuite, this, i, selectedMethods);
 	}
 
 	//join sub-suites
@@ -53,7 +53,7 @@ bool ParallelSuite::run(Output& output, bool continueAfterFail)
 	return true;
 }
 
-bool ParallelSuite::runSuite(unsigned int suiteIndex)
+bool ParallelSuite::runSuite(unsigned int suiteIndex, const std::vector<TestMethodInfo>& selectedMethods)
 {
-	return subSuites[suiteIndex]->run(*output, continueAfterFail);
+	return subSuites[suiteIndex]->run(*output, selectedMethods, continueAfterFail);
 }

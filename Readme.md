@@ -26,7 +26,7 @@ because - seriously - that is bad coding style
 - Split user-message and failure-message into two separate fields (two separate lines in *TextOutput*)
 
 ## New Features (latest version)
-- based upon the (new) C++11 standard
+- based upon the C++11 standard
 - new macros **TEST_PREDICATE(_MSG)** and **TEST_BIPREDICATE(_MSG)** for testing a single (or two) values with a predicate.
 Additionally, two new types were created: **Test::Predicate** and **Test::BiPredicate**, but basically any method accepting a single (or two) arguments and
 returning a *bool* or any other type which can be coerced into a *bool* can be used.
@@ -43,6 +43,7 @@ to add test with one, two or three arguments of arbitrary types.
 - new macros to compare with allowed error, **TEST_ASSERT_ULP** and **TEST_ASSERT_ULP_MSG**
 - allows to register test suites from different files than the main test entry-point, thanks to @mondegreengames
 - can now generate JUnit XML format via *XMLOutput*
+- can list all registered test-methods (via `--list-tests` command-line option) and run test-methods matching a pattern (via `--test-pattern` command-line option)
 
 ### Behavior driven development
 - As of version 0.6 BDD is supported as a completely new feature

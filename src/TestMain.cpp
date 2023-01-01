@@ -91,6 +91,8 @@ namespace Test
 		std::cout << std::endl;
 		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
 		std::cout << std::setw(paramWidth) << "--list-tests[=<file>]" << std::setw(gapWidth) << " " << "Prints the list of tests methods to the given output file or the standard output. Does not actually run any tests" << std::endl;
+		std::cout << std::setw(paramWidth) << "--test-pattern=<pattern>" << std::setw(gapWidth) << " " << "Runs only the test methods matching the given simplified glob pattern. Only full matches and wildcard (via '*') matching is supported." << std::endl;
+		std::cout << std::setw(paramWidth) << " " << std::setw(gapWidth) << " " << "Can be repeated to include test-methods matching any of the given patterns." << std::endl;
 		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic, junit. Defaults to 'plain'" << std::endl;
 		std::cout << std::setw(paramWidth) << "-o=val" << std::setw(gapWidth) << " " << "'plain' prints simple text, 'colored' uses console colors, 'gcc', 'msvc' and 'generic' use compiler-like output syntax" << std::endl;
 		std::cout << std::setw(paramWidth) << "--mode=val" << std::setw(gapWidth) << " " << "Sets the output mode to one of 'debug', 'verbose', 'terse' in order of the amount of information printed. Defaults to 'terse'" << std::endl;
@@ -108,6 +110,29 @@ namespace Test
 		}
 	}
 
+	static bool matchesPattern(const std::string& name, const std::vector<std::string>& parts)
+	{
+		auto it = parts.begin();
+		std::size_t pos = 0;
+		for(;it != parts.end(); ++it)
+		{
+			if ((pos = name.find(*it, pos)) == std::string::npos)
+				return false;
+			pos += it->size();
+		}
+		return it == parts.end();
+	}
+
+	static std::vector<TestMethodInfo> filterTests(std::vector<TestMethodInfo>&& infos, const std::vector<std::vector<std::string>>& patterns)
+	{
+		infos.erase(std::remove_if(infos.begin(), infos.end(), [&patterns] (const TestMethodInfo& info) {
+			return std::none_of(patterns.begin(), patterns.end(), [&info] (const std::vector<std::string>& pattern) {
+				return matchesPattern(info.fullName, pattern);
+			});
+		}), infos.end());
+		return std::move(infos);
+	}
+
 	int runSuites(int argc, char** argv, const ArgumentCallback& callback)
 	{
 		std::vector<std::unique_ptr<Test::Suite>> selectedSuites;
@@ -118,6 +143,7 @@ namespace Test
 		unsigned int mode = Test::TextOutput::Terse;
 		std::unique_ptr<std::ostream> listTestsFile;
 		std::ostream* listTestsOutput = nullptr;
+		std::vector<std::string> testPatterns;
 		for(int i = 1; i < argc; ++i)
 		{
 			std::string arg(argv[i]);
@@ -137,6 +163,11 @@ namespace Test
 				{
 					listTestsOutput = &std::cout;
 				}
+			}
+			else if (arg.find("--test-pattern") == 0)
+			{
+				if(arg.find('=') != std::string::npos)
+					testPatterns.emplace_back(arg.substr(arg.find('=') + 1));
 			}
 			else if(arg.find("--output-file") == 0)
 			{
@@ -180,6 +211,28 @@ namespace Test
 				}
 			}
 
+		}
+
+		std::vector<std::vector<std::string>> testSplitPatterns;
+		if (!testPatterns.empty())
+		{
+			// just as marker to select all correct suites below
+			listTestsOutput = &std::cout;
+			testSplitPatterns.reserve(testPatterns.size());
+			for(auto& pattern : testPatterns)
+			{
+				testSplitPatterns.emplace_back();
+				std::size_t pos = 0;
+				while((pos = pattern.find('*')) != std::string::npos)
+				{
+					testSplitPatterns.back().emplace_back(pattern.substr(0, pos));
+					pattern.erase(0, pos + 1);
+				}
+				if (!pattern.empty())
+				{
+					testSplitPatterns.back().emplace_back(pattern.substr(0, pos));
+				}
+			}
 		}
 
 		if(selectedSuites.empty())
@@ -265,11 +318,17 @@ namespace Test
 		bool failures = false;
 		for(auto& suite : selectedSuites)
 		{
-			if (listTestsOutput)
+			if (!testPatterns.empty())
+			{
+				auto matchingTests = filterTests(suite->listTests(), testSplitPatterns);
+				if (!matchingTests.empty())
+					failures = !suite->run(*output, matchingTests, Test::continueAfterFailure) || failures;
+			}
+			else if (listTestsOutput)
 			{
 				for(const auto& test : suite->listTests())
 				{
-					*listTestsOutput << test.name << '(' << (test.argString.empty() ? "" : test.argString) << ')' << std::endl;
+					*listTestsOutput << test.fullName << std::endl;
 				}
 			}
 			else

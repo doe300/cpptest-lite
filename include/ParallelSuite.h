@@ -25,9 +25,9 @@ namespace Test
 		ParallelSuite& operator=(const ParallelSuite&) = delete;
 		ParallelSuite& operator=(ParallelSuite&&) = default;
 
-		bool run(Output& output, bool continueAfterFail) override;
+		bool run(Output& output, const std::vector<TestMethodInfo>& selectedMethods, bool continueAfterFail) override;
 
 	private:
-		bool runSuite(unsigned int suiteIndex);
+		bool runSuite(unsigned int suiteIndex, const std::vector<TestMethodInfo>& selectedMethods);
 	};
 } // namespace Test
