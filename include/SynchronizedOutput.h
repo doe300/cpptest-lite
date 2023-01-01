@@ -29,6 +29,7 @@ namespace Test
 		void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
 		void printSuccess(const Assertion& assertion) override;
 		void printFailure(const Assertion& assertion) override;
+
 	private:
 		Output& realOutput;
 		std::mutex outputMutex;

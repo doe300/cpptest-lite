@@ -70,8 +70,10 @@ namespace Test
 		 * \param suiteName The name of the suite
 		 * \param numTests The number of tests in this suite
 		 */
-		virtual void initializeSuite(const std::string& suiteName, const unsigned int numTests)
+		virtual void initializeSuite(const std::string& suiteName, unsigned int numTests)
 		{
+			(void) suiteName;
+			(void) numTests;
 		}
 
 		/*!
@@ -82,8 +84,12 @@ namespace Test
 		 * \param numPositiveTests The number of successful tests in this suite
 		 * \param totalDuration The total duration in microseconds the suite took to execute
 		 */
-		virtual void finishSuite(const std::string& suiteName, const unsigned int numTests, const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration)
+		virtual void finishSuite(const std::string& suiteName, unsigned int numTests, unsigned int numPositiveTests, std::chrono::microseconds totalDuration)
 		{
+			(void) suiteName;
+			(void) numTests;
+			(void) numPositiveTests;
+			(void) totalDuration;
 		}
 
 		/*!
@@ -95,6 +101,9 @@ namespace Test
 		 */
 		virtual void initializeTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString)
 		{
+			(void) suiteName;
+			(void) methodName;
+			(void) argString;
 		}
 
 		/*!
@@ -105,8 +114,12 @@ namespace Test
 		 * \param argString The argument-string for the test-method
 		 * \param withSuccess Whether the test-method was finished with success
 		 */
-		virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, const bool withSuccess)
+		virtual void finishTestMethod(const std::string& suiteName, const std::string& methodName, const std::string& argString, bool withSuccess)
 		{
+			(void) suiteName;
+			(void) methodName;
+			(void) argString;
+			(void) withSuccess;
 		}
 
 		/*!
@@ -121,6 +134,10 @@ namespace Test
 		 */
 		virtual void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex)
 		{
+			(void) suiteName;
+			(void) methodName;
+			(void) argString;
+			(void) ex;
 		}
 
 		/*!
@@ -132,6 +149,7 @@ namespace Test
 		 */
 		virtual void printSuccess(const Assertion& assertion)
 		{
+			(void) assertion;
 		}
 
 		/*!
@@ -141,6 +159,7 @@ namespace Test
 		 */
 		virtual void printFailure(const Assertion& assertion)
 		{
+			(void) assertion;
 		}
 
 	protected:

@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   SynchronizedOutput.cpp
  * Author: daniel
- * 
+ *
  * Created on October 16, 2015, 11:44 AM
  */
 

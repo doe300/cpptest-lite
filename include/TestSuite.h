@@ -31,7 +31,6 @@ namespace Test
 		/*!
 		 * Adds another Test::Suite to this suite.
 		 * All associated suites will be run after this suite has finished
-		 *
 		 */
 		void add(const std::shared_ptr<Test::Suite>& suite);
 
@@ -67,7 +66,6 @@ namespace Test
 		inline void addTest(SimpleTestMethod method, const std::string& funcName)
 		{
 			testMethods.emplace_back(funcName, method);
-			totalTestMethods++;
 		}
 
 #if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
@@ -77,28 +75,24 @@ namespace Test
 		inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0)
 		{
 			testMethods.emplace_back(TestMethod(funcName, method, arg0));
-			totalTestMethods++;
 		}
 
 		template<typename T, typename U>
 		inline void addTest(ParameterizedTestMethod<T, U> method, const std::string& funcName, const T arg0, const U arg1)
 		{
 			testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1));
-			totalTestMethods++;
 		}
 
 		template<typename T, typename U, typename V>
 		inline void addTest(ParameterizedTestMethod<T, U, V> method, const std::string& funcName, const T arg0, const U arg1, const V arg2)
 		{
 			testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1, arg2));
-			totalTestMethods++;
 		}
 #else
 		template<typename... T>
 		inline void addTest(ParameterizedTestMethod<T...> method, const std::string& funcName, const T... args)
 		{
 			testMethods.emplace_back(TestMethod(funcName, method, args...));
-			totalTestMethods++;
 		}
 #endif
 
@@ -151,6 +145,7 @@ namespace Test
 		virtual bool before(const std::string& methodName)
 		{
 			//does nothing by default
+			(void) methodName;
 			return true;
 		}
 
@@ -160,9 +155,9 @@ namespace Test
 		virtual void after(const std::string& methodName, const bool success)
 		{
 			//does nothing by default
+			(void) methodName;
+			(void) success;
 		}
-
-		static unsigned int totalTestMethods;
 
 	private:
 

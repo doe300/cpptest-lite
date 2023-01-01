@@ -24,6 +24,7 @@ namespace Test
 		void printSuccess(const Assertion& assertion) override;
 		void printFailure(const Assertion& assertion) override;
 		void printException(const std::string& suiteName, const std::string& methodName, const std::string& argString, const std::exception& ex) override;
+
 	private:
 		static const std::string errorColor;
 		static const std::string successColor;

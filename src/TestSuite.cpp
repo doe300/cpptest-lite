@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   SimpleTest.cpp
  * Author: daniel
- * 
+ *
  * Created on September 10, 2015, 11:28 AM
  */
 
@@ -11,8 +11,6 @@
 #include <iostream>
 
 using namespace Test;
-
-unsigned int Test::Suite::totalTestMethods = 0;
 
 Suite::Suite() : Suite("")
 { }

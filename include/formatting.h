@@ -23,27 +23,27 @@ namespace Test
 			return val;
 		}
 
-		inline std::string to_string(const std::nullptr_t ptr)
+		inline std::string to_string(std::nullptr_t)
 		{
 			return "(nullptr)";
 		}
 
-		inline std::string to_string(const int32_t val)
+		inline std::string to_string(int32_t val)
 		{
 			return std::to_string(val);
 		}
 
-		inline std::string to_string(const int64_t val)
+		inline std::string to_string(int64_t val)
 		{
 			return std::to_string(val);
 		}
 
-		inline std::string to_string(const uint32_t val)
+		inline std::string to_string(uint32_t val)
 		{
 			return std::to_string(val);
 		}
 
-		inline std::string to_string(const uint64_t val)
+		inline std::string to_string(uint64_t val)
 		{
 			return std::to_string(val);
 		}
@@ -52,21 +52,21 @@ namespace Test
 		// Custom format
 		////
 
-		inline std::string to_string(const float val)
+		inline std::string to_string(float val)
 		{
 			char buffer[128];
 			sprintf(buffer, "%g", static_cast<double>(val));
 			return buffer;
 		}
 
-		inline std::string to_string(const double val)
+		inline std::string to_string(double val)
 		{
 			char buffer[128];
 			sprintf(buffer, "%g", val);
 			return buffer;
 		}
 
-		inline std::string to_string(const long double val)
+		inline std::string to_string(long double val)
 		{
 			char buffer[128];
 			sprintf(buffer, "%Lg", val);

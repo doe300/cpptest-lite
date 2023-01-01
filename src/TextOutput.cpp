@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   TextOutput.cpp
  * Author: daniel
- * 
+ *
  * Created on September 11, 2015, 7:07 PM
  */
 
@@ -73,6 +73,3 @@ void TextOutput::printException(const std::string& suiteName, const std::string&
 	stream << "\tErrno: " << errno << std::endl;
 	stream << "\tError: " << strerror(errno) << std::endl;
 }
-
-
-
