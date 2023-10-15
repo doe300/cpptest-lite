@@ -1,8 +1,23 @@
 #pragma once
 
+#include <array>
+#include <climits>
+#include <cuchar>
+#include <cstdint>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <string>
+#include <tuple>
+#include <vector>
+#ifdef __has_include
+#if __has_include(<span>)
+#include <span>
+#endif
+#if __has_include(<optional>)
+#include <optional>
+#endif
+#endif
 
 namespace Test
 {
@@ -15,12 +30,129 @@ namespace Test
 
 		inline std::string to_string(const char* val)
 		{
-			return val;
+			return std::string{"'"} + (val ? val : "(null)") + "'";
 		}
 
 		inline std::string to_string(const std::string& val)
 		{
-			return val;
+			return "'" + val + "'";
+		}
+
+		inline std::string to_string(const std::u16string& val)
+		{
+			std::mbstate_t state{};
+		    std::string result;
+		    for(char16_t c : val)
+		    {
+			    std::array<char, MB_LEN_MAX> tmp{};
+		        std::size_t rc = std::c16rtomb(tmp.data(), c, &state);
+                if (rc == static_cast<std::size_t>(-1))
+				{
+					result.push_back('?');
+					state = std::mbstate_t{};
+					rc = 0;
+				}
+		        for (std::size_t i = 0; i < rc; ++i)
+		        {
+					result.push_back(tmp[i]);
+		        }
+		    }
+
+			return "'" + result + "'";
+		}
+
+		inline std::string to_string(const std::u32string& val)
+		{
+			std::mbstate_t state{};
+		    std::string result;
+		    for(char32_t c : val)
+		    {
+			    std::array<char, MB_LEN_MAX> tmp{};
+		        std::size_t rc = std::c32rtomb(tmp.data(), c, &state);
+                if (rc == static_cast<std::size_t>(-1))
+                {
+	                result.push_back('?');
+	                state = std::mbstate_t{};
+	                rc = 0;
+                }
+		        for (std::size_t i = 0; i < rc; ++i)
+		        {
+					result.push_back(tmp[i]);
+		        }
+		    }
+
+			return "'" + result + "'";
+		}
+
+#ifdef __cpp_lib_string_view
+		inline std::string to_string(std::string_view val)
+		{
+			return "'" + std::string{val} + "'";
+		}
+
+		inline std::string to_string(std::u16string_view val)
+		{
+			std::mbstate_t state{};
+		    std::string result;
+		    for(char16_t c : val)
+		    {
+			    std::array<char, MB_LEN_MAX> tmp{};
+		        std::size_t rc = std::c16rtomb(tmp.data(), c, &state);
+		        if (rc == static_cast<std::size_t>(-1))
+		        {
+					result.push_back('?');
+					state = std::mbstate_t{};
+					rc = 0;
+		        }
+		        for (std::size_t i = 0; i < rc; ++i)
+		        {
+					result.push_back(tmp[i]);
+		        }
+		    }
+
+			return "'" + result + "'";
+		}
+
+		inline std::string to_string(std::u32string_view val)
+		{
+			std::mbstate_t state{};
+		    std::string result;
+		    for(char32_t c : val)
+		    {
+			    std::array<char, MB_LEN_MAX> tmp{};
+		        std::size_t rc = std::c32rtomb(tmp.data(), c, &state);
+		        if (rc == static_cast<std::size_t>(-1))
+		        {
+					result.push_back('?');
+					state = std::mbstate_t{};
+					rc = 0;
+		        }
+		        for (std::size_t i = 0; i < rc; ++i)
+		        {
+					result.push_back(tmp[i]);
+		        }
+		    }
+
+			return "'" + result + "'";
+		}
+#endif
+
+		inline std::string to_string(const char16_t* val)
+		{
+#ifdef __cpp_lib_string_view
+			return to_string(std::u16string_view{val ? val : u"(null)"});
+#else
+			return to_string(std::u16string{val ? val : u"(null)"});
+#endif
+		}
+
+		inline std::string to_string(const char32_t* val)
+		{
+#ifdef __cpp_lib_string_view
+			return to_string(std::u32string_view{val ? val : U"(null)"});
+#else
+			return to_string(std::u32string{val ? val : U"(null)"});
+#endif
 		}
 
 		inline std::string to_string(std::nullptr_t)
@@ -73,7 +205,7 @@ namespace Test
 			return buffer;
 		}
 
-		//support for enum-class, which can't be implicitly converted to int
+		// support for enum-class, which can't be implicitly converted to int
 
 		template<typename T>
 		inline
@@ -82,6 +214,56 @@ namespace Test
 		{
 			return std::to_string(static_cast<int>(val));
 		}
+
+		// support for optional values
+#ifdef __cpp_lib_optional
+		template<typename T>
+		inline std::string to_string(const std::optional<T>& val)
+		{
+			if(val)
+			{
+				return to_string(*val);
+			}
+			return "(empty)";
+		}
+#endif
+
+		// support for read-only memory ranges (e.g. vector, array, etc.)
+		template<typename T>
+		inline std::string to_string(T begin, T end)
+		{
+			std::stringstream ss;
+			ss << '(' << std::distance(begin, end) << ") [";
+			bool first = true;
+			for(auto it = begin; it != end; ++it)
+			{
+				if(!first) ss << ", ";
+				first = false;
+				ss << to_string(*it);
+			}
+			ss << ']';
+			return ss.str();
+		}
+
+		template<typename T, std::size_t N>
+		inline std::string to_string(const std::array<T, N>& val)
+		{
+			return to_string(val.begin(), val.end());
+		}
+
+		template<typename T>
+		inline std::string to_string(const std::vector<T>& val)
+		{
+			return to_string(val.begin(), val.end());
+		}
+
+#ifdef __cpp_lib_span
+		template<typename T>
+		inline std::string to_string(const std::span<T>& val)
+		{
+			return to_string(val.begin(), val.end());
+		}
+#endif
 
 		/*
 		 * Helper for checking whether #to_string() or #toString() member-functions exist
@@ -140,6 +322,25 @@ namespace Test
 
 			template<typename T>
 			struct has_stream_operator : substitution_succeeded<typename get_stream_operator_result<T>::type> { };
+
+			template<std::size_t N, typename... Args>
+			inline typename std::enable_if<N == (sizeof...(Args) - 1), std::string>::type toElementString(const std::tuple<Args...>& tuple)
+			{
+				return to_string(std::get<N>(tuple));
+			}
+
+			template<std::size_t N, typename... Args>
+			inline typename std::enable_if<N < (sizeof...(Args) - 1), std::string>::type toElementString(const std::tuple<Args...>& tuple)
+			{
+				return to_string(std::get<N>(tuple)) + ", " + toElementString<N + 1>(tuple);
+			}
+
+			template<typename Head, typename Next, typename... Tail>
+			inline std::string toElementString(const Head& head, const Next& next, const Tail&... tail)
+			{
+				return to_string(head) + ", " + toElementString(next, tail...);
+			}
+
 		} // namespace internal
 
 		/*
@@ -171,6 +372,12 @@ namespace Test
 		to_string(const T& val)
 		{
 			return val.toString();
+		}
+
+		template<typename... Args>
+		inline std::string to_string(const std::tuple<Args...>& tuple)
+		{
+			return "{" + internal::toElementString<0>(tuple) + "}";
 		}
 	} // namespace Formats
 } // namespace Test

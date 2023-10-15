@@ -44,6 +44,9 @@ using namespace std;
 //
 int main(int argc, char* argv[])
 {
+    // TODO required for proper UTF-16 to locale-dependent multi-byte conversion (in formatting tests)
+    setlocale(LC_ALL, "en_US.utf8");
+
     Test::setContinueAfterFail(true);
     Test::ignoreArgument("--no-such-argument");
     Test::registerSuite(Test::newInstance<FailTestSuite>, "fail-tests", "Tests the correct handling of failed tests");

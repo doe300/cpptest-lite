@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -rdynamic")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project (CppTest-lite VERSION 0.9)
+project (CppTest-lite VERSION 0.10)
 find_package(Threads REQUIRED)
 
 option(CPPTEST_LITE_CREATE_TESTS "Creates the test-program used to test cpptest-lite" OFF)

@@ -26,7 +26,7 @@ because - seriously - that is bad coding style
 - Split user-message and failure-message into two separate fields (two separate lines in *TextOutput*)
 
 ## New Features (latest version)
-- based upon the C++11 standard
+- based upon the C++11 standard (with selected support for some C++14/C++17/C++20 types)
 - new macros **TEST_PREDICATE(_MSG)** and **TEST_BIPREDICATE(_MSG)** for testing a single (or two) values with a predicate.
 Additionally, two new types were created: **Test::Predicate** and **Test::BiPredicate**, but basically any method accepting a single (or two) arguments and
 returning a *bool* or any other type which can be coerced into a *bool* can be used.

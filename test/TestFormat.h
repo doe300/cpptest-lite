@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   TestFormat.h
  * Author: doe300
  *
@@ -17,6 +17,9 @@ public:
 
     void testFloatingPointNumbers();
     void testStreamWriteOperator();
+    void testStringTypes();
+    void testMemoryRanges();
+    void testTuples();
 };
 
 #endif /* TESTFORMAT_H */
