@@ -12,7 +12,7 @@
 
 #define TEST_FAIL(msg) \
     { \
-        testFailed(Test::Assertion(__FILE__, __LINE__, ((msg) != nullptr ? #msg : ""))); \
+        testFailed(Test::Assertion(__FILE__, __LINE__, msg)); \
         if(!continueAfterFailure()) return; \
     }
 
@@ -28,7 +28,7 @@
 #define TEST_ASSERT_MSG(condition, msg) \
     { \
         if(false == (condition)) { \
-            testFailed(Test::Assertion( __FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion( __FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -45,7 +45,7 @@
 #define TEST_ASSERT_EQUALS_MSG(expected, value, msg) \
     { \
         if(!Test::Comparisons::isSame(expected, value)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -69,7 +69,7 @@
 #define TEST_ASSERT_DELTA_MSG(expected, value, delta, msg) \
     { \
         if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -89,7 +89,7 @@
 		using Type = std::remove_reference<decltype(expected)>::type; \
 		auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon(); \
         if(!Test::Comparisons::inMaxDistance(expected, value, delta)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -119,18 +119,18 @@
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected exception of type '") + #except + std::string("' was not thrown!"), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         catch(except&) { testSucceeded(Test::Assertion(__FILE__,__LINE__)); } \
         catch(std::exception &ex) { \
             /*If we get here, wrong exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Wrong Exception was thrown: ") + ex.what(), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Wrong Exception was thrown: ") + ex.what(), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         catch(...) { \
             /* Any other type than an exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("A non-exception-type was thrown, expected exception of type: ") + #except, ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("A non-exception-type was thrown, expected exception of type: ") + #except, msg)); \
             if(!continueAfterFailure()) return; \
         } \
     }
@@ -156,7 +156,7 @@
         try { \
             expression; \
             /*If we get here, no exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", msg)); \
             if(!continueAfterFailure()) return; \
         } \
         catch(std::exception &ex) { \
@@ -164,7 +164,7 @@
         } \
         catch(...) { \
             /* Any other type than an exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", msg)); \
             if(!continueAfterFailure()) return; \
         } \
     }
@@ -193,12 +193,12 @@
             testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
         } \
         catch(std::exception &ex) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Exception thrown: ") + ex.what(), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Exception thrown: ") + ex.what(), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         catch(...) { \
             /* Any other type than an exception was thrown*/ \
-            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, "A non-exception-type was thrown!", msg)); \
             if(!continueAfterFailure()) return; \
         } \
     }
@@ -216,7 +216,7 @@
 #define TEST_PREDICATE_MSG(predicate, value, msg) \
     { \
         if(false == predicate(value)) {\
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, msg)); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
@@ -230,13 +230,13 @@
 #define TEST_BIPREDICATE_MSG(bipredicate, value0, value1, msg) \
     { \
         if(false == bipredicate(value0, value1)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, msg)); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_ABORT(msg) \
     { \
-        testFailed(Test::Assertion(__FILE__, __LINE__, "Test-method aborted!", ((msg) != nullptr ? #msg : ""))); \
+        testFailed(Test::Assertion(__FILE__, __LINE__, "Test-method aborted!", msg)); \
         return; \
     }
 #define TEST_STRING_EQUALS(expected, value) \
@@ -250,7 +250,7 @@
 #define TEST_STRING_EQUALS_MSG(expected, value, msg) \
     { \
         if(std::string(expected) != (value)) { \
-            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), ((msg) != nullptr ? #msg : ""))); \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \

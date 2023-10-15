@@ -35,17 +35,27 @@ namespace Test
 		const std::string userMessage;
 		const int lineNumber;
 
-		Assertion(const char* fileName, const int lineNumber, const std::string& errorMessage, const char* userMessage) :
+		Assertion(const char* fileName, int lineNumber, const std::string& errorMessage, const std::string& userMessage) :
 			suite(""), file(fileName), method(""), args(""), errorMessage(errorMessage), userMessage(userMessage), lineNumber(lineNumber)
 		{
 		}
 
-		Assertion(const char* fileName, const int lineNumber, const char* userMessage) :
+		Assertion(const char* fileName, int lineNumber, const std::string& errorMessage, const char* userMessage) :
+			Assertion(fileName, lineNumber, errorMessage, std::string{userMessage != nullptr ? userMessage : ""})
+		{
+		}
+
+		Assertion(const char* fileName, int lineNumber, const std::string& userMessage) :
 			suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(userMessage), lineNumber(lineNumber)
 		{
 		}
 
-		Assertion(const char* fileName, const int lineNumber) :
+		Assertion(const char* fileName, int lineNumber, const char* userMessage) :
+			Assertion(fileName, lineNumber, std::string{userMessage != nullptr ? userMessage : ""})
+		{
+		}
+
+		Assertion(const char* fileName, int lineNumber) :
 			suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(""), lineNumber(lineNumber)
 		{
 		}

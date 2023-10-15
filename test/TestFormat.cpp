@@ -19,6 +19,7 @@ TestFormat::TestFormat()
     TEST_ADD(TestFormat::testStringTypes);
     TEST_ADD(TestFormat::testMemoryRanges);
     TEST_ADD(TestFormat::testTuples);
+    TEST_ADD(TestFormat::testNonLiteralMessages);
 }
 
 void TestFormat::testFloatingPointNumbers()
@@ -83,4 +84,14 @@ void TestFormat::testTuples()
     auto a = std::make_tuple(7, 8U, 3.5, 7.1f, true);
     std::tuple<int, unsigned, double, float, bool> b{13, 4U, 2.7, 1.9F, false};
     TEST_ASSERT_EQUALS_MSG(a, b, "Tuple elements should be printed");
+}
+
+void TestFormat::testNonLiteralMessages()
+{
+    // checks compatibility with old string literal only calls which handle NULL pointer
+    TEST_ASSERT_MSG(false, nullptr);
+    for(int i = 0; i < 2; ++i)
+    {
+        TEST_ASSERT_EQUALS_MSG(i, i - 1, std::to_string(i) + " and " + std::to_string(i - 1) + " are never equal");
+    }
 }

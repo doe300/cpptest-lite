@@ -20,6 +20,7 @@ public:
     void testStringTypes();
     void testMemoryRanges();
     void testTuples();
+    void testNonLiteralMessages();
 };
 
 #endif /* TESTFORMAT_H */
