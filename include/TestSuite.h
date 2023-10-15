@@ -53,6 +53,11 @@ namespace Test
 		 */
 		virtual std::vector<TestMethodInfo> listTests() const;
 
+		std::string getName() const
+		{
+			return suiteName;
+		}
+
 	protected:
 
 		//! Test-method without any parameter
@@ -165,6 +170,14 @@ namespace Test
 			(void) success;
 		}
 
+		/*!
+		 * Returns whether the current test method has already failed (but continued to execute)
+		 */
+		inline bool hasFailed()
+		{
+			return !currentTestSucceeded;
+		}
+
 	private:
 
 		struct TestMethod
@@ -234,7 +247,7 @@ namespace Test
 			}
 
 			template<typename... R>
-			static inline std::string joinStrings(const R&... remainder)
+			static inline std::string joinStrings(const R&... /* remainder */)
 			{
 				//is never called, but must exist to not throw compilation errors
 				return "";
