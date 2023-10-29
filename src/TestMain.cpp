@@ -90,7 +90,7 @@ namespace Test
 		std::cout << "Run with '" << progName << " [options]'" << std::endl;
 		std::cout << std::endl;
 		std::cout << std::setw(paramWidth) << "--help" << std::setw(gapWidth) << " " << "Prints this help" << std::endl;
-		std::cout << std::setw(paramWidth) << "--list-tests[=<file>]" << std::setw(gapWidth) << " " << "Prints the list of tests methods to the given output file or the standard output. Does not actually run any tests" << std::endl;
+		std::cout << std::setw(paramWidth) << "--list-tests[=<file>]" << std::setw(gapWidth) << " " << "Prints the list of test methods to the given output file or the standard output. Does not actually run any tests" << std::endl;
 		std::cout << std::setw(paramWidth) << "--test-pattern=<pattern>" << std::setw(gapWidth) << " " << "Runs only the test methods matching the given simplified glob pattern. Only full matches and wildcard (via '*') matching is supported." << std::endl;
 		std::cout << std::setw(paramWidth) << " " << std::setw(gapWidth) << " " << "Can be repeated to include test-methods matching any of the given patterns." << std::endl;
 		std::cout << std::setw(paramWidth) << "--output=val" << std::setw(gapWidth) << " " << "Sets the output of the tests. Available options are: plain, colored, gcc, msvc, generic, junit. Defaults to 'plain'" << std::endl;
@@ -135,14 +135,15 @@ namespace Test
 
 	int runSuites(int argc, char** argv, const ArgumentCallback& callback)
 	{
-		std::vector<std::unique_ptr<Test::Suite>> selectedSuites;
+		std::vector<std::pair<std::unique_ptr<Test::Suite>, std::string>> selectedSuites;
 		std::set<std::string> selectedSuiteNames;
 		selectedSuites.reserve(argc);
 		std::string outputMode = "plain";
 		std::string outputFile;
 		unsigned int mode = Test::TextOutput::Terse;
-		std::unique_ptr<std::ostream> listTestsFile;
+		std::unique_ptr<std::ostream> listOutputFile;
 		std::ostream* listTestsOutput = nullptr;
+		std::ostream* listSuitesOutput = nullptr;
 		std::vector<std::string> testPatterns;
 		for(int i = 1; i < argc; ++i)
 		{
@@ -156,12 +157,24 @@ namespace Test
 			{
 				if(arg.find('=') != std::string::npos)
 				{
-					listTestsFile.reset(new std::ofstream(arg.substr(arg.find('=') + 1)));
-					listTestsOutput = listTestsFile.get();
+					listOutputFile.reset(new std::ofstream(arg.substr(arg.find('=') + 1)));
+					listTestsOutput = listOutputFile.get();
 				}
 				else
 				{
 					listTestsOutput = &std::cout;
+				}
+			}
+			else if (arg.find("--list-suites") == 0)
+			{
+				if(arg.find('=') != std::string::npos)
+				{
+					listOutputFile.reset(new std::ofstream(arg.substr(arg.find('=') + 1)));
+					listSuitesOutput = listOutputFile.get();
+				}
+				else
+				{
+					listSuitesOutput = &std::cout;
 				}
 			}
 			else if (arg.find("--test-pattern") == 0)
@@ -206,7 +219,7 @@ namespace Test
 				}
 				if(selectedSuiteNames.find(name) == selectedSuiteNames.end())
 				{
-					selectedSuites.emplace_back(it->supplier());
+					selectedSuites.emplace_back(std::make_pair(it->supplier(), it->name));
 					selectedSuiteNames.emplace(name);
 				}
 			}
@@ -240,14 +253,14 @@ namespace Test
 			//only the program-name run all suites
 			for(const auto& entry : availableSuites)
 			{
-				if((!listTestsOutput && entry.has(RegistrationFlags::OMIT_FROM_DEFAULT)) ||
-				   (listTestsOutput && entry.has(RegistrationFlags::OMIT_LIST_TESTS)))
+				if((!listTestsOutput && !listSuitesOutput && entry.has(RegistrationFlags::OMIT_FROM_DEFAULT)) ||
+				   ((listTestsOutput || listSuitesOutput) && entry.has(RegistrationFlags::OMIT_LIST_TESTS)))
 				{
 					continue;
 				}
 				if(selectedSuiteNames.find(entry.name) == selectedSuiteNames.end())
 				{
-					selectedSuites.emplace_back(entry.supplier());
+					selectedSuites.emplace_back(std::make_pair(entry.supplier(), entry.name));
 					selectedSuiteNames.emplace(entry.name);
 				}
 			}
@@ -320,20 +333,24 @@ namespace Test
 		{
 			if (!testPatterns.empty())
 			{
-				auto matchingTests = filterTests(suite->listTests(), testSplitPatterns);
+				auto matchingTests = filterTests(suite.first->listTests(), testSplitPatterns);
 				if (!matchingTests.empty())
-					failures = !suite->run(*output, matchingTests, Test::continueAfterFailure) || failures;
+					failures = !suite.first->run(*output, matchingTests, Test::continueAfterFailure) || failures;
 			}
 			else if (listTestsOutput)
 			{
-				for(const auto& test : suite->listTests())
+				for(const auto& test : suite.first->listTests())
 				{
 					*listTestsOutput << test.fullName << std::endl;
 				}
 			}
+			else if (listSuitesOutput)
+			{
+				*listSuitesOutput << suite.first->getName() << ':' << suite.second << std::endl;
+			}
 			else
 			{
-				failures = !suite->run(*output, Test::continueAfterFailure) || failures;
+				failures = !suite.first->run(*output, Test::continueAfterFailure) || failures;
 			}
 		}
 
