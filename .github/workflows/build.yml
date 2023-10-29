@@ -30,7 +30,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Configure
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCPPTEST_LITE_CREATE_TESTS=ON
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CONFIGURATION_TYPES=${{ matrix.build_type }} -DCPPTEST_LITE_CREATE_TESTS=ON
       env:
         CC: ${{ matrix.config.cc }}
         CXX: ${{ matrix.config.cxx }}
