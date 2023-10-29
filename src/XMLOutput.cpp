@@ -50,7 +50,8 @@ void XMLOutput::finishSuite(const std::string& suiteName, unsigned int numTests,
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(totalDuration);
 	std::chrono::microseconds remainder = totalDuration - seconds;
-	unsigned numErrors = std::count_if(currentSuite->methods.begin(), currentSuite->methods.end(), [] (const TestMethodInfo& method) { return !method.exceptionMessage.empty(); });
+	unsigned numErrors = static_cast<unsigned>(std::count_if(currentSuite->methods.begin(), currentSuite->methods.end(),
+        [] (const TestMethodInfo& method) { return !method.exceptionMessage.empty(); }));
 	output << "\t<testsuite name=\"" << escapeXML(suiteName) << "\" tests=\"" << numTests << "\" failures=\""
 		<< (numTests - numPositiveTests - numErrors) << "\" errors=\"" << numErrors << "\" time=\""
 		<< seconds.count() << '.' << std::setfill('0') << std::setw(3) << remainder.count() << "\" timestamp=\""

@@ -43,7 +43,8 @@ void TestAssertions::testAssertULP()
 
 void TestAssertions::testThrows()
 {
-    int i, j;
+    int i = 1;
+    int j = 2;
     TEST_THROWS_NOTHING(std::string s);
     TEST_THROWS_NOTHING(i = i + j);
 }

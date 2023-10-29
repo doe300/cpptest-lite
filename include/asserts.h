@@ -142,7 +142,7 @@
             testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", "")); \
             if(!continueAfterFailure()) return; \
         } \
-        catch(std::exception &ex) { \
+        catch(std::exception &) { \
             testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
         } \
         catch(...) { \
@@ -159,7 +159,7 @@
             testFailed(Test::Assertion(__FILE__, __LINE__, "Expected exception, nothing was thrown!", msg)); \
             if(!continueAfterFailure()) return; \
         } \
-        catch(std::exception &ex) { \
+        catch(std::exception &) { \
             testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
         } \
         catch(...) { \
