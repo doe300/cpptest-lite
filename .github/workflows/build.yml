@@ -42,20 +42,20 @@ jobs:
       run: ctest --test-dir ${{github.workspace}}/build -C ${{ matrix.build_type }} --output-on-failure
 
     - name: Report Linux
-      uses: EnricoMi/publish-unit-test-result-action@v1.31
+      uses: EnricoMi/publish-unit-test-result-action@v2.6.0
       if: ${{ matrix.config.os != 'windows-latest' }}
       with:
-        files: '${{github.workspace}}/build/*.xml'
+        junit_files: '${{github.workspace}}/build/*.xml'
         check_name: ${{ matrix.config.name }} Test Results
         comment_mode: off
         fail_on: errors
         check_run_annotations: none
 
     - name: Report Windows
-      uses: EnricoMi/publish-unit-test-result-action/composite@v1.31
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2.6.0
       if: ${{ matrix.config.os == 'windows-latest' }}
       with:
-        files: '${{github.workspace}}/build/*.xml'
+        junit_files: '${{github.workspace}}/build/*.xml'
         check_name: ${{ matrix.config.name }} Test Results
         comment_mode: off
         fail_on: errors

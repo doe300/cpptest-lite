@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.9)
 
 # Set C++ standard to C++11 without any extensions (e.g. GNU)
 set(CMAKE_CXX_STANDARD 11)
