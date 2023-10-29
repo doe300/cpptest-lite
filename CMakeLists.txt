@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.5)
 
 # Set C++ standard to C++11 without any extensions (e.g. GNU)
 set(CMAKE_CXX_STANDARD 11)
@@ -108,6 +108,17 @@ if(CPPTEST_LITE_CREATE_TESTS)
 	add_test(NAME PatternNoMatch COMMAND testCppTestLite --test-pattern=*moo* --output=junit --output-file=pattern_empty.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	add_test(NAME PatternMatch COMMAND testCppTestLite --test-pattern=*BDD* --output=junit --output-file=pattern_bdd.xml WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 	set_tests_properties(PatternMatch PROPERTIES WILL_FAIL TRUE)
+
+	# Example of how to use the cpptest_discover_tests() CMake script
+	include(cmake/CppTest.cmake)
+	cpptest_discover_tests(testCppTestLite
+		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+		PROPERTIES
+			COST 17
+			LABELS CppTest
+		DISABLED_TESTS ThrowTestSuite TestMacros
+		FAILING_TESTS FailTestSuite CompareTestSuite TestFormat Story1
+	)
 endif()
 
 # Installation targets
