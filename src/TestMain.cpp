@@ -177,21 +177,21 @@ namespace Test
 					listSuitesOutput = &std::cout;
 				}
 			}
-			else if (arg.find("--test-pattern") == 0)
+			else if (arg.find("--test-pattern=") == 0)
 			{
 				if(arg.find('=') != std::string::npos)
 					testPatterns.emplace_back(arg.substr(arg.find('=') + 1));
 			}
-			else if(arg.find("--output-file") == 0)
+			else if(arg.find("--output-file=") == 0)
 			{
 				if(arg.find('=') != std::string::npos)
 					outputFile = arg.substr(arg.find('=') + 1);
 			}
-			else if(arg.find("--output") == 0 || arg.find("-o") == 0)
+			else if(arg.find("--output=") == 0 || arg.find("-o=") == 0)
 			{
 				outputMode = arg;
 			}
-			else if(arg.find("--mode") == 0)
+			else if(arg.find("--mode=") == 0)
 			{
 				if(arg.find("debug") != std::string::npos)
 					mode = Test::TextOutput::Debug;

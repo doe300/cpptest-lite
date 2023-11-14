@@ -276,33 +276,33 @@ namespace Test
 	/*!
 	 * Registers a simple test-method
 	 */
-#define TEST_ADD(func) setSuiteName(__FILE__); addTest(static_cast<SimpleTestMethod>((&func)), #func)
+#define TEST_ADD(func) this->setSuiteName(__FILE__); this->addTest(static_cast<Test::Suite::SimpleTestMethod>((&func)), #func)
 	/*!
 	 * Registers a test-method taking a single argument of type std::string or a c-style string-literal
 	 */
-#define TEST_ADD_WITH_STRING(func, string) setSuiteName(__FILE__); addTest<std::basic_string<char>>(static_cast<ParameterizedTestMethod<std::basic_string<char>>>((&func)), #func, string)
+#define TEST_ADD_WITH_STRING(func, string) this->setSuiteName(__FILE__); this->addTest<std::basic_string<char>>(static_cast<Test::Suite::ParameterizedTestMethod<std::basic_string<char>>>((&func)), #func, string)
 	/*!
 	 * Registers a test-method taking a single argument of type c-string
 	 */
-#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) setSuiteName(__FILE__); addTest<char*>(static_cast<ParameterizedTestMethod<char*>>((&func)), #func, stringLiteral)
+#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) this->setSuiteName(__FILE__); this->addTest<char*>(static_cast<Test::Suite::ParameterizedTestMethod<char*>>((&func)), #func, stringLiteral)
 	/*!
 	 * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
 	 */
-#define TEST_ADD_WITH_INTEGER(func, number) setSuiteName(__FILE__); addTest<int>(static_cast<ParameterizedTestMethod<int>>((&func)), #func, number)
+#define TEST_ADD_WITH_INTEGER(func, number) this->setSuiteName(__FILE__); this->addTest<int>(static_cast<Test::Suite::ParameterizedTestMethod<int>>((&func)), #func, number)
 	/*!
 	 * Registers a test-method which takes an argument to a pointer of arbitrary data
 	 */
-#define TEST_ADD_WITH_POINTER(func, pointer) setSuiteName(__FILE__); addTest<void*>(static_cast<ParameterizedTestMethod<void*>>((&func)), #func, pointer)
+#define TEST_ADD_WITH_POINTER(func, pointer) this->setSuiteName(__FILE__); this->addTest<void*>(static_cast<Test::Suite::ParameterizedTestMethod<void*>>((&func)), #func, pointer)
 	/*!
 	 * Registers a test-method with a single argument of arbitrary type
 	 */
-#define TEST_ADD_SINGLE_ARGUMENT(func, arg) setSuiteName(__FILE__); addTest<decltype(arg)>(static_cast<ParameterizedTestMethod<decltype(arg)>>((&func)), #func, arg)
+#define TEST_ADD_SINGLE_ARGUMENT(func, arg) this->setSuiteName(__FILE__); this->addTest<decltype(arg)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg)>>((&func)), #func, arg)
 	/*!
 	 * Registers a test-method with two arguments of arbitrary types
 	 */
-#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1)>>((&func)), #func, arg0, arg1)
+#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) this->setSuiteName(__FILE__); this->addTest<decltype(arg0), decltype(arg1)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1)>>((&func)), #func, arg0, arg1)
 	/*!
 	 * Registers a test-method with three arguments of arbitrary types
 	 */
-#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) setSuiteName(__FILE__); addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>((&func)), #func, arg0, arg1, arg2)
+#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) this->setSuiteName(__FILE__); this->addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>((&func)), #func, arg0, arg1, arg2)
 } // namespace Test

@@ -44,6 +44,7 @@ to add test with one, two or three arguments of arbitrary types.
 - allows to register test suites from different files than the main test entry-point, thanks to @mondegreengames
 - can now generate JUnit XML format via *XMLOutput*
 - can list all registered test-methods (via `--list-tests` command-line option) and run test-methods matching a pattern (via `--test-pattern` command-line option)
+- CTest integration with automatic creating of CTest tests for cpptest-lite test suites via (CppTest.cmake, cpptest_discover_tests), similar to CTest's GoogleTest integration.
 
 ### Behavior driven development
 - As of version 0.6 BDD is supported as a completely new feature
