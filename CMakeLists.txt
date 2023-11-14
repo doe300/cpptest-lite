@@ -117,6 +117,12 @@ if(CPPTEST_LITE_CREATE_TESTS)
 		DISABLED_TESTS ThrowTestSuite TestMacros
 		FAILING_TESTS FailTestSuite CompareTestSuite TestFormat Story1
 	)
+
+	add_executable(testModernCppTestLite test/run_modern_tests.cpp)
+	target_link_libraries(testModernCppTestLite cpptest-lite)
+	set_target_properties(testModernCppTestLite PROPERTIES CXX_STANDARD 20)
+	cpptest_discover_tests(testModernCppTestLite FAILING_TESTS ModernAssertions)
+
 endif()
 
 # Installation targets

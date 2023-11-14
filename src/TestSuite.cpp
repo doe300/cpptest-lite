@@ -9,6 +9,9 @@
 
 #include <exception>
 #include <iostream>
+#if defined(__GNUG__) || defined(__clang__)
+#include <cxxabi.h>
+#endif
 
 using namespace Test;
 
@@ -93,6 +96,10 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
 		try {
 			method(static_cast<Suite*>(this));
 		}
+		catch(const AssertionFailedException& afe)
+		{
+			currentTestSucceeded = false;
+		}
 		catch(const std::exception& e)
 		{
 			exceptionThrown = true;
@@ -132,6 +139,19 @@ std::vector<std::reference_wrapper<const Suite::TestMethod>> Suite::filterTests(
 	return result;
 }
 
+std::string Suite::toPrettyTypeName(const std::type_info& type)
+{
+	// Adapted from Howard Hinnants's implementation in http://stackoverflow.com/a/18369732
+	std::string result = type.name();
+#if defined(__GNUG__) || defined(__clang__)
+	std::unique_ptr<char, void(*)(void*)> owner{
+		abi::__cxa_demangle(type.name(), nullptr, nullptr, nullptr),
+		std::free
+	};
+	result = owner ? owner.get() : type.name();
+#endif
+	return result;
+}
 
 // explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx
 // thats a bug in libc++, because of interaction with __attribute__ ((__visibility__("hidden"), __always_inline__)) in std::string

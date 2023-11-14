@@ -6,9 +6,17 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
+#include <typeinfo>
 #include <type_traits>
 #include <vector>
+#ifdef __has_include
+#if __has_include(<source_location>) && __has_include(<string_view>)
+#include <source_location>
+#include <string_view>
+#endif
+#endif
 
 namespace Test
 {
@@ -16,6 +24,12 @@ namespace Test
 	{
 		std::uintptr_t reference;
 		std::string fullName;
+	};
+
+	struct AssertionFailedException : public std::runtime_error
+	{
+		AssertionFailedException() : std::runtime_error{"Test assertion failed"}
+		{}
 	};
 
 	/*!
@@ -178,6 +192,160 @@ namespace Test
 			return !currentTestSucceeded;
 		}
 
+#if defined(__cpp_lib_source_location) && defined(__cpp_lib_string_view)
+		inline void testFail(std::string_view msg, std::source_location loc = std::source_location::current())
+		{
+			testFailed(Test::Assertion(loc.file_name(), loc.line(), "", std::string{msg}));
+			if(!continueAfterFailure()) throw AssertionFailedException{};
+		}
+
+		inline void testAssert(bool condition, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if (!condition) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed", std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename Func>
+		inline void testAssert(Func&& condition, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if (!condition()) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed for condition: " + toPrettyTypeName(typeid(Func)), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename T, typename U>
+		inline void testAssertEquals(T&& expected, U&& value, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if (!Test::Comparisons::isSame(expected, value)) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename T>
+		inline void testAssertDelta(T&& expected, T&& value, T&& delta, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if(!Test::Comparisons::inMaxDistance(expected, value, delta)) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename T>
+		inline void testAssertUlp(T&& expected, T&& value, T&& numULP, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			using Type = std::remove_reference<decltype(expected)>::type;
+			auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon();
+			if(!Test::Comparisons::inMaxDistance(expected, value, delta)) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename Exception, typename Func>
+		inline void testThrows(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			static const auto EXCEPTION_NAME = toPrettyTypeName(typeid(Exception));
+			try {
+				expression();
+				/*If we get here, no exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Expected exception of type ") + EXCEPTION_NAME + std::string(" was not thrown"), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			catch(const Exception&) {
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+			}
+			catch(std::exception &ex) {
+				/*If we get here, wrong exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), ""));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			catch(...) {
+				/* Any other type than an exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME, ""));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+		}
+
+		template<typename Func>
+		inline void testThrowsAnything(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			try {
+				expression();
+				/*If we get here, no exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Expected exception was not thrown", std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			catch(std::exception &ex) {
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+			}
+			catch(...) {
+				/* Any other type than an exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+		}
+
+		template<typename Func>
+		inline void testThrowsNothing(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			try {
+				expression();
+			}
+			catch(std::exception &ex) {
+				/*If we get here, an exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), ""));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			catch(...) {
+				/* Any other type than an exception was thrown*/
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+		}
+
+		template<typename Predicate, typename T>
+		inline void testPredicate(Predicate&& predicate, T&& value, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if (!predicate(value)) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Value " + Test::Formats::to_string(value) + " did not match the predicate: " + toPrettyTypeName(typeid(Predicate)), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		template<typename Predicate, typename T, typename U>
+		inline void testBiPredicate(Predicate&& predicate, T&& value0, U&& value1, std::string_view msg = "", std::source_location loc = std::source_location::current())
+		{
+			if (!predicate(value0, value1)) {
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Values " + Test::Formats::to_string(value0) + " and " + Test::Formats::to_string(value1) + " did not match the bi-predicate: " + toPrettyTypeName(typeid(Predicate)), std::string{msg}));
+				if(!continueAfterFailure()) throw AssertionFailedException{};
+			}
+			else
+				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+		}
+
+		inline void testAbort(std::string_view msg, std::source_location loc = std::source_location::current())
+		{
+			testFailed(Test::Assertion(loc.file_name(), loc.line(), "Test-method aborted", std::string{msg}));
+			throw AssertionFailedException{};
+		}
+#endif
+
 	private:
 
 		struct TestMethod
@@ -268,6 +436,8 @@ namespace Test
 		std::pair<bool, std::chrono::microseconds> runTestMethod(const TestMethod& method);
 
 		std::vector<std::reference_wrapper<const TestMethod>> filterTests(const std::vector<TestMethodInfo>& selectedMethods);
+
+		static std::string toPrettyTypeName(const std::type_info& type);
 
 		//ParallelSuite needs access to subSuites
 		friend class ParallelSuite;
