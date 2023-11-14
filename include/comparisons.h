@@ -1,8 +1,14 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <type_traits>
+#ifdef __has_include
+#if __has_include(<span>)
+#include <span>
+#endif
+#endif
 
 namespace Test
 {
@@ -50,6 +56,16 @@ namespace Test
 				return true;
 			return val1 == val2;
 		}
+
+#ifdef __cpp_lib_span
+		template<typename T>
+		inline bool isSame(const std::span<T>& span1, const std::span<T>& span2)
+		{
+			if(span1.size() != span2.size())
+				return false;
+			return std::equal(span1.begin(), span1.end(), span2.begin(), span2.end());
+		}
+#endif
 
 		////
 		// General case

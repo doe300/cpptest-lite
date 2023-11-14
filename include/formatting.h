@@ -17,6 +17,9 @@
 #if __has_include(<optional>)
 #include <optional>
 #endif
+#if __has_include(<variant>)
+#include <variant>
+#endif
 #endif
 
 namespace Test
@@ -225,6 +228,14 @@ namespace Test
 				return to_string(*val);
 			}
 			return "(empty)";
+		}
+#endif
+
+#ifdef __cpp_lib_variant
+		template<typename... Args>
+		inline std::string to_string(const std::variant<Args...>& val)
+		{
+			return std::visit([] (auto& entry) {return to_string(entry);}, val);
 		}
 #endif
 
