@@ -1,5 +1,6 @@
 #pragma once
 
+#include "comparisons.h"
 #include "Output.h"
 #include "formatting.h"
 

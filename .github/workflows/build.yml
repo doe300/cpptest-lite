@@ -19,15 +19,19 @@ jobs:
           cxx: "cl"
         - name: "Linux GCC"
           os: "ubuntu-latest"
-          cc: "gcc"
-          cxx: "g++"
+          cc: "gcc-12"
+          cxx: "g++-12"
         - name: "Linux CLang"
           os: "ubuntu-latest"
-          cc: "clang"
-          cxx: "clang++"
+          cc: "clang-15"
+          cxx: "clang++-15"
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Update Compilers
+      if: ${{ matrix.config.os == "ubuntu-latest" }}
+      run: sudo apt update && sudo apt install gcc-12 g++-12 clang-15
 
     - name: Configure
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CONFIGURATION_TYPES=${{ matrix.build_type }} -DCPPTEST_LITE_CREATE_TESTS=ON
