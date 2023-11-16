@@ -246,7 +246,7 @@ namespace Test
 		template<typename T>
 		inline void testAssertUlp(T&& expected, T&& value, T&& numULP, std::string_view msg = "", std::source_location loc = std::source_location::current())
 		{
-			using Type = std::remove_reference<decltype(expected)>::type;
+			using Type = std::remove_reference_t<decltype(expected)>;
 			auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon();
 			if(!Test::Comparisons::inMaxDistance(expected, value, delta)) {
 				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), std::string{msg}));
