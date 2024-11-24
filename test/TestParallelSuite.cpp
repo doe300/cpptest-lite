@@ -1,10 +1,3 @@
-/* 
- * File:   TestParallelSuite.cpp
- * Author: daniel
- * 
- * Created on October 16, 2015, 1:10 PM
- */
-
 #include "TestParallelSuite.h"
 
 TestParallelSuite::TestParallelSuite() : Test::ParallelSuite("TestParallel")

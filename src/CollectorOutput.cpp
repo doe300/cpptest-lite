@@ -1,10 +1,3 @@
-/* 
- * File:   CollectorOutput.cpp
- * Author: daniel
- * 
- * Created on September 20, 2015, 12:16 PM
- */
-
 #include <stdexcept>
 
 #include "CollectorOutput.h"

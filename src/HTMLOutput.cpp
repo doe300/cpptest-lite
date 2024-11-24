@@ -1,10 +1,3 @@
-/* 
- * File:   HTMLOutput.cpp
- * Author: daniel
- * 
- * Created on September 20, 2015, 12:53 PM
- */
-
 #include "HTMLOutput.h"
 
 using namespace Test;

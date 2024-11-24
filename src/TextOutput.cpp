@@ -1,10 +1,3 @@
-/*
- * File:   TextOutput.cpp
- * Author: daniel
- *
- * Created on September 11, 2015, 7:07 PM
- */
-
 #include "TextOutput.h"
 
 #include <cerrno>

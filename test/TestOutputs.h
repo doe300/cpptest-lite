@@ -1,12 +1,4 @@
-/*
- * File:   TestOutputs.h
- * Author: daniel
- *
- * Created on September 20, 2015, 12:41 PM
- */
-
-#ifndef TESTOUTPUTS_H
-#define	TESTOUTPUTS_H
+#pragma once
 
 #include "cpptest.h"
 
@@ -37,6 +29,3 @@ public:
     void somePassingMethod();
     void emptyMethod();
 };
-
-#endif	/* TESTOUTPUTS_H */
-

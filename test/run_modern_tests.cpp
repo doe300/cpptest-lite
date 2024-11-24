@@ -1,10 +1,3 @@
-/*
-* File:   run_modern_tests.h
-* Author: doe300
-*
-* Created on October 29, 2023
-*/
-
 #include <iostream>
 #include <optional>
 #include <variant>

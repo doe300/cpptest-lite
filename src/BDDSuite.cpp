@@ -1,10 +1,3 @@
-/* 
- * File:   BDDSuite.cpp
- * Author: doe300
- * 
- * Created on June 29, 2016, 2:47 PM
- */
-
 #include "BDDSuite.h"
 
 using namespace Test;

@@ -1,7 +1,4 @@
-
-
-#ifndef TEST_ASSERTIONS_H
-#define TEST_ASSERTIONS_H
+#pragma once
 
 #include "cpptest.h"
 
@@ -23,5 +20,3 @@ public:
     void testAssertNotEquals();
     void testAssertFalse();
 };
-
-#endif /* TEST_ASSERTIONS_H */

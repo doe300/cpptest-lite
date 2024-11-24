@@ -1,12 +1,4 @@
-/*
- * File:   TestFormat.h
- * Author: doe300
- *
- * Created on March 4, 2017, 11:39 AM
- */
-
-#ifndef TESTFORMAT_H
-#define TESTFORMAT_H
+#pragma once
 
 #include "cpptest.h"
 
@@ -22,6 +14,3 @@ public:
     void testTuples();
     void testNonLiteralMessages();
 };
-
-#endif /* TESTFORMAT_H */
-

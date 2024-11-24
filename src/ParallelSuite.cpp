@@ -1,10 +1,3 @@
-/*
- * File:   ParallelSuite.cpp
- * Author: daniel
- *
- * Created on September 13, 2015, 5:14 PM
- */
-
 #include "ParallelSuite.h"
 
 using namespace Test;

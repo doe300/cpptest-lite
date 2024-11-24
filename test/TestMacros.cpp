@@ -1,10 +1,3 @@
-/* 
- * File:   TestMacros.cpp
- * Author: daniel
- * 
- * Created on September 15, 2015, 6:27 PM
- */
-
 #include <cstring>
 
 #include "TestMacros.h"
@@ -63,7 +56,7 @@ void TestMacros::testFailureMessages()
     TEST_ASSERT_EQUALS_MSG(i, 45, "Comparison should fail");
     TEST_ASSERT_DELTA_MSG(i, 45, 2, "Delta comparison should fail");
     TEST_ASSERT_ULP_MSG(0.9f, std::nextafter(std::nextafter(0.9f, 1.0f), 1.0f), 1, "ULP comparison should fail");
-    
+
     TEST_THROWS_MSG(std::signbit(5.0), std::out_of_range, "Fails for not throwing exception");
     TEST_THROWS_MSG(throwsInt(), std::out_of_range, "Fails for non-exception-type");
     //XXX could use improvements
@@ -72,10 +65,10 @@ void TestMacros::testFailureMessages()
     TEST_THROWS_ANYTHING_MSG(throwsInt(), "Fails for throwing a non-exception type");
     TEST_THROWS_NOTHING_MSG(throwsException(), "Fails for throwing exception");
     TEST_THROWS_NOTHING_MSG(throwsInt(), "Fails for throwing a non-exception type");
-    
+
     TEST_PREDICATE_MSG(std::signbit, static_cast<double>(i), "Fails for value not matching predicate");
     TEST_BIPREDICATE_MSG([](int x, int y){return x == y;}, i, 45, "Fails for not matching bipredicate");
-    
+
     TEST_ABORT("Abort method");
     TEST_ASSERT_MSG(false,"Is not called");
 }

@@ -1,12 +1,4 @@
-/* 
- * File:   TestSuites.h
- * Author: daniel
- *
- * Created on October 16, 2015, 1:14 PM
- */
-
-#ifndef TESTSUITES_H
-#define	TESTSUITES_H
+#pragma once
 
 #include "../include/cpptest.h"
 
@@ -139,6 +131,3 @@ private:
         throw 13;
     }
 };
-
-#endif	/* TESTSUITES_H */
-

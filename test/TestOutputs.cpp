@@ -1,10 +1,3 @@
-/*
- * File:   TestOutputs.cpp
- * Author: daniel
- *
- * Created on September 20, 2015, 12:41 PM
- */
-
 #include "TestOutputs.h"
 
 #include <fstream>

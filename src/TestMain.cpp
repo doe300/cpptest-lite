@@ -1,10 +1,3 @@
-/*
- * File:   TestMain.cpp
- * Author:
- *
- * Created on March 31, 2022, 2:56 PM
- */
-
 #include "cpptest-main.h"
 
 #include "cpptest.h"

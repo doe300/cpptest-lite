@@ -1,10 +1,3 @@
-/* 
- * File:   CompilerOutput.cpp
- * Author: daniel
- * 
- * Created on September 14, 2015, 10:23 PM
- */
-
 #include "CompilerOutput.h"
 
 using namespace Test;

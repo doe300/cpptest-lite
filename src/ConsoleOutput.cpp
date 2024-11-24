@@ -1,10 +1,3 @@
-/*
- * File:   ConsoleOutput.cpp
- * Author: doe300
- *
- * Created on April 25, 2016, 4:44 PM
- */
-
 #include "ConsoleOutput.h"
 
 #include <cstring>

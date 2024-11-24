@@ -1,10 +1,3 @@
-/*
- * File:   SimpleTest.cpp
- * Author: daniel
- *
- * Created on September 10, 2015, 11:28 AM
- */
-
 #include "TestSuite.h"
 
 #include <exception>

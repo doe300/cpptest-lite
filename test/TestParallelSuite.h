@@ -1,12 +1,4 @@
-/* 
- * File:   TestParallelSuite.h
- * Author: daniel
- *
- * Created on October 16, 2015, 1:10 PM
- */
-
-#ifndef TESTPARALLELSUITE_H
-#define	TESTPARALLELSUITE_H
+#pragma once
 
 #include "TestMacros.h"
 #include "TestSuites.h"
@@ -17,6 +9,3 @@ public:
     TestParallelSuite();
 
 };
-
-#endif	/* TESTPARALLELSUITE_H */
-

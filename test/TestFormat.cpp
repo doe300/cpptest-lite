@@ -1,10 +1,3 @@
-/*
- * File:   TestFormat.cpp
- * Author: doe300
- *
- * Created on March 4, 2017, 11:39 AM
- */
-
 #include <cmath>
 #include <cstdint>
 #include <tuple>
