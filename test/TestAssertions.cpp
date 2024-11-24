@@ -1,6 +1,26 @@
 
 #include "TestAssertions.h"
 
+struct OneComparableType
+{
+    friend std::ostream& operator<<(std::ostream& os, const OneComparableType&)
+    {
+        return os << "one";
+    }
+};
+struct OtherComparableType
+{
+    friend bool operator==(const OneComparableType&, const OtherComparableType&) noexcept
+    {
+        return true;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const OtherComparableType&)
+    {
+        return os << "other";
+    }
+};
+
 TestAssertions::TestAssertions()
 {
     TEST_ADD(TestAssertions::testAssertBoolean);
@@ -27,6 +47,10 @@ void TestAssertions::testAssertEquals()
     TEST_ASSERT_EQUALS(nullptr, nullptr);
     TEST_ASSERT_EQUALS("Foo", "Foo");
     TEST_ASSERT_EQUALS(1.0f, 1.0f);
+
+    OneComparableType one{};
+    OtherComparableType other{};
+    TEST_ASSERT_EQUALS(one, other);
 }
 
 void TestAssertions::testAssertDelta()

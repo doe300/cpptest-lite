@@ -9,6 +9,9 @@
 #include <span>
 #endif
 #endif
+#if __cplusplus >= 202002L
+#include <concepts>
+#endif
 
 namespace Test
 {
@@ -57,14 +60,38 @@ namespace Test
 			return val1 == val2;
 		}
 
+#if __cplusplus >= 202002L
+		template<typename T, typename U>
+		concept EqualsComparable = requires(const T& val1, const U& val2)
+		{
+			{ val1 == val2 } -> std::convertible_to<bool>;
+		};
+#endif
+
 #ifdef __cpp_lib_span
-		template<typename T>
-		inline bool isSame(const std::span<T>& span1, const std::span<T>& span2)
+		template<typename T, std::size_t Extent1, std::size_t Extent2>
+		inline bool isSame(const std::span<T, Extent1>& span1, const std::span<T, Extent2>& span2)
 		{
 			if(span1.size() != span2.size())
 				return false;
 			return std::equal(span1.begin(), span1.end(), span2.begin(), span2.end());
 		}
+
+#if __cplusplus >= 202002L
+		template<typename T>
+		concept Span = requires(T val)
+		{
+			typename T::value_type;
+			{ val } -> std::convertible_to<std::span<const typename T::value_type>>;
+		};
+
+		template<typename T1, typename T2>
+		inline bool isSame(const T1& val1, const T2& val2)
+			requires(!EqualsComparable<T1, T2> && Span<T1> && Span<T2>)
+		{
+			return isSame(std::span{val1}, std::span{val2});
+		}
+#endif
 #endif
 
 		////
@@ -72,10 +99,33 @@ namespace Test
 		////
 
 		//support for arbitrary types, falls back to the == operator
+#if __cplusplus < 202002L
 		template<typename T1, typename T2>
 		inline bool isSame(const T1& val1, const T2& val2)
 		{
 			return val1 == val2;
 		}
+#else
+		template<typename T1, typename T2>
+		inline bool isSame(const T1& val1, const T2& val2)
+			requires EqualsComparable<T1, T2>
+		{
+			return val1 == val2;
+		}
+
+		template<typename T1, typename T2>
+		inline bool isSame(const T1& val1, const T2& val2)
+			requires(!EqualsComparable<T1, T2> && !(Span<T1> && Span<T2>) && std::convertible_to<T1, T2>)
+		{
+			return static_cast<T2>(val1) == val2;
+		}
+
+		template<typename T1, typename T2>
+		inline bool isSame(const T1& val1, const T2& val2)
+			requires(!EqualsComparable<T1, T2> && !(Span<T1> && Span<T2>) && !std::convertible_to<T1, T2> && std::convertible_to<T2, T1>)
+		{
+			return val1 == static_cast<T1>(val2);
+		}
+#endif
 	} // namespace Comparisons
 } // namespace Test
