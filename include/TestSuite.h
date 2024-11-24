@@ -271,12 +271,12 @@ namespace Test
 			}
 			catch(std::exception &ex) {
 				/*If we get here, wrong exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), ""));
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), std::string{msg}));
 				if(!continueAfterFailure()) throw AssertionFailedException{};
 			}
 			catch(...) {
 				/* Any other type than an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME, ""));
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME, std::string{msg}));
 				if(!continueAfterFailure()) throw AssertionFailedException{};
 			}
 		}
@@ -308,7 +308,7 @@ namespace Test
 			}
 			catch(std::exception &ex) {
 				/*If we get here, an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), ""));
+				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), std::string{msg}));
 				if(!continueAfterFailure()) throw AssertionFailedException{};
 			}
 			catch(...) {

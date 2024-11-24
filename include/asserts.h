@@ -18,7 +18,7 @@
 
 #define TEST_ASSERT(condition) \
     { \
-        if(false == (condition)) { \
+        if(!(condition)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), "")); \
             if(!continueAfterFailure()) return; \
         } \
@@ -27,7 +27,7 @@
 
 #define TEST_ASSERT_MSG(condition, msg) \
     { \
-        if(false == (condition)) { \
+        if(!(condition)) { \
             testFailed(Test::Assertion( __FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' failed"), msg)); \
             if(!continueAfterFailure()) return; \
         } \
@@ -208,28 +208,28 @@
 ////
 #define TEST_PREDICATE(predicate, value) \
     { \
-        if(false == predicate(value)) { \
+        if(!predicate(value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_PREDICATE_MSG(predicate, value, msg) \
     { \
-        if(false == predicate(value)) {\
+        if(!predicate(value)) {\
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Value '") + Test::Formats::to_string(value) + std::string("' did not match the predicate: ") + #predicate, msg)); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE(bipredicate, value0, value1) \
     { \
-        if(false == bipredicate(value0, value1)) { \
+        if(!bipredicate(value0, value1)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, "")); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
     }
 #define TEST_BIPREDICATE_MSG(bipredicate, value0, value1, msg) \
     { \
-        if(false == bipredicate(value0, value1)) { \
+        if(!bipredicate(value0, value1)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Values '") + Test::Formats::to_string(value0) + "' and '" + Test::Formats::to_string(value1) + std::string("' did not match the bi-predicate: ") + #bipredicate, msg)); \
             if(!continueAfterFailure()) return; \
         } else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
@@ -251,6 +251,39 @@
     { \
         if(std::string(expected) != (value)) { \
             testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Got \"") + std::string(value) + std::string("\", expected \"") + std::string(expected) + std::string("\""), msg)); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_NOT_EQUALS(expected, value) \
+    { \
+        if(Test::Comparisons::isSame(expected, value)) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected ") + Test::Formats::to_string(value) + std::string(" to differ from ") + Test::Formats::to_string(expected), "")); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_NOT_EQUALS_MSG(expected, value, msg) \
+    { \
+        if(Test::Comparisons::isSame(expected, value)) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Expected ") + Test::Formats::to_string(value) + std::string(" to differ from ") + Test::Formats::to_string(expected), msg)); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+#define TEST_ASSERT_FALSE(condition) \
+    { \
+        if((condition)) { \
+            testFailed(Test::Assertion(__FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' passed unexpectedly"), "")); \
+            if(!continueAfterFailure()) return; \
+        } \
+        else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \
+    }
+
+#define TEST_ASSERT_FALSE_MSG(condition, msg) \
+    { \
+        if((condition)) { \
+            testFailed(Test::Assertion( __FILE__, __LINE__, std::string("Assertion '") + #condition + std::string("' passed unexpectedly"), msg)); \
             if(!continueAfterFailure()) return; \
         } \
         else testSucceeded(Test::Assertion(__FILE__,__LINE__)); \

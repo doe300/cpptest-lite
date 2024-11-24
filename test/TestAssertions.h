@@ -12,7 +12,7 @@ class TestAssertions : public Test::Suite
 {
 public:
     TestAssertions();
-    
+
     void testAssertBoolean();
     void testAssertEquals();
     void testAssertDelta();
@@ -20,6 +20,8 @@ public:
     void testThrows();
     void testPredicate();
     void testBiPredicate();
+    void testAssertNotEquals();
+    void testAssertFalse();
 };
 
 #endif /* TEST_ASSERTIONS_H */

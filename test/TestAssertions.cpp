@@ -10,6 +10,8 @@ TestAssertions::TestAssertions()
     TEST_ADD(TestAssertions::testThrows);
     TEST_ADD(TestAssertions::testPredicate);
     TEST_ADD(TestAssertions::testBiPredicate);
+    TEST_ADD(TestAssertions::testAssertNotEquals);
+    TEST_ADD(TestAssertions::testAssertFalse);
 }
 
 void TestAssertions::testAssertBoolean()
@@ -23,6 +25,7 @@ void TestAssertions::testAssertEquals()
 {
     TEST_ASSERT_EQUALS(1, 1);
     TEST_ASSERT_EQUALS(nullptr, nullptr);
+    TEST_ASSERT_EQUALS("Foo", "Foo");
     TEST_ASSERT_EQUALS(1.0f, 1.0f);
 }
 
@@ -60,4 +63,19 @@ void TestAssertions::testBiPredicate()
 {
     int i = 0, j = 1;
     TEST_BIPREDICATE((std::less<int>{}), i, j);
+}
+
+void TestAssertions::testAssertNotEquals()
+{
+    TEST_ASSERT_NOT_EQUALS(0, 1);
+    TEST_ASSERT_NOT_EQUALS("Foo", "Bar");
+    TEST_ASSERT_NOT_EQUALS(1.0f, -1.0f);
+}
+
+void TestAssertions::testAssertFalse()
+{
+    TEST_ASSERT_FALSE(false);
+    TEST_ASSERT_FALSE(1 == 2);
+    TEST_ASSERT_FALSE(1.0f == -1.0f);
+    TEST_ASSERT_FALSE(nullptr);
 }
