@@ -44,7 +44,7 @@ namespace Test
 			return "'" + val + "'";
 		}
 
-#ifdef __cpp_char8_t
+#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
 		inline std::string to_string(const std::u8string& val)
 		{
 			std::mbstate_t state{};
@@ -162,7 +162,7 @@ namespace Test
 			return "'" + result + "'";
 		}
 
-#ifdef __cpp_char8_t
+#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
 		inline std::string to_string(std::u8string_view val)
 		{
 			std::mbstate_t state{};

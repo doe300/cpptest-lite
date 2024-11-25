@@ -123,12 +123,14 @@ struct TestModernAssertions : public Test::Suite
         std::vector<uint8_t> span1{0x01, 0x02, 0x03};
         testAssertEquals(span0, span1);
 
+#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
         std::u8string u1{u8"Foo Bar"};
         std::u8string u2{u8"⠁⠂⠃"};
         std::u8string_view u3 = u8"Baz";
         testAssertEquals(u1, u2);
         testAssertEquals(u1, u3);
         testAssertEquals(u1.c_str(), u3.data());
+#endif
 
         std::u16string w1{u"Foo Bar"};
         std::u16string w2{u"\u2801⠐⠂⠃"};
