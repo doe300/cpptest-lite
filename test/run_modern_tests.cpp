@@ -7,6 +7,7 @@
 
 using namespace std;
 
+#if defined(__cpp_lib_source_location) && defined(__cpp_lib_string_view)
 struct NonCopyOrMoveableType
 {
     NonCopyOrMoveableType(int val) : value(val) {}
@@ -153,3 +154,10 @@ int main(int argc, char* argv[])
     Test::registerSuite(Test::newInstance<TestModernAssertions>, "modern", "Test workings of modern (non-macro) assertions");
     return Test::runSuites(argc, argv);
 }
+#else
+int main(int argc, char* argv[])
+{
+    // Not supported
+    return EXIT_SUCCESS;
+}
+#endif

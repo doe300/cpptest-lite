@@ -20,6 +20,9 @@
 #if __has_include(<variant>)
 #include <variant>
 #endif
+#if __has_include(<cuchar>)
+#include <cuchar>
+#endif
 #endif
 
 namespace Test
@@ -250,21 +253,33 @@ namespace Test
 		inline std::string to_string(float val)
 		{
 			char buffer[128];
+#ifdef _MSC_VER
+			sprintf_s(buffer, sizeof(buffer), "%g", static_cast<double>(val));
+#else
 			sprintf(buffer, "%g", static_cast<double>(val));
+#endif
 			return buffer;
 		}
 
 		inline std::string to_string(double val)
 		{
 			char buffer[128];
+#ifdef _MSC_VER
+			sprintf_s(buffer, sizeof(buffer), "%g", val);
+#else
 			sprintf(buffer, "%g", val);
+#endif
 			return buffer;
 		}
 
 		inline std::string to_string(long double val)
 		{
 			char buffer[128];
+#ifdef _MSC_VER
+			sprintf_s(buffer, sizeof(buffer), "%Lg", val);
+#else
 			sprintf(buffer, "%Lg", val);
+#endif
 			return buffer;
 		}
 
@@ -285,7 +300,11 @@ namespace Test
 		to_string(const T ptr)
 		{
 			char buffer[32];
+#ifdef _MSC_VER
+			sprintf_s(buffer, sizeof(buffer), "%p", reinterpret_cast<const void*>(ptr));
+#else
 			sprintf(buffer, "%p", reinterpret_cast<const void*>(ptr));
+#endif
 			return buffer;
 		}
 
