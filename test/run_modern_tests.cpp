@@ -121,6 +121,27 @@ struct TestModernAssertions : public Test::Suite
         std::array<uint8_t, 3> span0{0x00, 0x01, 0x13};
         std::vector<uint8_t> span1{0x01, 0x02, 0x03};
         testAssertEquals(span0, span1);
+
+        std::u8string u1{u8"Foo Bar"};
+        std::u8string u2{u8"⠁⠂⠃"};
+        std::u8string_view u3 = u8"Baz";
+        testAssertEquals(u1, u2);
+        testAssertEquals(u1, u3);
+        testAssertEquals(u1.c_str(), u3.data());
+
+        std::u16string w1{u"Foo Bar"};
+        std::u16string w2{u"\u2801⠐⠂⠃"};
+        std::u16string_view w3 = u"Baz";
+        testAssertEquals(w1, w2);
+        testAssertEquals(w1, w3);
+        testAssertEquals(w1.c_str(), w3.data());
+
+        std::u32string utf1{U"Foo Bar"};
+        std::u32string utf2{U"\u2801⠐⠂⠃"};
+        std::u32string_view utf3 = U"Baz";
+        testAssertEquals(utf1, utf2);
+        testAssertEquals(utf1, utf3);
+        testAssertEquals(utf1.c_str(), utf3.data());
     }
 };
 
