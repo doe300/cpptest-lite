@@ -189,7 +189,7 @@ namespace Test
 #endif
 #endif
 
-#ifdef __cpp_char8_t
+#if defined (__cpp_char8_t) && defined (CPPTEST_LITE_U8_STRING)
 		inline std::string to_string(const char8_t* val)
 		{
 #ifdef __cpp_lib_string_view
