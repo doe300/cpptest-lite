@@ -44,7 +44,9 @@ namespace Test
 			return "'" + val + "'";
 		}
 
-#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
+#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t) && __cpp_lib_char8_t >= 201907L && defined(_GLIBCXX_USE_UCHAR_C8RTOMB_MBRTOC8_CXX20)
+// _GLIBCXX_USE_UCHAR_C8RTOMB_MBRTOC8_CXX20 seems to be required, since the standard libraries do not properly signal support for std::c8rtomb
+#define CPPTEST_LITE_U8_STRING 1
 		inline std::string to_string(const std::u8string& val)
 		{
 			std::mbstate_t state{};
@@ -162,7 +164,7 @@ namespace Test
 			return "'" + result + "'";
 		}
 
-#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
+#if defined(CPPTEST_LITE_U8_STRING)
 		inline std::string to_string(std::u8string_view val)
 		{
 			std::mbstate_t state{};

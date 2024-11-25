@@ -123,7 +123,7 @@ struct TestModernAssertions : public Test::Suite
         std::vector<uint8_t> span1{0x01, 0x02, 0x03};
         testAssertEquals(span0, span1);
 
-#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t)
+#if defined(CPPTEST_LITE_U8_STRING)
         std::u8string u1{u8"Foo Bar"};
         std::u8string u2{u8"⠁⠂⠃"};
         std::u8string_view u3 = u8"Baz";
@@ -160,6 +160,6 @@ int main(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     // Not supported
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
 }
 #endif
