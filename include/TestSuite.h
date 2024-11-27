@@ -72,16 +72,8 @@ namespace Test {
     template <typename... T>
     using ParameterizedTestMethod = void (Suite::*)(T... args);
 
-    inline void setSuiteName(const std::string &filePath) {
-      if (this->suiteName.empty()) {
-        this->suiteName = Private::getFileName(filePath);
-        this->suiteName = this->suiteName.substr(0, this->suiteName.find_last_of('.'));
-      }
-    }
-
-    inline void addTest(SimpleTestMethod method, const std::string &funcName) {
-      testMethods.emplace_back(funcName, method);
-    }
+    void setSuiteName(const std::string &filePath);
+    void addTest(SimpleTestMethod method, const std::string &funcName);
 
 #if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
     // Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and
@@ -109,20 +101,8 @@ namespace Test {
     }
 #endif
 
-    inline void testSucceeded(Assertion &&assertion) {
-      assertion.method = currentTestMethodName;
-      assertion.args = currentTestMethodArgs;
-      assertion.suite = suiteName;
-      output->printSuccess(assertion);
-    }
-
-    inline void testFailed(Assertion &&assertion) {
-      currentTestSucceeded = false;
-      assertion.method = currentTestMethodName;
-      assertion.args = currentTestMethodArgs;
-      assertion.suite = suiteName;
-      output->printFailure(assertion);
-    }
+    void testSucceeded(Assertion &&assertion);
+    void testFailed(Assertion &&assertion);
 
     inline bool continueAfterFailure() { return continueAfterFail; }
 

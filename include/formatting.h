@@ -3,7 +3,6 @@
 #include <array>
 #include <climits>
 #include <cstdint>
-#include <cuchar>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -32,8 +31,8 @@ namespace Test {
     // Simple methods
     ////
 
-    inline std::string to_string(const char *val) { return std::string{"'"} + (val ? val : "(null)") + "'"; }
-    inline std::string to_string(const std::string &val) { return "'" + val + "'"; }
+    std::string to_string(const char *val);
+    std::string to_string(const std::string &val);
 
 #if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t) && __cpp_lib_char8_t >= 201907L &&                            \
     defined(_GLIBCXX_USE_UCHAR_C8RTOMB_MBRTOC8_CXX20)
@@ -59,41 +58,8 @@ namespace Test {
     }
 #endif
 
-    inline std::string to_string(const std::u16string &val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char16_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c16rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
-    }
-
-    inline std::string to_string(const std::u32string &val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char32_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c32rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
-    }
+    std::string to_string(const std::u16string &val);
+    std::string to_string(const std::u32string &val);
 
 #ifdef __cpp_lib_string_view
     inline std::string to_string(std::string_view val) { return "'" + std::string{val} + "'"; }
@@ -181,46 +147,20 @@ namespace Test {
 #endif
     }
 
-    inline std::string to_string(std::nullptr_t) { return "(nullptr)"; }
-    inline std::string to_string(bool val) { return val ? "true" : "false"; }
-    inline std::string to_string(int32_t val) { return std::to_string(val); }
-    inline std::string to_string(int64_t val) { return std::to_string(val); }
-    inline std::string to_string(uint32_t val) { return std::to_string(val); }
-    inline std::string to_string(uint64_t val) { return std::to_string(val); }
+    std::string to_string(std::nullptr_t);
+    std::string to_string(bool val);
+    std::string to_string(int32_t val);
+    std::string to_string(int64_t val);
+    std::string to_string(uint32_t val);
+    std::string to_string(uint64_t val);
 
     ////
     // Custom format
     ////
 
-    inline std::string to_string(float val) {
-      char buffer[128];
-#ifdef _MSC_VER
-      sprintf_s(buffer, sizeof(buffer), "%g", static_cast<double>(val));
-#else
-      sprintf(buffer, "%g", static_cast<double>(val));
-#endif
-      return buffer;
-    }
-
-    inline std::string to_string(double val) {
-      char buffer[128];
-#ifdef _MSC_VER
-      sprintf_s(buffer, sizeof(buffer), "%g", val);
-#else
-      sprintf(buffer, "%g", val);
-#endif
-      return buffer;
-    }
-
-    inline std::string to_string(long double val) {
-      char buffer[128];
-#ifdef _MSC_VER
-      sprintf_s(buffer, sizeof(buffer), "%Lg", val);
-#else
-      sprintf(buffer, "%Lg", val);
-#endif
-      return buffer;
-    }
+    std::string to_string(float val);
+    std::string to_string(double val);
+    std::string to_string(long double val);
 
     // support for enum-class, which can't be implicitly converted to int
 
@@ -229,16 +169,11 @@ namespace Test {
       return std::to_string(static_cast<int>(val));
     }
 
+    std::string to_string(const void *ptr);
     // support for generic pointers, which would otherwise be treated as booleans below
     template <typename T>
     inline std::string to_string(const T *ptr) {
-      char buffer[32];
-#ifdef _MSC_VER
-      sprintf_s(buffer, sizeof(buffer), "%p", reinterpret_cast<const void *>(ptr));
-#else
-      sprintf(buffer, "%p", reinterpret_cast<const void *>(ptr));
-#endif
-      return buffer;
+      return to_string(reinterpret_cast<const void *>(ptr));
     }
 
     /*

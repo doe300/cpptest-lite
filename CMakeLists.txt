@@ -40,7 +40,9 @@ target_sources(cpptest-lite
     src/CollectorOutput.cpp
     src/CompilerOutput.cpp
     src/ConsoleOutput.cpp
+    src/formatting.cpp
     src/HTMLOutput.cpp
+    src/Output.cpp
     src/ParallelSuite.cpp
     src/SynchronizedOutput.cpp
     src/TestSuite.cpp

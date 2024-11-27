@@ -63,6 +63,32 @@ std::vector<TestMethodInfo> Suite::listTests() const {
   return result;
 }
 
+void Suite::setSuiteName(const std::string &filePath) {
+  if (suiteName.empty()) {
+    suiteName = Private::getFileName(filePath);
+    suiteName = suiteName.substr(0, suiteName.find_last_of('.'));
+  }
+}
+
+void Suite::addTest(SimpleTestMethod method, const std::string &funcName) {
+  testMethods.emplace_back(funcName, method);
+}
+
+void Suite::testSucceeded(Assertion &&assertion) {
+  assertion.method = currentTestMethodName;
+  assertion.args = currentTestMethodArgs;
+  assertion.suite = suiteName;
+  output->printSuccess(assertion);
+}
+
+void Suite::testFailed(Assertion &&assertion) {
+  currentTestSucceeded = false;
+  assertion.method = currentTestMethodName;
+  assertion.args = currentTestMethodArgs;
+  assertion.suite = suiteName;
+  output->printFailure(assertion);
+}
+
 std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod &method) {
   errno = 0;
   bool exceptionThrown = false;
