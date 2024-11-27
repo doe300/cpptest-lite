@@ -103,6 +103,25 @@ namespace Test {
 
     void testSucceeded(Assertion &&assertion);
     void testFailed(Assertion &&assertion);
+    void testFailed(
+        const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage = "");
+
+    void testRun(bool success, const char *fileName, int lineNumber, std::string &&errorMessage,
+        const std::string &userMessage = "");
+
+    inline void testRun(bool success, const char *fileName, int lineNumber, const char *errorMessage,
+        const std::string &userMessage = "") {
+      testRun(success, fileName, lineNumber, std::string{errorMessage ? errorMessage : ""}, userMessage);
+    }
+
+    template <typename Func>
+    void testRun(
+        bool success, const char *fileName, int lineNumber, Func &&generateError, const std::string &userMessage) {
+      testRun(success, fileName, lineNumber, !success ? generateError() : std::string{}, userMessage);
+    }
+
+    const std::string &toMessage(const std::string &msg) const { return msg; }
+    std::string toMessage(const char *msg) const { return std::string{msg ? msg : ""}; }
 
     inline bool continueAfterFailure() { return continueAfterFail; }
 
@@ -157,52 +176,36 @@ namespace Test {
 
     inline void testAssert(
         bool condition, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
-      if (!condition) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed", std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(condition, loc.file_name(), loc.line(), "Assertion failed", std::string{msg});
     }
 
     template <typename Func>
     inline void testAssert(
         Func &&condition, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
-      if (!condition()) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            "Assertion failed for condition: " + toPrettyTypeName(typeid(Func)), std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          condition(), loc.file_name(), loc.line(),
+          [] { return "Assertion failed for condition: " + toPrettyTypeName(typeid(Func)); }, std::string{msg});
     }
 
     template <typename T, typename U>
     inline void testAssertEquals(T &&expected, U &&value, std::string_view msg = "",
         std::source_location loc = std::source_location::current()) {
-      if (!Test::Comparisons::isSame(expected, value)) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
-                Test::Formats::to_string(expected),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          Test::Comparisons::isSame(expected, value), loc.file_name(), loc.line(),
+          [&] { return "Got " + Test::Formats::to_string(value) + ", expected " + Test::Formats::to_string(expected); },
+          std::string{msg});
     }
 
     template <typename T>
     inline void testAssertDelta(T &&expected, T &&value, T &&delta, std::string_view msg = "",
         std::source_location loc = std::source_location::current()) {
-      if (!Test::Comparisons::inMaxDistance(expected, value, delta)) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
-                Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          Test::Comparisons::inMaxDistance(expected, value, delta), loc.file_name(), loc.line(),
+          [&] {
+            return "Got " + Test::Formats::to_string(value) + ", expected " + Test::Formats::to_string(expected) +
+                   " +/- " + Test::Formats::to_string(delta);
+          },
+          std::string{msg});
     }
 
     template <typename T>
@@ -210,46 +213,34 @@ namespace Test {
         std::source_location loc = std::source_location::current()) {
       using Type = std::remove_reference_t<decltype(expected)>;
       auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon();
-      if (!Test::Comparisons::inMaxDistance(expected, value, delta)) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
-                Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") +
-                (Test::Formats::to_string(numULP) + " ULP)"),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          Test::Comparisons::inMaxDistance(expected, value, delta), loc.file_name(), loc.line(),
+          [&] {
+            return "Got " + Test::Formats::to_string(value) + ", expected " + Test::Formats::to_string(expected) +
+                   " +/- " + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)");
+          },
+          std::string{msg});
     }
 
     template <typename Exception, typename Func>
     inline void testThrows(
         Func &&expression, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
-      static const auto EXCEPTION_NAME = toPrettyTypeName(typeid(Exception));
+      const std::string EXCEPTION_NAME = toPrettyTypeName(typeid(Exception));
       try {
         expression();
         /*If we get here, no exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Expected exception of type ") + EXCEPTION_NAME + std::string(" was not thrown"),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(), "Expected exception of type " + EXCEPTION_NAME + " was not thrown",
+            std::string{msg});
       } catch (const Exception &) {
         testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
       } catch (std::exception &ex) {
         /*If we get here, wrong exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(),
+            "Wrong Exception of type " + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(), std::string{msg});
       } catch (...) {
         /* Any other type than an exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME,
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(),
+            "A non-exception-type was thrown, expected exception of type: " + EXCEPTION_NAME, std::string{msg});
       }
     }
 
@@ -259,16 +250,12 @@ namespace Test {
       try {
         expression();
         /*If we get here, no exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(), "Expected exception was not thrown", std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(), "Expected exception was not thrown", std::string{msg});
       } catch (std::exception &ex) {
         testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
       } catch (...) {
         /* Any other type than an exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(), "A non-exception-type was thrown");
       }
     }
 
@@ -279,45 +266,36 @@ namespace Test {
         expression();
       } catch (std::exception &ex) {
         /*If we get here, an exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(),
+            "Exception of type " + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(), std::string{msg});
       } catch (...) {
         /* Any other type than an exception was thrown*/
-        testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
+        testFailed(loc.file_name(), loc.line(), "A non-exception-type was thrown");
       }
     }
 
     template <typename Predicate, typename T>
     inline void testPredicate(Predicate &&predicate, T &&value, std::string_view msg = "",
         std::source_location loc = std::source_location::current()) {
-      if (!predicate(value)) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            "Value " + Test::Formats::to_string(value) +
-                " did not match the predicate: " + toPrettyTypeName(typeid(Predicate)),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          predicate(value), loc.file_name(), loc.line(),
+          [&] {
+            return "Value " + Test::Formats::to_string(value) +
+                   " did not match the predicate: " + toPrettyTypeName(typeid(Predicate));
+          },
+          std::string{msg});
     }
 
     template <typename Predicate, typename T, typename U>
     inline void testBiPredicate(Predicate &&predicate, T &&value0, U &&value1, std::string_view msg = "",
         std::source_location loc = std::source_location::current()) {
-      if (!predicate(value0, value1)) {
-        testFailed(Test::Assertion(loc.file_name(), loc.line(),
-            "Values " + Test::Formats::to_string(value0) + " and " + Test::Formats::to_string(value1) +
-                " did not match the bi-predicate: " + toPrettyTypeName(typeid(Predicate)),
-            std::string{msg}));
-        if (!continueAfterFailure())
-          throw AssertionFailedException{};
-      } else
-        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      testRun(
+          predicate(value0, value1), loc.file_name(), loc.line(),
+          [&] {
+            return "Values " + Test::Formats::to_string(value0) + " and " + Test::Formats::to_string(value1) +
+                   " did not match the bi-predicate: " + toPrettyTypeName(typeid(Predicate));
+          },
+          std::string{msg});
     }
 
     inline void testAbort(std::string_view msg, std::source_location loc = std::source_location::current()) {

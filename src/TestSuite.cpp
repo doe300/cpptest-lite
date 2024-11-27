@@ -89,6 +89,23 @@ void Suite::testFailed(Assertion &&assertion) {
   output->printFailure(assertion);
 }
 
+void Suite::testFailed(
+    const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage) {
+  testFailed(Assertion(fileName, lineNumber, errorMessage, userMessage));
+  if (!continueAfterFailure())
+    throw AssertionFailedException{};
+}
+
+void Suite::testRun(
+    bool success, const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage) {
+  if (!success) {
+    testFailed(Assertion(fileName, lineNumber, errorMessage, userMessage));
+    if (!continueAfterFailure())
+      throw AssertionFailedException{};
+  } else
+    testSucceeded(Assertion(fileName, lineNumber));
+}
+
 std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod &method) {
   errno = 0;
   bool exceptionThrown = false;
