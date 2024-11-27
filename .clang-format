@@ -1,0 +1,7 @@
+IndentWidth: 2
+AccessModifierOffset: -2
+UseTab: Never
+ColumnLimit: 120
+NamespaceIndentation: All
+AlwaysBreakTemplateDeclarations: Yes
+AlignAfterOpenBracket: DontAlign

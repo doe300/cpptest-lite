@@ -1,10 +1,10 @@
 #pragma once
 
-#include "asserts.h"
 #include "ParallelSuite.h"
 #include "TestSuite.h"
+#include "asserts.h"
 
-//Outputs
+// Outputs
 #include "CompilerOutput.h"
 #include "ConsoleOutput.h"
 #include "HTMLOutput.h"

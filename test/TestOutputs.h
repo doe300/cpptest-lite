@@ -4,28 +4,27 @@
 
 #include <memory>
 
-class TestOutputs : public Test::Suite
-{
+class TestOutputs : public Test::Suite {
 public:
-    TestOutputs();
-    ~TestOutputs() override;
+  TestOutputs();
+  ~TestOutputs() override;
 
-    void testOutput(void* output);
+  void testOutput(void *output);
+
 private:
-    std::unique_ptr<Test::Output> textOutput;
-    std::unique_ptr<Test::Output> compilerOutput;
-    std::unique_ptr<Test::Output> htmlOutput;
-    std::unique_ptr<Test::Output> consoleOutput;
-    std::unique_ptr<Test::Output> xmlOutput;
+  std::unique_ptr<Test::Output> textOutput;
+  std::unique_ptr<Test::Output> compilerOutput;
+  std::unique_ptr<Test::Output> htmlOutput;
+  std::unique_ptr<Test::Output> consoleOutput;
+  std::unique_ptr<Test::Output> xmlOutput;
 };
 
-class TestWithOutput : public Test::Suite
-{
+class TestWithOutput : public Test::Suite {
 public:
-    TestWithOutput();
+  TestWithOutput();
 
-    void someTestMethod();
-    void anotherTestMethod(char* someText);
-    void somePassingMethod();
-    void emptyMethod();
+  void someTestMethod();
+  void anotherTestMethod(char *someText);
+  void somePassingMethod();
+  void emptyMethod();
 };

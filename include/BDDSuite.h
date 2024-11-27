@@ -1,41 +1,37 @@
 #pragma once
 #include "cpptest.h"
 
-namespace Test
-{
+namespace Test {
 
-	/*!
-	 * Test Suite for behavior driven development
-	 *
-	 * \since 0.6
-	 */
-	class BDDSuite : public Suite
-	{
-	public:
+  /*!
+   * Test Suite for behavior driven development
+   *
+   * \since 0.6
+   */
+  class BDDSuite : public Suite {
+  public:
+    using Condition = std::function<bool()>;
+    using Action = std::function<void()>;
 
-		using Condition = std::function<bool()>;
-		using Action = std::function<void()>;
+    struct Scenario {
+      std::string name;
+      Condition precondition;
+      Action action;
+      Condition postcondition;
+    };
 
-		struct Scenario
-		{
-			std::string name;
-			Condition precondition;
-			Action action;
-			Condition postcondition;
-		};
+    BDDSuite() = default;
+    explicit BDDSuite(const std::string &suiteName);
+    BDDSuite(const BDDSuite &) = delete;
+    BDDSuite(BDDSuite &&) noexcept = default;
+    ~BDDSuite() noexcept override = default;
 
-		BDDSuite() = default;
-		explicit BDDSuite(const std::string& suiteName);
-		BDDSuite(const BDDSuite&) = delete;
-		BDDSuite(BDDSuite&&) noexcept = default;
-		~BDDSuite() noexcept override = default;
+    BDDSuite &operator=(const BDDSuite &) = delete;
+    BDDSuite &operator=(BDDSuite &&) = default;
 
-		BDDSuite& operator=(const BDDSuite&) = delete;
-		BDDSuite& operator=(BDDSuite&&) = default;
+    void runScenario(std::string scenarioName);
 
-		void runScenario(std::string scenarioName);
-
-	protected:
-		std::vector<Scenario> scenarios;
-	};
+  protected:
+    std::vector<Scenario> scenarios;
+  };
 } // namespace Test

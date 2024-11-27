@@ -1,7 +1,7 @@
 #pragma once
 
-#include "comparisons.h"
 #include "Output.h"
+#include "comparisons.h"
 #include "formatting.h"
 
 #include <chrono>
@@ -9,8 +9,8 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <typeinfo>
 #include <type_traits>
+#include <typeinfo>
 #include <vector>
 #ifdef __has_include
 #if __has_include(<source_location>) && __has_include(<string_view>)
@@ -19,461 +19,462 @@
 #endif
 #endif
 
-namespace Test
-{
-	struct TestMethodInfo
-	{
-		std::uintptr_t reference;
-		std::string fullName;
-	};
+namespace Test {
+  struct TestMethodInfo {
+    std::uintptr_t reference;
+    std::string fullName;
+  };
 
-	struct AssertionFailedException : public std::runtime_error
-	{
-		AssertionFailedException() : std::runtime_error{"Test assertion failed"}
-		{}
-	};
+  struct AssertionFailedException : public std::runtime_error {
+    AssertionFailedException() : std::runtime_error{"Test assertion failed"} {}
+  };
 
-	/*!
-	 * Any test-class must extend this class
-	 */
-	class Suite
-	{
-	public:
-		Suite();
-		explicit Suite(const std::string& suiteName);
-		Suite(const Suite&) = delete;
-		Suite(Suite&&) noexcept = default;
-		virtual ~Suite() noexcept = default;
+  /*!
+   * Any test-class must extend this class
+   */
+  class Suite {
+  public:
+    Suite();
+    explicit Suite(const std::string &suiteName);
+    Suite(const Suite &) = delete;
+    Suite(Suite &&) noexcept = default;
+    virtual ~Suite() noexcept = default;
 
-		Suite& operator=(const Suite&) = delete;
-		Suite& operator=(Suite&&) = default;
+    Suite &operator=(const Suite &) = delete;
+    Suite &operator=(Suite &&) = default;
 
-		/*!
-		 * Adds another Test::Suite to this suite.
-		 * All associated suites will be run after this suite has finished
-		 */
-		void add(const std::shared_ptr<Test::Suite>& suite);
+    /*!
+     * Adds another Test::Suite to this suite.
+     * All associated suites will be run after this suite has finished
+     */
+    void add(const std::shared_ptr<Test::Suite> &suite);
 
-		/*!
-		 * Runs all the registered test-methods in this suite
-		 *
-		 * \param output The output to print the results to
-		 * \param continueAfterFail whether to continue running after a test failed
-		 */
-		virtual bool run(Output& output, bool continueAfterFail = true);
-		virtual bool run(Output& output, const std::vector<TestMethodInfo>& selectedMethods, bool continueAfterFail = true);
+    /*!
+     * Runs all the registered test-methods in this suite
+     *
+     * \param output The output to print the results to
+     * \param continueAfterFail whether to continue running after a test failed
+     */
+    virtual bool run(Output &output, bool continueAfterFail = true);
+    virtual bool run(Output &output, const std::vector<TestMethodInfo> &selectedMethods, bool continueAfterFail = true);
 
-		/*!
-		 * Lists all test-methods to be run in this suite
-		 */
-		virtual std::vector<TestMethodInfo> listTests() const;
+    /*!
+     * Lists all test-methods to be run in this suite
+     */
+    virtual std::vector<TestMethodInfo> listTests() const;
 
-		std::string getName() const
-		{
-			return suiteName;
-		}
+    std::string getName() const { return suiteName; }
 
-	protected:
+  protected:
+    //! Test-method without any parameter
+    using SimpleTestMethod = void (Suite::*)();
+    //! Test-method with an arbitrary number of arguments of arbitrary types
+    template <typename... T>
+    using ParameterizedTestMethod = void (Suite::*)(T... args);
 
-		//! Test-method without any parameter
-		using SimpleTestMethod = void (Suite::*)();
-		//! Test-method with an arbitrary number of arguments of arbitrary types
-		template<typename... T>
-		using ParameterizedTestMethod = void (Suite::*)(T... args);
+    inline void setSuiteName(const std::string &filePath) {
+      if (this->suiteName.empty()) {
+        this->suiteName = Private::getFileName(filePath);
+        this->suiteName = this->suiteName.substr(0, this->suiteName.find_last_of('.'));
+      }
+    }
 
-		inline void setSuiteName(const std::string& filePath)
-		{
-			if (this->suiteName.empty()) {
-				this->suiteName = Private::getFileName(filePath);
-				this->suiteName = this->suiteName.substr(0, this->suiteName.find_last_of('.'));
-			}
-		}
-
-		inline void addTest(SimpleTestMethod method, const std::string& funcName)
-		{
-			testMethods.emplace_back(funcName, method);
-		}
+    inline void addTest(SimpleTestMethod method, const std::string &funcName) {
+      testMethods.emplace_back(funcName, method);
+    }
 
 #if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
-		//Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and https://llvm.org/bugs/show_bug.cgi?id=25250
-		//Same for GCC <= 4.8, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=41933
-		template<typename T>
-		inline void addTest(ParameterizedTestMethod<T> method, const std::string& funcName, const T arg0)
-		{
-			testMethods.emplace_back(TestMethod(funcName, method, arg0));
-		}
+    // Need extra handling for clang++, see https://llvm.org/bugs/show_bug.cgi?id=25695 and
+    // https://llvm.org/bugs/show_bug.cgi?id=25250 Same for GCC <= 4.8, see
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=41933
+    template <typename T>
+    inline void addTest(ParameterizedTestMethod<T> method, const std::string &funcName, const T arg0) {
+      testMethods.emplace_back(TestMethod(funcName, method, arg0));
+    }
 
-		template<typename T, typename U>
-		inline void addTest(ParameterizedTestMethod<T, U> method, const std::string& funcName, const T arg0, const U arg1)
-		{
-			testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1));
-		}
+    template <typename T, typename U>
+    inline void addTest(ParameterizedTestMethod<T, U> method, const std::string &funcName, const T arg0, const U arg1) {
+      testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1));
+    }
 
-		template<typename T, typename U, typename V>
-		inline void addTest(ParameterizedTestMethod<T, U, V> method, const std::string& funcName, const T arg0, const U arg1, const V arg2)
-		{
-			testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1, arg2));
-		}
+    template <typename T, typename U, typename V>
+    inline void addTest(ParameterizedTestMethod<T, U, V> method, const std::string &funcName, const T arg0,
+        const U arg1, const V arg2) {
+      testMethods.emplace_back(TestMethod(funcName, method, arg0, arg1, arg2));
+    }
 #else
-		template<typename... T>
-		inline void addTest(ParameterizedTestMethod<T...> method, const std::string& funcName, const T... args)
-		{
-			testMethods.emplace_back(TestMethod(funcName, method, args...));
-		}
+    template <typename... T>
+    inline void addTest(ParameterizedTestMethod<T...> method, const std::string &funcName, const T... args) {
+      testMethods.emplace_back(TestMethod(funcName, method, args...));
+    }
 #endif
 
-		inline void testSucceeded(Assertion&& assertion)
-		{
-			assertion.method = currentTestMethodName;
-			assertion.args = currentTestMethodArgs;
-			assertion.suite = suiteName;
-			output->printSuccess(assertion);
-		}
+    inline void testSucceeded(Assertion &&assertion) {
+      assertion.method = currentTestMethodName;
+      assertion.args = currentTestMethodArgs;
+      assertion.suite = suiteName;
+      output->printSuccess(assertion);
+    }
 
-		inline void testFailed(Assertion&& assertion)
-		{
-			currentTestSucceeded = false;
-			assertion.method = currentTestMethodName;
-			assertion.args = currentTestMethodArgs;
-			assertion.suite = suiteName;
-			output->printFailure(assertion);
-		}
+    inline void testFailed(Assertion &&assertion) {
+      currentTestSucceeded = false;
+      assertion.method = currentTestMethodName;
+      assertion.args = currentTestMethodArgs;
+      assertion.suite = suiteName;
+      output->printFailure(assertion);
+    }
 
-		inline bool continueAfterFailure()
-		{
-			return continueAfterFail;
-		}
+    inline bool continueAfterFailure() { return continueAfterFail; }
 
-		/*!
-		 * This method can be overridden to execute code before the test-methods in this class are run
-		 *
-		 * \return A boolean value, if false, the whole suite will not be executed (inclusive \ref tearDown)
-		 */
-		virtual bool setup()
-		{
-			//does nothing by default
-			return true;
-		}
+    /*!
+     * This method can be overridden to execute code before the test-methods in this class are run
+     *
+     * \return A boolean value, if false, the whole suite will not be executed (inclusive \ref tearDown)
+     */
+    virtual bool setup() {
+      // does nothing by default
+      return true;
+    }
 
-		/*!
-		 * This method can be overridden to run code after all the test-methods have finished
-		 */
-		virtual void tear_down()
-		{
-			//does nothing by default
-		}
+    /*!
+     * This method can be overridden to run code after all the test-methods have finished
+     */
+    virtual void tear_down() {
+      // does nothing by default
+    }
 
-		/*!
-		 * Override this method to run code before every test-method
-		 *
-		 * \return A boolean value. If false, the test-method will not be executed (inclusive \ref after)
-		 */
-		virtual bool before(const std::string& methodName)
-		{
-			//does nothing by default
-			(void) methodName;
-			return true;
-		}
+    /*!
+     * Override this method to run code before every test-method
+     *
+     * \return A boolean value. If false, the test-method will not be executed (inclusive \ref after)
+     */
+    virtual bool before(const std::string &methodName) {
+      // does nothing by default
+      (void)methodName;
+      return true;
+    }
 
-		/*!
-		 * Override this method to run code after every test-method
-		 */
-		virtual void after(const std::string& methodName, const bool success)
-		{
-			//does nothing by default
-			(void) methodName;
-			(void) success;
-		}
+    /*!
+     * Override this method to run code after every test-method
+     */
+    virtual void after(const std::string &methodName, const bool success) {
+      // does nothing by default
+      (void)methodName;
+      (void)success;
+    }
 
-		/*!
-		 * Returns whether the current test method has already failed (but continued to execute)
-		 */
-		inline bool hasFailed()
-		{
-			return !currentTestSucceeded;
-		}
+    /*!
+     * Returns whether the current test method has already failed (but continued to execute)
+     */
+    inline bool hasFailed() { return !currentTestSucceeded; }
 
 #if defined(__cpp_lib_source_location) && defined(__cpp_lib_string_view)
-		inline void testFail(std::string_view msg, std::source_location loc = std::source_location::current())
-		{
-			testFailed(Test::Assertion(loc.file_name(), loc.line(), "", std::string{msg}));
-			if(!continueAfterFailure()) throw AssertionFailedException{};
-		}
+    inline void testFail(std::string_view msg, std::source_location loc = std::source_location::current()) {
+      testFailed(Test::Assertion(loc.file_name(), loc.line(), "", std::string{msg}));
+      if (!continueAfterFailure())
+        throw AssertionFailedException{};
+    }
 
-		inline void testAssert(bool condition, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if (!condition) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed", std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    inline void testAssert(
+        bool condition, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
+      if (!condition) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed", std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename Func>
-		inline void testAssert(Func&& condition, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if (!condition()) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Assertion failed for condition: " + toPrettyTypeName(typeid(Func)), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename Func>
+    inline void testAssert(
+        Func &&condition, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
+      if (!condition()) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            "Assertion failed for condition: " + toPrettyTypeName(typeid(Func)), std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename T, typename U>
-		inline void testAssertEquals(T&& expected, U&& value, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if (!Test::Comparisons::isSame(expected, value)) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename T, typename U>
+    inline void testAssertEquals(T &&expected, U &&value, std::string_view msg = "",
+        std::source_location loc = std::source_location::current()) {
+      if (!Test::Comparisons::isSame(expected, value)) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
+                Test::Formats::to_string(expected),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename T>
-		inline void testAssertDelta(T&& expected, T&& value, T&& delta, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if(!Test::Comparisons::inMaxDistance(expected, value, delta)) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename T>
+    inline void testAssertDelta(T &&expected, T &&value, T &&delta, std::string_view msg = "",
+        std::source_location loc = std::source_location::current()) {
+      if (!Test::Comparisons::inMaxDistance(expected, value, delta)) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
+                Test::Formats::to_string(expected) + std::string(" +/- ") + Test::Formats::to_string(delta),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename T>
-		inline void testAssertUlp(T&& expected, T&& value, T&& numULP, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			using Type = std::remove_reference_t<decltype(expected)>;
-			auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon();
-			if(!Test::Comparisons::inMaxDistance(expected, value, delta)) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") + Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") + (Test::Formats::to_string(numULP) + " ULP)"), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename T>
+    inline void testAssertUlp(T &&expected, T &&value, T &&numULP, std::string_view msg = "",
+        std::source_location loc = std::source_location::current()) {
+      using Type = std::remove_reference_t<decltype(expected)>;
+      auto delta = (expected) * static_cast<Type>(numULP) * std::numeric_limits<Type>::epsilon();
+      if (!Test::Comparisons::inMaxDistance(expected, value, delta)) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Got ") + Test::Formats::to_string(value) + std::string(", expected ") +
+                Test::Formats::to_string(expected) + std::string(" +/- ") + (Test::Formats::to_string(delta) + " (") +
+                (Test::Formats::to_string(numULP) + " ULP)"),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename Exception, typename Func>
-		inline void testThrows(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			static const auto EXCEPTION_NAME = toPrettyTypeName(typeid(Exception));
-			try {
-				expression();
-				/*If we get here, no exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Expected exception of type ") + EXCEPTION_NAME + std::string(" was not thrown"), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			catch(const Exception&) {
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-			}
-			catch(std::exception &ex) {
-				/*If we get here, wrong exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			catch(...) {
-				/* Any other type than an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME, std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-		}
+    template <typename Exception, typename Func>
+    inline void testThrows(
+        Func &&expression, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
+      static const auto EXCEPTION_NAME = toPrettyTypeName(typeid(Exception));
+      try {
+        expression();
+        /*If we get here, no exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Expected exception of type ") + EXCEPTION_NAME + std::string(" was not thrown"),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } catch (const Exception &) {
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      } catch (std::exception &ex) {
+        /*If we get here, wrong exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Wrong Exception of type ") + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } catch (...) {
+        /* Any other type than an exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("A non-exception-type was thrown, expected exception of type: ") + EXCEPTION_NAME,
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      }
+    }
 
-		template<typename Func>
-		inline void testThrowsAnything(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			try {
-				expression();
-				/*If we get here, no exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Expected exception was not thrown", std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			catch(std::exception &ex) {
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-			}
-			catch(...) {
-				/* Any other type than an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-		}
+    template <typename Func>
+    inline void testThrowsAnything(
+        Func &&expression, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
+      try {
+        expression();
+        /*If we get here, no exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(), "Expected exception was not thrown", std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } catch (std::exception &ex) {
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+      } catch (...) {
+        /* Any other type than an exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      }
+    }
 
-		template<typename Func>
-		inline void testThrowsNothing(Func&& expression, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			try {
-				expression();
-			}
-			catch(std::exception &ex) {
-				/*If we get here, an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) +  " was thrown: " + ex.what(), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			catch(...) {
-				/* Any other type than an exception was thrown*/
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-		}
+    template <typename Func>
+    inline void testThrowsNothing(
+        Func &&expression, std::string_view msg = "", std::source_location loc = std::source_location::current()) {
+      try {
+        expression();
+      } catch (std::exception &ex) {
+        /*If we get here, an exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            std::string("Exception of type ") + toPrettyTypeName(typeid(ex)) + " was thrown: " + ex.what(),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } catch (...) {
+        /* Any other type than an exception was thrown*/
+        testFailed(Test::Assertion(loc.file_name(), loc.line(), "A non-exception-type was thrown"));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      }
+    }
 
-		template<typename Predicate, typename T>
-		inline void testPredicate(Predicate&& predicate, T&& value, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if (!predicate(value)) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Value " + Test::Formats::to_string(value) + " did not match the predicate: " + toPrettyTypeName(typeid(Predicate)), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename Predicate, typename T>
+    inline void testPredicate(Predicate &&predicate, T &&value, std::string_view msg = "",
+        std::source_location loc = std::source_location::current()) {
+      if (!predicate(value)) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            "Value " + Test::Formats::to_string(value) +
+                " did not match the predicate: " + toPrettyTypeName(typeid(Predicate)),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		template<typename Predicate, typename T, typename U>
-		inline void testBiPredicate(Predicate&& predicate, T&& value0, U&& value1, std::string_view msg = "", std::source_location loc = std::source_location::current())
-		{
-			if (!predicate(value0, value1)) {
-				testFailed(Test::Assertion(loc.file_name(), loc.line(), "Values " + Test::Formats::to_string(value0) + " and " + Test::Formats::to_string(value1) + " did not match the bi-predicate: " + toPrettyTypeName(typeid(Predicate)), std::string{msg}));
-				if(!continueAfterFailure()) throw AssertionFailedException{};
-			}
-			else
-				testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
-		}
+    template <typename Predicate, typename T, typename U>
+    inline void testBiPredicate(Predicate &&predicate, T &&value0, U &&value1, std::string_view msg = "",
+        std::source_location loc = std::source_location::current()) {
+      if (!predicate(value0, value1)) {
+        testFailed(Test::Assertion(loc.file_name(), loc.line(),
+            "Values " + Test::Formats::to_string(value0) + " and " + Test::Formats::to_string(value1) +
+                " did not match the bi-predicate: " + toPrettyTypeName(typeid(Predicate)),
+            std::string{msg}));
+        if (!continueAfterFailure())
+          throw AssertionFailedException{};
+      } else
+        testSucceeded(Test::Assertion(loc.file_name(), loc.line()));
+    }
 
-		inline void testAbort(std::string_view msg, std::source_location loc = std::source_location::current())
-		{
-			testFailed(Test::Assertion(loc.file_name(), loc.line(), "Test-method aborted", std::string{msg}));
-			throw AssertionFailedException{};
-		}
+    inline void testAbort(std::string_view msg, std::source_location loc = std::source_location::current()) {
+      testFailed(Test::Assertion(loc.file_name(), loc.line(), "Test-method aborted", std::string{msg}));
+      throw AssertionFailedException{};
+    }
 #endif
 
-	private:
+  private:
+    struct TestMethod {
+      const std::string name;
+      const std::function<void(Suite *)> functor;
+      const std::string argString;
 
-		struct TestMethod
-		{
-			const std::string name;
-			const std::function<void(Suite*) > functor;
-			const std::string argString;
+      TestMethod() : name("") {}
 
-			TestMethod() : name("")
-			{
-			}
-
-			TestMethod(const std::string& name, SimpleTestMethod method) : name(name), functor(method), argString({})
-			{
-			}
+      TestMethod(const std::string &name, SimpleTestMethod method) : name(name), functor(method), argString({}) {}
 
 #if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
-			template<typename T>
-			TestMethod(const std::string& name, ParameterizedTestMethod<T> method, const T arg0) : name(name),
-			functor([arg0, method](Suite* suite) {(suite->*method)(arg0);}), argString(joinStrings(arg0))
-			{
+      template <typename T>
+      TestMethod(const std::string &name, ParameterizedTestMethod<T> method, const T arg0)
+          : name(name), functor([arg0, method](Suite *suite) { (suite->*method)(arg0); }),
+            argString(joinStrings(arg0)) {}
 
-			}
+      template <typename T, typename U>
+      TestMethod(const std::string &name, ParameterizedTestMethod<T, U> method, const T arg0, const U arg1)
+          : name(name), functor([arg0, arg1, method](Suite *suite) { (suite->*method)(arg0, arg1); }),
+            argString(joinStrings(arg0, arg1)) {}
 
-			template<typename T, typename U>
-			TestMethod(const std::string& name, ParameterizedTestMethod<T, U> method, const T arg0, const U arg1) : name(name),
-			functor([arg0, arg1, method](Suite* suite) {(suite->*method)(arg0, arg1);}), argString(joinStrings(arg0, arg1))
-			{
-
-			}
-
-			template<typename T, typename U, typename V>
-			TestMethod(const std::string& name, ParameterizedTestMethod<T, U, V> method, const T arg0, const U arg1, const V arg2) : name(name),
-			functor([arg0, arg1, arg2, method](Suite* suite) {(suite->*method)(arg0, arg1, arg2);}), argString(joinStrings(arg0, arg1, arg2))
-			{
-
-			}
+      template <typename T, typename U, typename V>
+      TestMethod(
+          const std::string &name, ParameterizedTestMethod<T, U, V> method, const T arg0, const U arg1, const V arg2)
+          : name(name), functor([arg0, arg1, arg2, method](Suite *suite) { (suite->*method)(arg0, arg1, arg2); }),
+            argString(joinStrings(arg0, arg1, arg2)) {}
 #else
-			template<typename... T>
-			TestMethod(const std::string& name, ParameterizedTestMethod<T...> method, const T... args) : name(name),
-			functor([args..., method](Suite* suite) {(suite->*method)(args...);}), argString(joinStrings(args...))
-			{
-
-			}
+      template <typename... T>
+      TestMethod(const std::string &name, ParameterizedTestMethod<T...> method, const T... args)
+          : name(name), functor([args..., method](Suite *suite) { (suite->*method)(args...); }),
+            argString(joinStrings(args...)) {}
 #endif
 
-			inline void operator()(Suite* suite) const
-			{
-				functor(suite);
-			}
+      inline void operator()(Suite *suite) const { functor(suite); }
 
-			template<typename T, typename... R>
-			static inline std::string joinStrings(const T& t, const R&... remainder)
-			{
-				if(sizeof...(R) == 0)
-					return Test::Formats::to_string(t);
-				return (Test::Formats::to_string(t) + ", ") + joinStrings(remainder...);
-			}
+      template <typename T, typename... R>
+      static inline std::string joinStrings(const T &t, const R &...remainder) {
+        if (sizeof...(R) == 0)
+          return Test::Formats::to_string(t);
+        return (Test::Formats::to_string(t) + ", ") + joinStrings(remainder...);
+      }
 
-			template<typename... R>
-			static inline std::string joinStrings(const std::string& t, const R&... remainder)
-			{
-				//special case to enquote std::string
-				if(sizeof...(R) == 0)
-					return std::string("\"")+t+"\"";
-				return (std::string("\"")+t+"\", ") + joinStrings(remainder...);
-			}
+      template <typename... R>
+      static inline std::string joinStrings(const std::string &t, const R &...remainder) {
+        // special case to enquote std::string
+        if (sizeof...(R) == 0)
+          return std::string("\"") + t + "\"";
+        return (std::string("\"") + t + "\", ") + joinStrings(remainder...);
+      }
 
-			template<typename... R>
-			static inline std::string joinStrings(const R&... /* remainder */)
-			{
-				//is never called, but must exist to not throw compilation errors
-				return "";
-			}
-		};
+      template <typename... R>
+      static inline std::string joinStrings(const R &.../* remainder */) {
+        // is never called, but must exist to not throw compilation errors
+        return "";
+      }
+    };
 
-		std::string suiteName;
-		std::vector<TestMethod> testMethods;
-		std::vector<std::shared_ptr<Test::Suite>> subSuites;
-		std::string currentTestMethodName;
-		std::string currentTestMethodArgs;
-		std::chrono::microseconds totalDuration;
-		Output* output;
-		unsigned int positiveTestMethods;
-		bool continueAfterFail;
-		bool currentTestSucceeded;
+    std::string suiteName;
+    std::vector<TestMethod> testMethods;
+    std::vector<std::shared_ptr<Test::Suite>> subSuites;
+    std::string currentTestMethodName;
+    std::string currentTestMethodArgs;
+    std::chrono::microseconds totalDuration;
+    Output *output;
+    unsigned int positiveTestMethods;
+    bool continueAfterFail;
+    bool currentTestSucceeded;
 
-		std::pair<bool, std::chrono::microseconds> runTestMethod(const TestMethod& method);
+    std::pair<bool, std::chrono::microseconds> runTestMethod(const TestMethod &method);
 
-		std::vector<std::reference_wrapper<const TestMethod>> filterTests(const std::vector<TestMethodInfo>& selectedMethods);
+    std::vector<std::reference_wrapper<const TestMethod>> filterTests(
+        const std::vector<TestMethodInfo> &selectedMethods);
 
-		static std::string toPrettyTypeName(const std::type_info& type);
+    static std::string toPrettyTypeName(const std::type_info &type);
 
-		//ParallelSuite needs access to subSuites
-		friend class ParallelSuite;
-	};
+    // ParallelSuite needs access to subSuites
+    friend class ParallelSuite;
+  };
 
-	/*!
-	 * Registers a simple test-method
-	 */
-#define TEST_ADD(func) this->setSuiteName(__FILE__); this->addTest(static_cast<Test::Suite::SimpleTestMethod>((&func)), #func)
-	/*!
-	 * Registers a test-method taking a single argument of type std::string or a c-style string-literal
-	 */
-#define TEST_ADD_WITH_STRING(func, string) this->setSuiteName(__FILE__); this->addTest<std::basic_string<char>>(static_cast<Test::Suite::ParameterizedTestMethod<std::basic_string<char>>>((&func)), #func, string)
-	/*!
-	 * Registers a test-method taking a single argument of type c-string
-	 */
-#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral) this->setSuiteName(__FILE__); this->addTest<char*>(static_cast<Test::Suite::ParameterizedTestMethod<char*>>((&func)), #func, stringLiteral)
-	/*!
-	 * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
-	 */
-#define TEST_ADD_WITH_INTEGER(func, number) this->setSuiteName(__FILE__); this->addTest<int>(static_cast<Test::Suite::ParameterizedTestMethod<int>>((&func)), #func, number)
-	/*!
-	 * Registers a test-method which takes an argument to a pointer of arbitrary data
-	 */
-#define TEST_ADD_WITH_POINTER(func, pointer) this->setSuiteName(__FILE__); this->addTest<void*>(static_cast<Test::Suite::ParameterizedTestMethod<void*>>((&func)), #func, pointer)
-	/*!
-	 * Registers a test-method with a single argument of arbitrary type
-	 */
-#define TEST_ADD_SINGLE_ARGUMENT(func, arg) this->setSuiteName(__FILE__); this->addTest<decltype(arg)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg)>>((&func)), #func, arg)
-	/*!
-	 * Registers a test-method with two arguments of arbitrary types
-	 */
-#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1) this->setSuiteName(__FILE__); this->addTest<decltype(arg0), decltype(arg1)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1)>>((&func)), #func, arg0, arg1)
-	/*!
-	 * Registers a test-method with three arguments of arbitrary types
-	 */
-#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2) this->setSuiteName(__FILE__); this->addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>((&func)), #func, arg0, arg1, arg2)
+  /*!
+   * Registers a simple test-method
+   */
+#define TEST_ADD(func)                                                                                                 \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest(static_cast<Test::Suite::SimpleTestMethod>((&func)), #func)
+  /*!
+   * Registers a test-method taking a single argument of type std::string or a c-style string-literal
+   */
+#define TEST_ADD_WITH_STRING(func, string)                                                                             \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<std::basic_string<char>>(                                                                              \
+      static_cast<Test::Suite::ParameterizedTestMethod<std::basic_string<char>>>((&func)), #func, string)
+  /*!
+   * Registers a test-method taking a single argument of type c-string
+   */
+#define TEST_ADD_WITH_STRING_LITERAL(func, stringLiteral)                                                              \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<char *>(static_cast<Test::Suite::ParameterizedTestMethod<char *>>((&func)), #func, stringLiteral)
+  /*!
+   * Registers a test-method accepting a single argument of type int (or any type which can be coerced from int)
+   */
+#define TEST_ADD_WITH_INTEGER(func, number)                                                                            \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<int>(static_cast<Test::Suite::ParameterizedTestMethod<int>>((&func)), #func, number)
+  /*!
+   * Registers a test-method which takes an argument to a pointer of arbitrary data
+   */
+#define TEST_ADD_WITH_POINTER(func, pointer)                                                                           \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<void *>(static_cast<Test::Suite::ParameterizedTestMethod<void *>>((&func)), #func, pointer)
+  /*!
+   * Registers a test-method with a single argument of arbitrary type
+   */
+#define TEST_ADD_SINGLE_ARGUMENT(func, arg)                                                                            \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<decltype(arg)>(static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg)>>((&func)), #func, arg)
+  /*!
+   * Registers a test-method with two arguments of arbitrary types
+   */
+#define TEST_ADD_TWO_ARGUMENTS(func, arg0, arg1)                                                                       \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<decltype(arg0), decltype(arg1)>(                                                                       \
+      static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1)>>((&func)), #func, arg0, arg1)
+  /*!
+   * Registers a test-method with three arguments of arbitrary types
+   */
+#define TEST_ADD_THREE_ARGUMENTS(func, arg0, arg1, arg2)                                                               \
+  this->setSuiteName(__FILE__);                                                                                        \
+  this->addTest<decltype(arg0), decltype(arg1), decltype(arg2)>(                                                       \
+      static_cast<Test::Suite::ParameterizedTestMethod<decltype(arg0), decltype(arg1), decltype(arg2)>>((&func)),      \
+      #func, arg0, arg1, arg2)
 } // namespace Test

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.10)
 
 function(cpptest_discover_tests_script TEST_EXECUTABLE_PATH TEST_LIST_FILE_PATH)
   cmake_parse_arguments(CPPTEST_DISCOVER "" "WORKING_DIRECTORY" "PROPERTIES;DISABLED_TESTS;FAILING_TESTS" ${ARGN})

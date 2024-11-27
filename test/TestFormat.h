@@ -2,15 +2,14 @@
 
 #include "cpptest.h"
 
-class TestFormat : public Test::Suite
-{
+class TestFormat : public Test::Suite {
 public:
-    TestFormat();
+  TestFormat();
 
-    void testFloatingPointNumbers();
-    void testStreamWriteOperator();
-    void testStringTypes();
-    void testMemoryRanges();
-    void testTuples();
-    void testNonLiteralMessages();
+  void testFloatingPointNumbers();
+  void testStreamWriteOperator();
+  void testStringTypes();
+  void testMemoryRanges();
+  void testTuples();
+  void testNonLiteralMessages();
 };
