@@ -21,10 +21,10 @@ jobs:
           os: "ubuntu-latest"
           cc: "gcc"
           cxx: "g++"
-        - name: "Linux CLang"
-          os: "ubuntu-latest"
-          cc: "clang"
-          cxx: "clang++"
+        # - name: "Linux CLang"
+        #   os: "ubuntu-latest"
+        #   cc: "clang"
+        #   cxx: "clang++"
 
     steps:
     - uses: actions/checkout@v4

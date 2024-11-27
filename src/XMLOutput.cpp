@@ -45,10 +45,17 @@ void XMLOutput::finishSuite(const std::string &suiteName, unsigned int numTests,
   std::chrono::microseconds remainder = totalDuration - seconds;
   unsigned numErrors = static_cast<unsigned>(std::count_if(currentSuite->methods.begin(), currentSuite->methods.end(),
       [](const TestMethodInfo &method) { return !method.exceptionMessage.empty(); }));
+#ifdef _MSC_VER
+  struct tm tmp {};
+  gmtime_s(&tmp, &now);
+  auto time = &tmp;
+#else
+  auto time = gmtime(&now);
+#endif
   output << "\t<testsuite name=\"" << escapeXML(suiteName) << "\" tests=\"" << numTests << "\" failures=\""
          << (numTests - numPositiveTests - numErrors) << "\" errors=\"" << numErrors << "\" time=\"" << seconds.count()
          << '.' << std::setfill('0') << std::setw(3) << remainder.count() << "\" timestamp=\""
-         << std::put_time(gmtime(&now), "%FT%T") << "\">\n";
+         << std::put_time(time, "%FT%T") << "\">\n";
 
   for (const TestMethodInfo &method : currentSuite->methods) {
     std::string name = stripMethodName(method.methodName);

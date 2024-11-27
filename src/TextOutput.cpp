@@ -1,5 +1,6 @@
 #include "TextOutput.h"
 
+#include <array>
 #include <cerrno>
 #include <cstring>
 #include <iostream>
@@ -62,5 +63,12 @@ void TextOutput::printException(const std::string &suiteName, const std::string 
          << std::endl;
   stream << "\tException: " << ex.what() << std::endl;
   stream << "\tErrno: " << errno << std::endl;
+#ifdef _MSC_VER
+  std::array<char, 1024> buffer{};
+  buffer.fill('\0');
+  strerror_s(buffer.data(), buffer.size() - 1U, errno);
+  stream << "\tError: " << buffer.data() << std::endl;
+#else
   stream << "\tError: " << strerror(errno) << std::endl;
+#endif
 }

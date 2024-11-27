@@ -118,7 +118,7 @@ std::pair<bool, std::chrono::microseconds> Suite::runTestMethod(const TestMethod
     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
     try {
       method(static_cast<Suite *>(this));
-    } catch (const AssertionFailedException &afe) {
+    } catch (const AssertionFailedException &) {
       currentTestSucceeded = false;
     } catch (const std::exception &e) {
       exceptionThrown = true;

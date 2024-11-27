@@ -30,7 +30,7 @@ void TestAssertions::testAssertBoolean() {
 void TestAssertions::testAssertEquals() {
   TEST_ASSERT_EQUALS(1, 1);
   TEST_ASSERT_EQUALS(nullptr, nullptr);
-  TEST_ASSERT_EQUALS("Foo", "Foo");
+  TEST_STRING_EQUALS("Foo", "Foo");
   TEST_ASSERT_EQUALS(1.0f, 1.0f);
 
   OneComparableType one{};
