@@ -152,7 +152,7 @@ std::string Formats::to_string(float val) {
 #ifdef _MSC_VER
   sprintf_s(buffer, sizeof(buffer), "%g", static_cast<double>(val));
 #else
-  sprintf(buffer, "%g", static_cast<double>(val));
+  snprintf(buffer, sizeof(buffer), "%g", static_cast<double>(val));
 #endif
   return buffer;
 }
@@ -162,7 +162,7 @@ std::string Formats::to_string(double val) {
 #ifdef _MSC_VER
   sprintf_s(buffer, sizeof(buffer), "%g", val);
 #else
-  sprintf(buffer, "%g", val);
+  snprintf(buffer, sizeof(buffer), "%g", val);
 #endif
   return buffer;
 }
@@ -172,7 +172,7 @@ std::string Formats::to_string(long double val) {
 #ifdef _MSC_VER
   sprintf_s(buffer, sizeof(buffer), "%Lg", val);
 #else
-  sprintf(buffer, "%Lg", val);
+  snprintf(buffer, sizeof(buffer), "%Lg", val);
 #endif
   return buffer;
 }
@@ -182,7 +182,7 @@ std::string Formats::to_string(const void *ptr) {
 #ifdef _MSC_VER
   sprintf_s(buffer, sizeof(buffer), "%p", ptr);
 #else
-  sprintf(buffer, "%p", ptr);
+  snprintf(buffer, sizeof(buffer), "%p", ptr);
 #endif
   return buffer;
 }
