@@ -97,7 +97,7 @@ struct TestModernAssertions : public Test::Suite {
 
 #if defined(CPPTEST_LITE_U8_STRING)
     std::u8string u1{u8"Foo Bar"};
-    std::u8string u2{u8"⠁⠂⠃"};
+    std::u8string u2{u8"abcd ÄÖÜ ☺ ⠁⠐⠂⠃  🙂🍏"};
     std::u8string_view u3 = u8"Baz";
     testAssertEquals(u1, u2);
     testAssertEquals(u1, u3);
@@ -105,14 +105,14 @@ struct TestModernAssertions : public Test::Suite {
 #endif
 
     std::u16string w1{u"Foo Bar"};
-    std::u16string w2{u"\u2801⠐⠂⠃"};
+    std::u16string w2{u"abcd ÄÖÜ ☺ ⠁⠐⠂⠃  🙂🍏"};
     std::u16string_view w3 = u"Baz";
     testAssertEquals(w1, w2);
     testAssertEquals(w1, w3);
     testAssertEquals(w1.c_str(), w3.data());
 
     std::u32string utf1{U"Foo Bar"};
-    std::u32string utf2{U"\u2801⠐⠂⠃"};
+    std::u32string utf2{U"abcd ÄÖÜ ☺ ⠁⠐⠂⠃  🙂🍏"};
     std::u32string_view utf3 = U"Baz";
     testAssertEquals(utf1, utf2);
     testAssertEquals(utf1, utf3);

@@ -19,13 +19,16 @@
 #if __has_include(<variant>)
 #include <variant>
 #endif
-#if __has_include(<cuchar>)
-#include <cuchar>
-#endif
 #endif
 
 namespace Test {
   namespace Formats {
+
+    namespace internal {
+      std::string utf8_to_string(const uint8_t *ptr, std::size_t length);
+      std::string utf16_to_string(const char16_t *ptr, std::size_t length);
+      std::string utf32_to_string(const char32_t *ptr, std::size_t length);
+    } // namespace internal
 
     ////
     // Simple methods
@@ -34,89 +37,29 @@ namespace Test {
     std::string to_string(const char *val);
     std::string to_string(const std::string &val);
 
-#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t) && __cpp_lib_char8_t >= 201907L &&                            \
-    defined(_GLIBCXX_USE_UCHAR_C8RTOMB_MBRTOC8_CXX20)
-// _GLIBCXX_USE_UCHAR_C8RTOMB_MBRTOC8_CXX20 seems to be required, since the standard libraries do not properly signal
-// support for std::c8rtomb
+#if defined(__cpp_char8_t) && defined(__cpp_lib_char8_t) && __cpp_lib_char8_t >= 201907L
 #define CPPTEST_LITE_U8_STRING 1
     inline std::string to_string(const std::u8string &val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char8_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c8rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
+      return internal::utf8_to_string(reinterpret_cast<const uint8_t *>(val.data()), val.size());
     }
 #endif
 
-    std::string to_string(const std::u16string &val);
-    std::string to_string(const std::u32string &val);
+    inline std::string to_string(const std::u16string &val) {
+      return internal::utf16_to_string(val.data(), val.size());
+    }
+
+    inline std::string to_string(const std::u32string &val) {
+      return internal::utf32_to_string(val.data(), val.size());
+    }
 
 #ifdef __cpp_lib_string_view
     inline std::string to_string(std::string_view val) { return "'" + std::string{val} + "'"; }
-
-    inline std::string to_string(std::u16string_view val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char16_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c16rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
-    }
-
-    inline std::string to_string(std::u32string_view val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char32_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c32rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
-    }
+    inline std::string to_string(std::u16string_view val) { return internal::utf16_to_string(val.data(), val.size()); }
+    inline std::string to_string(std::u32string_view val) { return internal::utf32_to_string(val.data(), val.size()); }
 
 #if defined(CPPTEST_LITE_U8_STRING)
     inline std::string to_string(std::u8string_view val) {
-      std::mbstate_t state{};
-      std::string result;
-      for (char8_t c : val) {
-        std::array<char, MB_LEN_MAX> tmp{};
-        std::size_t rc = std::c8rtomb(tmp.data(), c, &state);
-        if (rc == static_cast<std::size_t>(-1)) {
-          result.push_back('?');
-          state = std::mbstate_t{};
-          rc = 0;
-        }
-        for (std::size_t i = 0; i < rc; ++i) {
-          result.push_back(tmp[i]);
-        }
-      }
-      return "'" + result + "'";
+      return internal::utf8_to_string(reinterpret_cast<const uint8_t *>(val.data()), val.size());
     }
 #endif
 #endif
