@@ -2,7 +2,7 @@
 
 using namespace Test;
 
-SynchronizedOutput::SynchronizedOutput(Output &realOutput) : realOutput(realOutput) {}
+SynchronizedOutput::SynchronizedOutput(Output &backingOutput) : realOutput(backingOutput) {}
 
 void SynchronizedOutput::initializeSuite(const std::string &suiteName, const unsigned int numTests) {
   std::lock_guard<std::mutex> guard(outputMutex);

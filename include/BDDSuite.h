@@ -21,7 +21,7 @@ namespace Test {
     };
 
     BDDSuite() = default;
-    explicit BDDSuite(const std::string &suiteName);
+    explicit BDDSuite(const std::string &name);
     BDDSuite(const BDDSuite &) = delete;
     BDDSuite(BDDSuite &&) noexcept = default;
     ~BDDSuite() noexcept override = default;

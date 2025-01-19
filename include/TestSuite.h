@@ -35,7 +35,7 @@ namespace Test {
   class Suite {
   public:
     Suite();
-    explicit Suite(const std::string &suiteName);
+    explicit Suite(const std::string &name);
     Suite(const Suite &) = delete;
     Suite(Suite &&) noexcept = default;
     virtual ~Suite() noexcept = default;
@@ -52,11 +52,11 @@ namespace Test {
     /*!
      * Runs all the registered test-methods in this suite
      *
-     * \param output The output to print the results to
-     * \param continueAfterFail whether to continue running after a test failed
+     * \param out The output to print the results to
+     * \param continueOnError whether to continue running after a test failed
      */
-    virtual bool run(Output &output, bool continueAfterFail = true);
-    virtual bool run(Output &output, const std::vector<TestMethodInfo> &selectedMethods, bool continueAfterFail = true);
+    virtual bool run(Output &out, bool continueOnError = true);
+    virtual bool run(Output &out, const std::vector<TestMethodInfo> &selectedMethods, bool continueOnError = true);
 
     /*!
      * Lists all test-methods to be run in this suite
@@ -104,19 +104,19 @@ namespace Test {
     void testSucceeded(Assertion &&assertion);
     void testFailed(Assertion &&assertion);
     void testFailed(
-        const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage = "");
+        const char *fileName, uint32_t lineNumber, std::string &&errorMessage, const std::string &userMessage = "");
 
-    void testRun(bool success, const char *fileName, int lineNumber, std::string &&errorMessage,
+    void testRun(bool success, const char *fileName, uint32_t lineNumber, std::string &&errorMessage,
         const std::string &userMessage = "");
 
-    inline void testRun(bool success, const char *fileName, int lineNumber, const char *errorMessage,
+    inline void testRun(bool success, const char *fileName, uint32_t lineNumber, const char *errorMessage,
         const std::string &userMessage = "") {
       testRun(success, fileName, lineNumber, std::string{errorMessage ? errorMessage : ""}, userMessage);
     }
 
     template <typename Func>
     void testRun(
-        bool success, const char *fileName, int lineNumber, Func &&generateError, const std::string &userMessage) {
+        bool success, const char *fileName, uint32_t lineNumber, Func &&generateError, const std::string &userMessage) {
       testRun(success, fileName, lineNumber, !success ? generateError() : std::string{}, userMessage);
     }
 
@@ -312,28 +312,28 @@ namespace Test {
 
       TestMethod() : name("") {}
 
-      TestMethod(const std::string &name, SimpleTestMethod method) : name(name), functor(method), argString({}) {}
+      TestMethod(const std::string &methodName, SimpleTestMethod method) : name(methodName), functor(method), argString({}) {}
 
 #if defined(__clang__) || (defined(__GNUC__) && __GNUC__ < 5)
       template <typename T>
-      TestMethod(const std::string &name, ParameterizedTestMethod<T> method, const T arg0)
-          : name(name), functor([arg0, method](Suite *suite) { (suite->*method)(arg0); }),
+      TestMethod(const std::string &methodName, ParameterizedTestMethod<T> method, const T arg0)
+          : name(methodName), functor([arg0, method](Suite *suite) { (suite->*method)(arg0); }),
             argString(joinStrings(arg0)) {}
 
       template <typename T, typename U>
-      TestMethod(const std::string &name, ParameterizedTestMethod<T, U> method, const T arg0, const U arg1)
-          : name(name), functor([arg0, arg1, method](Suite *suite) { (suite->*method)(arg0, arg1); }),
+      TestMethod(const std::string &methodName, ParameterizedTestMethod<T, U> method, const T arg0, const U arg1)
+          : name(methodName), functor([arg0, arg1, method](Suite *suite) { (suite->*method)(arg0, arg1); }),
             argString(joinStrings(arg0, arg1)) {}
 
       template <typename T, typename U, typename V>
       TestMethod(
-          const std::string &name, ParameterizedTestMethod<T, U, V> method, const T arg0, const U arg1, const V arg2)
-          : name(name), functor([arg0, arg1, arg2, method](Suite *suite) { (suite->*method)(arg0, arg1, arg2); }),
+          const std::string &methodName, ParameterizedTestMethod<T, U, V> method, const T arg0, const U arg1, const V arg2)
+          : name(methodName), functor([arg0, arg1, arg2, method](Suite *suite) { (suite->*method)(arg0, arg1, arg2); }),
             argString(joinStrings(arg0, arg1, arg2)) {}
 #else
       template <typename... T>
-      TestMethod(const std::string &name, ParameterizedTestMethod<T...> method, const T... args)
-          : name(name), functor([args..., method](Suite *suite) { (suite->*method)(args...); }),
+      TestMethod(const std::string &methodName, ParameterizedTestMethod<T...> method, const T... args)
+          : name(methodName), functor([args..., method](Suite *suite) { (suite->*method)(args...); }),
             argString(joinStrings(args...)) {}
 #endif
 
@@ -368,7 +368,7 @@ namespace Test {
     std::string currentTestMethodArgs;
     std::chrono::microseconds totalDuration;
     Output *output;
-    unsigned int positiveTestMethods;
+    uint32_t positiveTestMethods;
     bool continueAfterFail;
     bool currentTestSucceeded;
 

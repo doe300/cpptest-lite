@@ -15,7 +15,7 @@ namespace Test {
   class ParallelSuite : public Suite {
   public:
     ParallelSuite() = default;
-    explicit ParallelSuite(const std::string &suiteName);
+    explicit ParallelSuite(const std::string &name);
     ParallelSuite(const ParallelSuite &) = delete;
     ParallelSuite(ParallelSuite &&) noexcept = default;
     ~ParallelSuite() override;
@@ -23,7 +23,7 @@ namespace Test {
     ParallelSuite &operator=(const ParallelSuite &) = delete;
     ParallelSuite &operator=(ParallelSuite &&) = default;
 
-    bool run(Output &output, const std::vector<TestMethodInfo> &selectedMethods, bool continueAfterFail) override;
+    bool run(Output &out, const std::vector<TestMethodInfo> &selectedMethods, bool continueOnError) override;
 
   private:
     bool runSuite(unsigned int suiteIndex, const std::vector<TestMethodInfo> &selectedMethods);

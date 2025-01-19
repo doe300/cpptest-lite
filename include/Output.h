@@ -20,13 +20,13 @@ namespace Test {
     std::string args;
     std::string errorMessage;
     const std::string userMessage;
-    const int lineNumber;
+    const uint32_t lineNumber;
 
-    Assertion(const char *fileName, int lineNumber, const std::string &errorMessage, const std::string &userMessage);
-    Assertion(const char *fileName, int lineNumber, const std::string &errorMessage, const char *userMessage);
-    Assertion(const char *fileName, int lineNumber, const std::string &userMessage);
-    Assertion(const char *fileName, int lineNumber, const char *userMessage);
-    Assertion(const char *fileName, int lineNumber);
+    Assertion(const char *fileName, uint32_t lineNum, const std::string &errorMsg, const std::string &userMsg);
+    Assertion(const char *fileName, uint32_t lineNum, const std::string &errorMsg, const char *userMsg);
+    Assertion(const char *fileName, uint32_t lineNum, const std::string &userMsg);
+    Assertion(const char *fileName, uint32_t lineNum, const char *userMsg);
+    Assertion(const char *fileName, uint32_t lineNum);
   };
 
   /*!

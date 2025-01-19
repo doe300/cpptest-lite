@@ -10,8 +10,8 @@ namespace Test {
     static const unsigned int Verbose = 2;
     static const unsigned int Terse = 3;
 
-    explicit TextOutput(unsigned int mode);
-    TextOutput(unsigned int mode, std::ostream &stream);
+    explicit TextOutput(unsigned int outputMode);
+    TextOutput(unsigned int outputMode, std::ostream &os);
     TextOutput(const TextOutput &) = delete;
     TextOutput(TextOutput &&) noexcept = delete;
     ~TextOutput() override;

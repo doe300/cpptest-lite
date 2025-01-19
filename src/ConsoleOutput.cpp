@@ -9,7 +9,7 @@ const std::string ConsoleOutput::errorColor("\033[31m");
 const std::string ConsoleOutput::successColor("\033[32m");
 const std::string ConsoleOutput::resetColors("\033[39;49m");
 
-ConsoleOutput::ConsoleOutput(const unsigned int mode) : TextOutput(mode, std::cout) {}
+ConsoleOutput::ConsoleOutput(const unsigned int outputMode) : TextOutput(outputMode, std::cout) {}
 
 void ConsoleOutput::finishSuite(const std::string &suiteName, const unsigned int numTests,
     const unsigned int numPositiveTests, const std::chrono::microseconds totalDuration) {

@@ -12,7 +12,7 @@ namespace Test {
    */
   class SynchronizedOutput : public Output {
   public:
-    explicit SynchronizedOutput(Output &realOutput);
+    explicit SynchronizedOutput(Output &backingOutput);
     SynchronizedOutput(const SynchronizedOutput &) = delete;
     SynchronizedOutput(SynchronizedOutput &&) noexcept = delete;
     ~SynchronizedOutput() override = default;

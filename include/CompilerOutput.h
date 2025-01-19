@@ -20,8 +20,8 @@ namespace Test {
     static const std::string FORMAT_MSVC;
     static const std::string FORMAT_GENERIC;
 
-    explicit CompilerOutput(const std::string &format);
-    CompilerOutput(const std::string &format, std::ostream &stream);
+    explicit CompilerOutput(const std::string &formatString);
+    CompilerOutput(const std::string &formatString, std::ostream &os);
     CompilerOutput(const CompilerOutput &) = delete;
     CompilerOutput(CompilerOutput &&) noexcept = delete;
     ~CompilerOutput() override;

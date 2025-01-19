@@ -10,21 +10,21 @@ using namespace Test;
 
 Suite::Suite() : Suite("") {}
 
-Suite::Suite(const std::string &suiteName)
-    : suiteName(suiteName), testMethods({}), subSuites({}), currentTestMethodName(""), currentTestMethodArgs(""),
+Suite::Suite(const std::string &name)
+    : suiteName(name), testMethods({}), subSuites({}), currentTestMethodName(""), currentTestMethodArgs(""),
       totalDuration(std::chrono::microseconds::zero()), output(nullptr), positiveTestMethods(0),
       continueAfterFail(true), currentTestSucceeded(false) {}
 
 void Suite::add(const std::shared_ptr<Test::Suite> &suite) { subSuites.push_back(suite); }
 
-bool Suite::run(Output &output, bool continueAfterFail) { return run(output, listTests(), continueAfterFail); }
+bool Suite::run(Output &out, bool continueOnError) { return run(out, listTests(), continueOnError); }
 
-bool Suite::run(Output &output, const std::vector<TestMethodInfo> &selectedMethods, bool continueAfterFail) {
+bool Suite::run(Output &out, const std::vector<TestMethodInfo> &selectedMethods, bool continueOnError) {
   auto selectedTestMethods = filterTests(selectedMethods);
 
-  this->continueAfterFail = continueAfterFail;
-  this->output = &output;
-  output.initializeSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()));
+  this->continueAfterFail = continueOnError;
+  this->output = &out;
+  out.initializeSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()));
   // run tests
   totalDuration = std::chrono::microseconds::zero();
   positiveTestMethods = 0;
@@ -39,11 +39,11 @@ bool Suite::run(Output &output, const std::vector<TestMethodInfo> &selectedMetho
     // run tear-down after all tests
     tear_down();
   }
-  output.finishSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()), positiveTestMethods, totalDuration);
+  out.finishSuite(suiteName, static_cast<unsigned>(selectedTestMethods.size()), positiveTestMethods, totalDuration);
 
   // run sub-suites
   for (std::shared_ptr<Test::Suite> &suite : subSuites) {
-    suite->run(output, selectedMethods, continueAfterFail);
+    suite->run(out, selectedMethods, continueAfterFail);
   }
 
   return positiveTestMethods == selectedTestMethods.size();
@@ -90,14 +90,14 @@ void Suite::testFailed(Assertion &&assertion) {
 }
 
 void Suite::testFailed(
-    const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage) {
+    const char *fileName, uint32_t lineNumber, std::string &&errorMessage, const std::string &userMessage) {
   testFailed(Assertion(fileName, lineNumber, errorMessage, userMessage));
   if (!continueAfterFailure())
     throw AssertionFailedException{};
 }
 
 void Suite::testRun(
-    bool success, const char *fileName, int lineNumber, std::string &&errorMessage, const std::string &userMessage) {
+    bool success, const char *fileName, uint32_t lineNumber, std::string &&errorMessage, const std::string &userMessage) {
   if (!success) {
     testFailed(Assertion(fileName, lineNumber, errorMessage, userMessage));
     if (!continueAfterFailure())

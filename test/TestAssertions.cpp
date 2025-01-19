@@ -59,9 +59,9 @@ void TestAssertions::testThrows() {
 }
 
 void TestAssertions::testPredicate() {
-  int i = 1;
-  TEST_PREDICATE([](int i) -> bool { return i; }, i);
-  TEST_PREDICATE([](int i) -> bool { return i > 0; }, i);
+  int val = 1;
+  TEST_PREDICATE([](int i) -> bool { return i; }, val);
+  TEST_PREDICATE([](int i) -> bool { return i > 0; }, val);
 }
 
 void TestAssertions::testBiPredicate() {

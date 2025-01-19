@@ -2,7 +2,7 @@
 
 using namespace Test;
 
-BDDSuite::BDDSuite(const std::string &suiteName) : Suite(suiteName) {}
+BDDSuite::BDDSuite(const std::string &name) : Suite(name) {}
 
 void BDDSuite::runScenario(const std::string scenarioName) {
   const Scenario *scenario = nullptr;

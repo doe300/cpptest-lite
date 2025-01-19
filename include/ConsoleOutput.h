@@ -7,7 +7,7 @@ namespace Test {
 
   class ConsoleOutput : public TextOutput {
   public:
-    explicit ConsoleOutput(unsigned int mode);
+    explicit ConsoleOutput(unsigned int outputMode);
     ConsoleOutput(const ConsoleOutput &) = delete;
     ConsoleOutput(ConsoleOutput &&) noexcept = delete;
     ~ConsoleOutput() noexcept override = default;

@@ -17,14 +17,14 @@ TestOutputs::TestOutputs()
 
 TestOutputs::~TestOutputs() = default;
 
-void TestOutputs::testOutput(void *output) {
-  Output *realOutput = static_cast<Output *>(output);
+void TestOutputs::testOutput(void *out) {
+  Output *realOutput = static_cast<Output *>(out);
   TestWithOutput runTest;
   runTest.run(*realOutput, true);
-  HTMLOutput *htmlOutput = dynamic_cast<HTMLOutput *>(realOutput);
-  if (htmlOutput != nullptr) {
+  HTMLOutput *realHtmlOutput = dynamic_cast<HTMLOutput *>(realOutput);
+  if (realHtmlOutput != nullptr) {
     std::fstream htmlFile("result.html", std::ios_base::out);
-    htmlOutput->generate(htmlFile, true);
+    realHtmlOutput->generate(htmlFile, true);
     htmlFile.close();
   }
 }

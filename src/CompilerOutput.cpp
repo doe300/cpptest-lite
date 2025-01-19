@@ -10,8 +10,8 @@ const std::string CompilerOutput::ARG_FILE("%file");
 const std::string CompilerOutput::ARG_LINE("%line");
 const std::string CompilerOutput::ARG_TEXT("%text");
 
-CompilerOutput::CompilerOutput(const std::string &format) : CompilerOutput(format, std::cout) {}
-CompilerOutput::CompilerOutput(const std::string &format, std::ostream &stream) : format(format), stream(stream) {}
+CompilerOutput::CompilerOutput(const std::string &formatString) : CompilerOutput(formatString, std::cout) {}
+CompilerOutput::CompilerOutput(const std::string &formatString, std::ostream &os) : format(formatString), stream(os) {}
 CompilerOutput::~CompilerOutput() { stream.flush(); }
 
 void CompilerOutput::printFailure(const Assertion &assertion) {

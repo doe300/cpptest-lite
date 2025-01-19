@@ -7,8 +7,8 @@
 
 using namespace Test;
 
-TextOutput::TextOutput(const unsigned int mode) : TextOutput(mode, std::cout) {}
-TextOutput::TextOutput(const unsigned int mode, std::ostream &stream) : stream(stream), mode(mode) {}
+TextOutput::TextOutput(const unsigned int outputMode) : TextOutput(outputMode, std::cout) {}
+TextOutput::TextOutput(const unsigned int outputMode, std::ostream &os) : stream(os), mode(outputMode) {}
 TextOutput::~TextOutput() { stream.flush(); }
 
 void TextOutput::initializeSuite(const std::string &suiteName, const unsigned int numTests) {

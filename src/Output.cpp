@@ -13,22 +13,22 @@ std::string Private::getFileName(const std::string &file) {
 }
 
 Assertion::Assertion(
-    const char *fileName, int lineNumber, const std::string &errorMessage, const std::string &userMessage)
-    : suite(""), file(fileName), method(""), args(""), errorMessage(errorMessage), userMessage(userMessage),
-      lineNumber(lineNumber) {}
+    const char *fileName, uint32_t lineNum, const std::string &errorMsg, const std::string &userMsg)
+    : suite(""), file(fileName), method(""), args(""), errorMessage(errorMsg), userMessage(userMsg),
+      lineNumber(lineNum) {}
 
-Assertion::Assertion(const char *fileName, int lineNumber, const std::string &errorMessage, const char *userMessage)
-    : Assertion(fileName, lineNumber, errorMessage, std::string{userMessage != nullptr ? userMessage : ""}) {}
+Assertion::Assertion(const char *fileName, uint32_t lineNum, const std::string &errorMsg, const char *userMsg)
+    : Assertion(fileName, lineNum, errorMsg, std::string{userMsg != nullptr ? userMsg : ""}) {}
 
-Assertion::Assertion(const char *fileName, int lineNumber, const std::string &userMessage)
-    : suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(userMessage),
-      lineNumber(lineNumber) {}
+Assertion::Assertion(const char *fileName, uint32_t lineNum, const std::string &userMsg)
+    : suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(userMsg),
+      lineNumber(lineNum) {}
 
-Assertion::Assertion(const char *fileName, int lineNumber, const char *userMessage)
-    : Assertion(fileName, lineNumber, std::string{userMessage != nullptr ? userMessage : ""}) {}
+Assertion::Assertion(const char *fileName, uint32_t lineNum, const char *userMsg)
+    : Assertion(fileName, lineNum, std::string{userMsg != nullptr ? userMsg : ""}) {}
 
-Assertion::Assertion(const char *fileName, int lineNumber)
-    : suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(""), lineNumber(lineNumber) {}
+Assertion::Assertion(const char *fileName, uint32_t lineNum)
+    : suite(""), file(fileName), method(""), args(""), errorMessage(""), userMessage(""), lineNumber(lineNum) {}
 
 double Output::prettifyPercentage(const double part, const double whole) const {
   if (part == 0 || whole == 0) {

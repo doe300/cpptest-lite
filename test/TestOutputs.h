@@ -9,7 +9,7 @@ public:
   TestOutputs();
   ~TestOutputs() override;
 
-  void testOutput(void *output);
+  void testOutput(void *out);
 
 private:
   std::unique_ptr<Test::Output> textOutput;

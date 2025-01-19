@@ -42,8 +42,8 @@ namespace Test {
       std::string exceptionMessage;
       bool withSuccess;
 
-      TestMethodInfo(const std::string &name, const std::string &argString)
-          : methodName(name), argString(argString), failedAssertions({}), passedAssertions({}), exceptionMessage(""),
+      TestMethodInfo(const std::string &name, const std::string &args)
+          : methodName(name), argString(args), failedAssertions({}), passedAssertions({}), exceptionMessage(""),
             withSuccess(false) {}
     };
 
@@ -54,8 +54,8 @@ namespace Test {
       const unsigned int numTests;
       unsigned int numPositiveTests;
 
-      SuiteInfo(const std::string &name, unsigned int numTests)
-          : suiteName(name), suiteDuration(std::chrono::microseconds::zero()), methods({}), numTests(numTests),
+      SuiteInfo(const std::string &name, unsigned int testCount)
+          : suiteName(name), suiteDuration(std::chrono::microseconds::zero()), methods({}), numTests(testCount),
             numPositiveTests(0) {}
     };
 

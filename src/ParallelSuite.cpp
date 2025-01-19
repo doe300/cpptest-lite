@@ -2,24 +2,24 @@
 
 using namespace Test;
 
-ParallelSuite::ParallelSuite(const std::string &suiteName) : Suite(suiteName) {}
+ParallelSuite::ParallelSuite(const std::string &name) : Suite(name) {}
 ParallelSuite::~ParallelSuite() { delete output; }
 
-bool ParallelSuite::run(Output &output, const std::vector<TestMethodInfo> &selectedMethods, bool continueAfterFail) {
-  this->continueAfterFail = continueAfterFail;
-  this->output = new SynchronizedOutput(output);
-  output.initializeSuite(suiteName, static_cast<unsigned>(testMethods.size()));
+bool ParallelSuite::run(Output &out, const std::vector<TestMethodInfo> &selectedMethods, bool continueOnError) {
+  this->continueAfterFail = continueOnError;
+  this->output = new SynchronizedOutput(out);
+  out.initializeSuite(suiteName, static_cast<unsigned>(testMethods.size()));
   if (setup()) {
     // warn if test-methods are directly added
     if (!testMethods.empty()) {
       Assertion notEmptyAssterion(
           suiteName.c_str(), 0, "Any test-methods directly added to a parallel-suite are not executed!");
-      output.printFailure(notEmptyAssterion);
+      out.printFailure(notEmptyAssterion);
     }
     // run tear-down after all tests
     tear_down();
   }
-  output.finishSuite(suiteName, static_cast<unsigned>(testMethods.size()), 0, std::chrono::microseconds::zero());
+  out.finishSuite(suiteName, static_cast<unsigned>(testMethods.size()), 0, std::chrono::microseconds::zero());
 
   std::vector<std::future<bool>> results(subSuites.size());
   // run sub-suites

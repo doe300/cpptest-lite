@@ -129,7 +129,7 @@ namespace Test {
   int runSuites(int argc, char **argv, const ArgumentCallback &callback) {
     std::vector<std::pair<std::unique_ptr<Test::Suite>, std::string>> selectedSuites;
     std::set<std::string> selectedSuiteNames;
-    selectedSuites.reserve(argc);
+    selectedSuites.reserve(static_cast<std::size_t>(argc));
     std::string outputMode = "plain";
     std::string outputFile;
     unsigned int mode = Test::TextOutput::Terse;
