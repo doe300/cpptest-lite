@@ -43,17 +43,17 @@ static void appendAsUtf8(uint32_t code, std::string &outUtf8String) {
   if (code < 0x80) {
     outUtf8String.push_back(static_cast<char>(code & 0x7F));
   } else if (code < 0x800) {
-    outUtf8String.push_back(0xC0 + ((code >> 6) & 0x1F));
-    outUtf8String.push_back(0x80 + (code & 0x3F));
+    outUtf8String.push_back(static_cast<char>(0xC0 + ((code >> 6) & 0x1F)));
+    outUtf8String.push_back(static_cast<char>(0x80 + (code & 0x3F)));
   } else if (code < 0x10000) {
-    outUtf8String.push_back(0xE0 + ((code >> 12) & 0x0F));
-    outUtf8String.push_back(0x80 + ((code >> 6) & 0x3F));
-    outUtf8String.push_back(0x80 + (code & 0x3F));
+    outUtf8String.push_back(static_cast<char>(0xE0 + ((code >> 12) & 0x0F)));
+    outUtf8String.push_back(static_cast<char>(0x80 + ((code >> 6) & 0x3F)));
+    outUtf8String.push_back(static_cast<char>(0x80 + (code & 0x3F)));
   } else if (code < 0x110000) {
-    outUtf8String.push_back(0xF0 + ((code >> 18) & 0x07));
-    outUtf8String.push_back(0x80 + ((code >> 12) & 0x3F));
-    outUtf8String.push_back(0x80 + ((code >> 6) & 0x3F));
-    outUtf8String.push_back(0x80 + (code & 0x3F));
+    outUtf8String.push_back(static_cast<char>(0xF0 + ((code >> 18) & 0x07)));
+    outUtf8String.push_back(static_cast<char>(0x80 + ((code >> 12) & 0x3F)));
+    outUtf8String.push_back(static_cast<char>(0x80 + ((code >> 6) & 0x3F)));
+    outUtf8String.push_back(static_cast<char>(0x80 + (code & 0x3F)));
   } else {
     outUtf8String.push_back('?');
   }
@@ -138,6 +138,16 @@ std::string Formats::internal::utf32_to_string(const char32_t *ptr, std::size_t 
 #else
   return "(unknown encoding)";
 #endif
+}
+
+std::string Formats::internal::to_hex_string(uintmax_t val, std::size_t numBytes) {
+  char buffer[128];
+#ifdef _MSC_VER
+  sprintf_s(buffer, sizeof(buffer), "0x%0*jX", static_cast<int>(numBytes) * 2, val);
+#else
+  snprintf(buffer, sizeof(buffer), "0x%0*jX", static_cast<int>(numBytes) * 2, val);
+#endif
+  return buffer;
 }
 
 std::string Formats::to_string(std::nullptr_t) { return "(nullptr)"; }

@@ -91,8 +91,8 @@ struct TestModernAssertions : public Test::Suite {
     std::variant<double, std::string> v2{"Foo"};
     testAssertEquals(v1, v2);
 
-    std::array<uint8_t, 3> span0{0x00, 0x01, 0x13};
-    std::vector<uint8_t> span1{0x01, 0x02, 0x03};
+    std::array<std::byte, 3> span0{std::byte{0x00}, std::byte{0x01}, std::byte{0x13}};
+    std::vector<std::byte> span1{std::byte{0x01}, std::byte{0xA2}, std::byte{0x03}};
     testAssertEquals(span0, span1);
 
 #if defined(CPPTEST_LITE_U8_STRING)

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -28,6 +29,7 @@ namespace Test {
       std::string utf8_to_string(const uint8_t *ptr, std::size_t length);
       std::string utf16_to_string(const char16_t *ptr, std::size_t length);
       std::string utf32_to_string(const char32_t *ptr, std::size_t length);
+      std::string to_hex_string(uintmax_t val, std::size_t numBytes);
     } // namespace internal
 
     ////
@@ -96,6 +98,12 @@ namespace Test {
     std::string to_string(int64_t val);
     std::string to_string(uint32_t val);
     std::string to_string(uint64_t val);
+
+#ifdef __cpp_lib_byte
+    inline std::string to_string(std::byte val) {
+      return internal::to_hex_string(static_cast<uintmax_t>(val), sizeof(std::byte));
+    }
+#endif
 
     ////
     // Custom format
